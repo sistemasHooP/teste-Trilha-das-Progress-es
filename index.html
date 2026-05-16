@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c4f2a">
+    <title>Trilha das Progressões – PA & PG</title>
+    <link rel="stylesheet" href="css/style.css?v=20260516-modos1">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <span class="brand-kicker">Jogo virtual <strong class="beta-badge">Beta</strong></span>
+          <h1>Trilha das Progressões <strong>PA & PG</strong></h1>
+        </div>
+        <span id="connectionStatus" class="status-pill status-pill--idle">Configurar API</span>
+      </header>
+
+      <main class="main-content">
+        <section id="homeView" class="view view--active" aria-labelledby="homeTitle">
+          <div class="home-layout">
+            <div class="home-title">
+              <p class="eyebrow">Trilha educativa</p>
+              <h2 id="homeTitle">Entre na diversão!</h2>
+              <p class="home-copy">Escolha uma corrida em grupo, treine sozinho ou use o código recebido para entrar. Responda perguntas de PA e PG para avançar.</p>
+              <p class="beta-note">Versão beta para testes em sala. Algumas melhorias ainda estão em evolução.</p>
+              <p class="credits-note">Desenvolvido por Renaly Basílio e Thiego Pereira.</p>
+            </div>
+
+            <form id="homeForm" class="form-panel">
+              <label class="field">
+                <span>Nome do jogador</span>
+                <input id="playerName" type="text" maxlength="40" autocomplete="name" placeholder="Digite seu nome">
+              </label>
+
+              <button id="createRoomBtn" class="btn btn--primary" type="button">Corrida das Progressões</button>
+              <button id="soloRoomBtn" class="btn btn--secondary" type="button">Missão PA & PG</button>
+              <button id="createChallengeBtn" class="btn btn--primary btn--challenge" type="button">Criar Desafio da Turma</button>
+
+              <div class="join-row">
+                <label class="field field--grow">
+                  <span>Código da sala</span>
+                  <input id="roomCodeInput" type="text" inputmode="numeric" maxlength="5" placeholder="Ex: 1234 ou 12345">
+                </label>
+                <button id="joinRoomBtn" class="btn btn--secondary" type="button">Entrar com código</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section id="challengeView" class="view" aria-labelledby="challengeTitle">
+          <div class="challenge-header">
+            <div>
+              <p id="challengeRoleLabel" class="eyebrow">Desafio da Turma</p>
+              <h2 id="challengeTitle">Arena das Progressões</h2>
+            </div>
+            <div class="room-code-box">
+              <span>Código</span>
+              <strong id="challengeCode">0000</strong>
+            </div>
+          </div>
+
+          <div class="challenge-layout">
+            <section class="panel challenge-question-panel">
+              <div class="challenge-meta-row">
+                <span id="challengeProgress" class="mini-badge">Pergunta 1/10</span>
+                <span id="challengeTimer" class="mini-badge mini-badge--timer">03:00</span>
+              </div>
+              <span id="challengeQuestionType" class="type-badge">PA</span>
+              <h2 id="challengeQuestionText">Aguardando o início do desafio.</h2>
+              <div id="challengeOptions" class="answer-options"></div>
+              <div id="challengeResultBox" class="question-feedback" hidden></div>
+              <div id="challengeStudentWaiting" class="challenge-waiting" hidden>
+                <strong>Resposta enviada</strong>
+                <p>Aguarde o professor liberar o resultado.</p>
+              </div>
+            </section>
+
+            <aside class="side-panel challenge-side">
+              <section id="challengeTeacherPanel" class="panel challenge-teacher-panel" hidden>
+                <div class="panel-heading">
+                  <h3>Controle</h3>
+                  <span id="challengeAnsweredBadge" class="mini-badge">0 respostas</span>
+                </div>
+                <div class="challenge-stats-grid">
+                  <div class="status-card">
+                    <span>Acertos</span>
+                    <strong id="challengeCorrectRate">0%</strong>
+                  </div>
+                  <div class="status-card">
+                    <span>Erros</span>
+                    <strong id="challengeWrongRate">0%</strong>
+                  </div>
+                </div>
+                <button id="challengeStartBtn" class="btn btn--primary" type="button">Iniciar desafio</button>
+                <button id="challengeRevealBtn" class="btn btn--secondary" type="button">Mostrar resultado</button>
+                <button id="challengeNextBtn" class="btn btn--primary" type="button">Próxima pergunta</button>
+                <button id="challengeEndBtn" class="btn btn--ghost" type="button">Encerrar desafio</button>
+              </section>
+
+              <section class="panel">
+                <div class="panel-heading">
+                  <h3>Ranking ao vivo</h3>
+                  <span id="challengeStudentCount" class="mini-badge">0 alunos</span>
+                </div>
+                <div id="challengeRankingList" class="ranking-list ranking-list--compact"></div>
+              </section>
+
+              <section class="panel">
+                <div class="panel-heading">
+                  <h3>Participantes</h3>
+                </div>
+                <ul id="challengeParticipantsList" class="player-list"></ul>
+              </section>
+
+              <button id="challengeLeaveBtn" class="btn btn--ghost" type="button">Sair do desafio</button>
+            </aside>
+          </div>
+        </section>
+
+        <section id="lobbyView" class="view" aria-labelledby="lobbyTitle">
+          <div class="room-header">
+            <div>
+              <p class="eyebrow">Sala de espera</p>
+              <h2 id="lobbyTitle">Aguardando jogadores</h2>
+            </div>
+            <div class="room-code-box">
+              <span>Código</span>
+              <strong id="roomCode">0000</strong>
+            </div>
+          </div>
+
+          <div class="lobby-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Jogadores da sala</h3>
+                <span id="playerCountBadge" class="mini-badge">0/4</span>
+              </div>
+              <ul id="lobbyPlayers" class="player-list"></ul>
+              <p id="lobbyStatus" class="muted-text">Mínimo 2 jogadores e máximo 4.</p>
+            </section>
+
+            <section class="panel panel--actions">
+              <button id="startGameBtn" class="btn btn--primary" type="button">Iniciar jogo</button>
+              <button id="leaveLobbyBtn" class="btn btn--ghost" type="button">Sair da sala</button>
+            </section>
+          </div>
+        </section>
+
+        <section id="gameView" class="view" aria-labelledby="gameTitle">
+          <div class="game-topline">
+            <div>
+              <p class="eyebrow">Partida em andamento</p>
+              <h2 id="gameTitle">O caminho do conhecimento</h2>
+            </div>
+            <div class="round-box">
+              <span>Rodada</span>
+              <strong id="roundValue">1</strong>
+            </div>
+          </div>
+
+          <div class="game-layout">
+            <section class="board-panel" aria-label="Trilha de 1 a 30">
+              <div id="boardMount"></div>
+            </section>
+
+            <aside class="side-panel">
+              <section class="panel turn-panel">
+                <div class="turn-status-grid">
+                  <div id="turnCard" class="status-card status-card--turn">
+                    <span>Vez de jogar</span>
+                    <strong id="turnName">Aguardando</strong>
+                  </div>
+                  <div class="status-card status-card--dice">
+                    <span>Dado</span>
+                    <div id="diceValue" class="dice" aria-label="Último resultado do dado">?</div>
+                  </div>
+                  <div class="status-card status-card--timer">
+                    <span>Tempo</span>
+                    <strong id="timeValue">30:00</strong>
+                  </div>
+                </div>
+                <button id="rollDiceBtn" class="btn btn--primary btn--roll" type="button">Rolar dado</button>
+                <div id="workStatus" class="work-status" hidden>
+                  <span class="work-spinner" aria-hidden="true"></span>
+                  <div>
+                    <strong id="workTitle">Processando</strong>
+                    <p id="workText">Aguarde um instante.</p>
+                  </div>
+                </div>
+                <div id="adminPanel" class="admin-panel" hidden>
+                  <label class="field">
+                    <span>Modo teste admin123</span>
+                    <select id="forcedDiceSelect">
+                      <option value="">Dado aleatório</option>
+                      <option value="1">Cair 1</option>
+                      <option value="2">Cair 2</option>
+                      <option value="3">Cair 3</option>
+                      <option value="4">Cair 4</option>
+                      <option value="5">Cair 5</option>
+                      <option value="6">Cair 6</option>
+                    </select>
+                  </label>
+                  <button id="adminBackBtn" class="btn btn--secondary" type="button">Voltar 1 casa</button>
+                </div>
+                <div id="lastAction" class="last-action last-action--idle">
+                  <span class="action-label">Status da jogada</span>
+                  <strong>Sem jogadas ainda</strong>
+                  <p>Aguardando a primeira rolagem.</p>
+                </div>
+                <div id="answerReview" class="answer-review" hidden>
+                  <strong>Quer revisar?</strong>
+                  <p>Você errou a última pergunta.</p>
+                  <button id="reviewAnswerBtn" class="btn btn--secondary" type="button">Ver resposta correta</button>
+                </div>
+              </section>
+
+              <section class="panel">
+                <div class="panel-heading">
+                  <h3>Posições atuais</h3>
+                  <span id="roomCodeGame" class="mini-badge">0000</span>
+                </div>
+                <ul id="positionsList" class="position-list"></ul>
+              </section>
+
+              <section class="panel rules-panel">
+                <details>
+                  <summary>Regras das casas especiais</summary>
+                  <ul>
+                    <li><strong>Movimento:</strong> só avança se acertar a pergunta.</li>
+                    <li><strong>Erro:</strong> fica na mesma casa de antes da rolagem.</li>
+                    <li><strong>8 e 22:</strong> acertou, cai na casa e volta 2 casas.</li>
+                    <li><strong>13:</strong> acertou, avança 1 casa extra.</li>
+                    <li><strong>16 e 29:</strong> pode trocar a pergunta uma vez.</li>
+                    <li><strong>19:</strong> acertou, fica uma rodada sem jogar.</li>
+                    <li><strong>26:</strong> acertou, avança 2 casas.</li>
+                    <li><strong>30:</strong> precisa tirar o número exato e acertar a pergunta.</li>
+                  </ul>
+                </details>
+              </section>
+
+              <button id="leaveGameBtn" class="btn btn--ghost" type="button">Sair da partida</button>
+            </aside>
+
+            <section id="houseInfo" class="house-info" hidden>
+              <button id="houseInfoClose" class="house-info-close" type="button" aria-label="Fechar">×</button>
+              <span id="houseInfoBadge">Casa</span>
+              <strong id="houseInfoTitle">Casa comum</strong>
+              <p id="houseInfoText">Ao parar aqui, responda uma pergunta de PA ou PG.</p>
+            </section>
+          </div>
+        </section>
+
+        <section id="finalView" class="view" aria-labelledby="finalTitle">
+          <div class="final-panel">
+            <p class="eyebrow">Fim da jornada</p>
+            <h2 id="finalTitle">Vitória!</h2>
+            <p id="winnerName" class="winner-name">Jogador vencedor</p>
+            <div id="rankingList" class="ranking-list"></div>
+            <h3 class="final-subtitle">Melhores tempos</h3>
+            <div id="fastestRankingList" class="ranking-list"></div>
+            <div class="final-actions">
+              <button id="finalHomeBtn" class="btn btn--secondary" type="button">Voltar ao início</button>
+              <button id="newRoomBtn" class="btn btn--primary" type="button">Jogar novamente</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="questionModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="questionText">
+      <div class="modal-scrim"></div>
+      <div class="modal-panel">
+        <div class="modal-heading">
+          <span id="questionType" class="type-badge">PA</span>
+          <strong id="questionHouse">Casa 1</strong>
+        </div>
+        <h2 id="questionText">Pergunta</h2>
+        <div id="answerOptions" class="answer-options"></div>
+        <div id="questionFeedback" class="question-feedback" hidden></div>
+        <div class="modal-actions">
+          <button id="swapQuestionBtn" class="btn btn--secondary" type="button">Trocar pergunta</button>
+          <button id="answerQuestionBtn" class="btn btn--primary" type="button" disabled>Responder</button>
+          <button id="continueQuestionBtn" class="btn btn--primary" type="button" hidden>Continuar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastHost" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="leaveScreen" class="leave-screen" hidden aria-live="polite">
+      <div class="leave-card">
+        <div class="leave-loader" aria-hidden="true"></div>
+        <strong>Saindo da sala</strong>
+        <span>Aguarde um instante.</span>
+      </div>
+    </div>
+
+    <script src="js/config.js?v=20260516-modos1"></script>
+    <script src="js/api.js?v=20260516-modos1"></script>
+    <script src="js/firebase-config.js?v=20260516-modos1"></script>
+    <script src="js/game.js?v=20260516-modos1"></script>
+    <script src="js/board.js?v=20260516-modos1"></script>
+    <script src="js/ui.js?v=20260516-modos1"></script>
+    <script src="js/app.js?v=20260516-modos1"></script>
+    <script type="module" src="js/classroom.js?v=20260516-modos1"></script>
+  </body>
+</html>
