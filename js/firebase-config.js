@@ -4,6 +4,9 @@ const CLASSROOM_CONFIG = {
   maxStudents: 45,
   heartbeatSeconds: 10,
   disconnectSeconds: 30,
+  cleanupFinishedMinutes: 10,
+  cleanupIdleLobbyMinutes: 30,
+  cleanupRunningMinutes: 90,
   servers: [
     {
       id: 'servidor1',
