@@ -240,7 +240,10 @@ const ClassroomChallenge = (function() {
       }
 
       pauseTrilhaMode();
-      await joinFoundChallenge(found, code, name);
+      const joined = await joinFoundChallenge(found, code, name);
+      if (!joined) {
+        return false;
+      }
       toast('Voce entrou no Desafio da Turma.');
       return true;
     } catch (error) {
@@ -260,7 +263,7 @@ const ClassroomChallenge = (function() {
     const roomSnap = await get(ref(found.context.db, path('rooms', found.roomId)));
     const room = roomSnap.val();
     if (!room || room.status === 'FINISHED') {
-      throw new Error('Esse desafio ja foi encerrado.');
+      return false;
     }
 
     const participantsSnap = await get(ref(found.context.db, path('participants', found.roomId)));
@@ -275,6 +278,7 @@ const ClassroomChallenge = (function() {
     const now = Date.now();
     await set(ref(found.context.db, path('participants', found.roomId, found.context.uid)), makeParticipant(name, 'student', now));
     await enterRoom(found.context, found.roomId, code, 'student', name);
+    return true;
   }
 
   async function enterRoom(context, roomId, code, role, name) {
@@ -825,6 +829,7 @@ const ClassroomChallenge = (function() {
     let bestCount = Infinity;
 
     for (const context of contexts) {
+      await cleanupServer(context);
       const roomsSnap = await get(ref(context.db, path('rooms')));
       const rooms = roomsSnap.val() || {};
       const activeCount = Object.keys(rooms).filter(function(roomId) {
@@ -893,8 +898,15 @@ const ClassroomChallenge = (function() {
     try {
       const roomsSnap = await get(ref(context.db, path('rooms')));
       const rooms = roomsSnap.val() || {};
+      const codesSnap = await get(ref(context.db, path('codes')));
+      const codes = codesSnap.val() || {};
       const now = Date.now();
-      const updates = {};
+      const markUpdates = {};
+      const dataDeleteUpdates = {};
+      const roomDeleteUpdates = {};
+      const finishedMs = minutesToMs(CLASSROOM_CONFIG.cleanupFinishedMinutes || 10);
+      const lobbyMs = minutesToMs(CLASSROOM_CONFIG.cleanupIdleLobbyMinutes || 30);
+      const runningMs = minutesToMs(CLASSROOM_CONFIG.cleanupRunningMinutes || 90);
 
       Object.keys(rooms).forEach(function(roomId) {
         const room = rooms[roomId];
@@ -903,35 +915,67 @@ const ClassroomChallenge = (function() {
         }
 
         const age = now - Number(room.updatedAt || room.createdAt || now);
-        if (room.status === 'FINISHED' && age > 10 * 60 * 1000 && room.hostUid === context.uid) {
-          updates[path('rooms', roomId)] = null;
-          updates[path('participants', roomId)] = null;
-          updates[path('questions', roomId)] = null;
-          updates[path('secrets', roomId)] = null;
-          updates[path('answers', roomId)] = null;
-          updates[path('results', roomId)] = null;
+
+        if (room.status === 'FINISHED' && age > finishedMs) {
+          dataDeleteUpdates[path('participants', roomId)] = null;
+          dataDeleteUpdates[path('questions', roomId)] = null;
+          dataDeleteUpdates[path('secrets', roomId)] = null;
+          dataDeleteUpdates[path('answers', roomId)] = null;
+          dataDeleteUpdates[path('results', roomId)] = null;
+          roomDeleteUpdates[path('rooms', roomId)] = null;
           if (room.code) {
-            updates[path('codes', room.code)] = null;
+            dataDeleteUpdates[path('codes', room.code)] = null;
           }
+          return;
         }
 
-        if (room.status === 'LOBBY' && age > 30 * 60 * 1000 && room.hostUid === context.uid) {
-          updates[path('rooms', roomId, 'status')] = 'FINISHED';
-          updates[path('rooms', roomId, 'phase')] = 'FINAL';
-          updates[path('rooms', roomId, 'finishReason')] = 'Sala encerrada por inatividade.';
-          updates[path('rooms', roomId, 'updatedAt')] = now;
-          if (room.code) {
-            updates[path('codes', room.code)] = null;
-          }
+        if (room.status === 'LOBBY' && age > lobbyMs) {
+          markRoomAsFinished(markUpdates, roomId, room, now, 'Sala encerrada por inatividade.');
+          return;
+        }
+
+        if (room.status === 'RUNNING' && age > runningMs) {
+          markRoomAsFinished(markUpdates, roomId, room, now, 'Desafio encerrado por inatividade.');
         }
       });
 
-      if (Object.keys(updates).length) {
-        await update(ref(context.db), updates);
+      Object.keys(codes).forEach(function(code) {
+        const roomId = codes[code] && codes[code].roomId;
+        const room = roomId ? rooms[roomId] : null;
+        if (!room || room.status === 'FINISHED') {
+          dataDeleteUpdates[path('codes', code)] = null;
+        }
+      });
+
+      if (Object.keys(markUpdates).length) {
+        await update(ref(context.db), markUpdates);
+      }
+
+      if (Object.keys(dataDeleteUpdates).length) {
+        await update(ref(context.db), dataDeleteUpdates);
+      }
+
+      if (Object.keys(roomDeleteUpdates).length) {
+        await update(ref(context.db), roomDeleteUpdates);
       }
     } catch (error) {
       console.warn('Limpeza do servidor ignorada:', error);
     }
+  }
+
+  function markRoomAsFinished(updates, roomId, room, now, reason) {
+    updates[path('rooms', roomId, 'status')] = 'FINISHED';
+    updates[path('rooms', roomId, 'phase')] = 'FINAL';
+    updates[path('rooms', roomId, 'finishReason')] = reason;
+    updates[path('rooms', roomId, 'updatedAt')] = now;
+    updates[path('rooms', roomId, 'endedAt')] = now;
+    if (room.code) {
+      updates[path('codes', room.code)] = null;
+    }
+  }
+
+  function minutesToMs(minutes) {
+    return Number(minutes || 0) * 60 * 1000;
   }
 
   function getStudents() {
