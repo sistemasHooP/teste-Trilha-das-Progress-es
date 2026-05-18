@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    CSS CARTONIZADO / COMIC STYLE (Válido para todas as telas)
    ========================================================================== */
 :root {
@@ -106,6 +106,29 @@ button:disabled { cursor: not-allowed; opacity: 0.6; filter: grayscale(50%); tra
 .room-code-box, .round-box { min-width: 120px; padding: 14px; text-align: center; color: var(--ink); background: var(--yellow-500); border: 4px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink); transform: rotate(2deg);}
 .room-code-box span, .round-box span { display: block; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; }
 .room-code-box strong, .round-box strong { display: block; margin-top: 4px; font-size: 1.8rem; letter-spacing: 2px; }
+
+/* Botão discreto de copiar */
+.copy-code-btn {
+  display: block;
+  margin: 8px auto 0;
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--ink);
+  border: 2px dashed var(--ink);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.copy-code-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+.copy-code-btn:active {
+  transform: translateY(0);
+}
 
 .lobby-grid, .game-layout, .challenge-layout { display: grid; gap: 24px; }
 .panel { padding: 24px; }
