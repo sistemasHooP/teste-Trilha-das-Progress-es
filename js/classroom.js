@@ -1,4 +1,4 @@
-﻿import { FirebaseQuestions } from './firebase-questions.js?v=20260518-turma13';
+import { FirebaseQuestions } from './firebase-questions.js?v=20260518-turma13';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
@@ -95,8 +95,8 @@ const ClassroomChallenge = (function() {
     const button = byId('createChallengeBtn');
     state.busy = true;
     pauseTrilhaMode();
-    setHomeBusy(true, button, 'Criando desafio');
-    setBusy(true, 'Criando desafio');
+    setHomeBusy(true, button, 'A criar desafio');
+    setBusy(true, 'A criar desafio');
     try {
       const context = await chooseServer();
       await cleanupServer(context);
@@ -148,7 +148,7 @@ const ClassroomChallenge = (function() {
       await update(ref(context.db), updates);
 
       await enterRoom(context, roomId, code, 'teacher', name);
-      toast('Desafio criado. Compartilhe o código com a turma.');
+      toast('Desafio criado. Partilhe o código com a turma.');
     } catch (error) {
       toast(error.message || String(error), 'error');
     } finally {
@@ -167,7 +167,7 @@ const ClassroomChallenge = (function() {
     const code = normalizeCode(byId('roomCodeInput').value);
 
     if (!name) {
-      toast('Informe seu nome.', 'warn');
+      toast('Informe o seu nome.', 'warn');
       return;
     }
 
@@ -184,8 +184,8 @@ const ClassroomChallenge = (function() {
     const button = byId('joinChallengeBtn');
     state.busy = true;
     pauseTrilhaMode();
-    setButtonBusy(button, true, 'Entrando');
-    setBusy(true, 'Entrando no desafio');
+    setButtonBusy(button, true, 'A entrar');
+    setBusy(true, 'A entrar no desafio');
     try {
       const found = await findRoomByCode(code);
       if (!found) {
@@ -196,7 +196,7 @@ const ClassroomChallenge = (function() {
       const roomSnap = await get(ref(found.context.db, path('rooms', found.roomId)));
       const room = roomSnap.val();
       if (!room || room.status === 'FINISHED') {
-        throw new Error('Esse desafio já foi encerrado.');
+        throw new Error('Este desafio já foi encerrado.');
       }
 
       const participantsSnap = await get(ref(found.context.db, path('participants', found.roomId)));
@@ -211,7 +211,7 @@ const ClassroomChallenge = (function() {
       const now = Date.now();
       await set(ref(found.context.db, path('participants', found.roomId, found.context.uid)), makeParticipant(name, 'student', now));
       await enterRoom(found.context, found.roomId, code, 'student', name);
-      toast('Você entrou no Desafio da Turma.');
+      toast('Entrou no Desafio da Turma.');
     } catch (error) {
       toast(error.message || String(error), 'error');
     } finally {
@@ -235,9 +235,9 @@ const ClassroomChallenge = (function() {
 
     state.busy = true;
     if (options.lockHome) {
-      setHomeBusy(true, options.activeButton, options.busyText || 'Entrando');
+      setHomeBusy(true, options.activeButton, options.busyText || 'A entrar');
     }
-    setBusy(true, 'Conferindo código');
+    setBusy(true, 'A verificar código');
 
     try {
       const found = await findRoomByCode(code);
@@ -250,7 +250,7 @@ const ClassroomChallenge = (function() {
       if (!joined) {
         return false;
       }
-      toast('Você entrou no Desafio da Turma.');
+      toast('Entrou no Desafio da Turma.');
       return true;
     } catch (error) {
       toast(error.message || String(error), 'error');
@@ -278,7 +278,7 @@ const ClassroomChallenge = (function() {
       return participants[uid].role === 'student';
     });
     if (students.length >= (room.maxStudents || CLASSROOM_CONFIG.maxStudents)) {
-      throw new Error('O desafio ja atingiu o limite de alunos.');
+      throw new Error('O desafio já atingiu o limite de alunos.');
     }
 
     const now = Date.now();
@@ -614,7 +614,7 @@ const ClassroomChallenge = (function() {
       state.selectedQuestionIndex = null;
       toast('Resposta enviada.');
     } else {
-      toast('Você já respondeu esta pergunta.', 'warn');
+      toast('Já respondeu a esta pergunta.', 'warn');
     }
     render();
   }
@@ -645,7 +645,15 @@ const ClassroomChallenge = (function() {
     }
 
     showChallengeView();
-    byId('challengeCode').textContent = state.code || state.room.code || '0000';
+    const currentCode = state.code || state.room.code || '0000';
+    byId('challengeCode').textContent = currentCode;
+    
+    // Assegurar que o botão de copiar a sala de aula recebe o código correto
+    const copyBtns = document.querySelectorAll('.copy-code-btn');
+    copyBtns.forEach(function(btn) {
+      btn.dataset.code = currentCode;
+    });
+
     byId('challengeRoleLabel').textContent = isTeacher() ? 'Professor do desafio' : 'Aluno do desafio';
     byId('challengeTeacherPanel').hidden = !isTeacher();
 
@@ -671,7 +679,7 @@ const ClassroomChallenge = (function() {
 
     if (isCurrentUserRemoved()) {
       byId('challengeQuestionType').textContent = 'Aviso';
-      byId('challengeQuestionText').textContent = 'Você foi removido do desafio por falta de conexão.';
+      byId('challengeQuestionText').textContent = 'Foi removido do desafio por falta de ligação.';
       byId('challengeOptions').innerHTML = '';
       return;
     }
@@ -679,14 +687,14 @@ const ClassroomChallenge = (function() {
     if (room.status === 'LOBBY') {
       byId('challengeQuestionType').textContent = 'Quiz';
       byId('challengeQuestionText').textContent = isTeacher()
-        ? 'Compartilhe o código e inicie quando a turma entrar.'
-        : 'Aguardando o professor iniciar o desafio.';
+        ? 'Partilhe o código e inicie quando a turma entrar.'
+        : 'A aguardar o professor iniciar o desafio.';
       byId('challengeOptions').innerHTML = '';
       return;
     }
 
     if (!question) {
-      byId('challengeQuestionText').textContent = 'Carregando pergunta.';
+      byId('challengeQuestionText').textContent = 'A carregar pergunta.';
       byId('challengeOptions').innerHTML = '';
       return;
     }
@@ -773,7 +781,7 @@ const ClassroomChallenge = (function() {
     }).length;
     const inLobby = room.status === 'LOBBY';
 
-    byId('challengeControlTitle').textContent = inLobby ? 'Sala da turma' : 'Controle';
+    byId('challengeControlTitle').textContent = inLobby ? 'Sala da turma' : 'Controlo';
     byId('challengeAnsweredBadge').hidden = inLobby;
     byId('challengeQuestionStats').hidden = inLobby;
     byId('challengeOverallStats').hidden = inLobby;
@@ -824,8 +832,8 @@ const ClassroomChallenge = (function() {
 
     const best = getQuestionExtreme(results, 'correct');
     const hard = getQuestionExtreme(results, 'wrong');
-    byId('challengeBestQuestion').textContent = best ? formatQuestionExtreme(best, 'acertos') : 'Aguardando resultados.';
-    byId('challengeHardQuestion').textContent = hard ? formatQuestionExtreme(hard, 'erros') : 'Aguardando resultados.';
+    byId('challengeBestQuestion').textContent = best ? formatQuestionExtreme(best, 'acertos') : 'A aguardar resultados.';
+    byId('challengeHardQuestion').textContent = hard ? formatQuestionExtreme(hard, 'erros') : 'A aguardar resultados.';
   }
 
   function getQuestionExtreme(results, kind) {
@@ -887,7 +895,7 @@ const ClassroomChallenge = (function() {
       const answered = getAnsweredOnlineCount();
       hint.textContent = online.length
         ? 'Resultado automático quando ' + answered + '/' + online.length + ' alunos online responderem.'
-        : 'Aguardando alunos online. Você pode mostrar o resultado manualmente.';
+        : 'A aguardar alunos online. Pode mostrar o resultado manualmente.';
       return;
     }
 
@@ -898,7 +906,7 @@ const ClassroomChallenge = (function() {
         : 0;
       hint.textContent = seconds > 0
         ? 'Próxima pergunta automática em ' + seconds + 's. O botão continua disponível para adiantar.'
-        : 'Avançando para a próxima pergunta.';
+        : 'A avançar para a próxima pergunta.';
       return;
     }
 
@@ -938,7 +946,7 @@ const ClassroomChallenge = (function() {
           '</div>'
         ].join('');
       }).join('')
-      : '<p class="muted-text">Aguardando alunos.</p>';
+      : '<p class="muted-text">A aguardar alunos.</p>';
   }
 
   function renderParticipants() {
@@ -1105,7 +1113,7 @@ const ClassroomChallenge = (function() {
     resetChallengeLobbyScreen();
     UI.showView('home');
     setHomeBusy(true, null);
-    UI.setConnection('idle', 'Saindo do desafio');
+    UI.setConnection('idle', 'A sair do desafio');
     stopListeners();
     stopHeartbeat();
 
@@ -1439,8 +1447,8 @@ const ClassroomChallenge = (function() {
     if (timer) timer.textContent = '00:00';
     if (questionType) questionType.textContent = 'Quiz';
     if (questionText) questionText.textContent = isTeacher()
-      ? 'Compartilhe o código e inicie quando a turma entrar.'
-      : 'Aguardando o professor iniciar o desafio.';
+      ? 'Partilhe o código e inicie quando a turma entrar.'
+      : 'A aguardar o professor iniciar o desafio.';
     if (options) options.innerHTML = '';
     if (submitButton) {
       submitButton.hidden = true;
@@ -1451,7 +1459,7 @@ const ClassroomChallenge = (function() {
 
   function getChallengeStatusText() {
     if (!state.room || state.room.status === 'LOBBY') {
-      return 'Aguardando jogadores';
+      return 'A aguardar jogadores';
     }
 
     if (state.room.status === 'FINISHED' || state.room.phase === 'FINAL') {
@@ -1483,7 +1491,7 @@ const ClassroomChallenge = (function() {
 
     if (isBusy) {
       button.dataset.originalText = button.textContent;
-      button.textContent = textWhenBusy || 'Aguarde';
+      button.textContent = textWhenBusy || 'A aguardar';
       button.disabled = true;
       return;
     }
