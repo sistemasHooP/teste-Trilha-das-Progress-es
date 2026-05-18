@@ -1,0 +1,95 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Importar Perguntas - Trilha PA & PG</title>
+    <style>
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        font-family: Arial, sans-serif;
+        background: #f3faeb;
+        color: #071b12;
+      }
+
+      main {
+        width: min(92vw, 560px);
+        padding: 28px;
+        border: 4px solid #071b12;
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow: 8px 8px 0 #071b12;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 28px;
+      }
+
+      p {
+        line-height: 1.5;
+      }
+
+      button {
+        width: 100%;
+        padding: 16px 18px;
+        border: 4px solid #071b12;
+        border-radius: 14px;
+        background: #34aa59;
+        color: #071b12;
+        font-size: 18px;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 #071b12;
+      }
+
+      button:disabled {
+        opacity: .65;
+        cursor: wait;
+      }
+
+      .status {
+        margin-top: 18px;
+        padding: 14px;
+        border-radius: 12px;
+        background: #fff5d6;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Importar perguntas para o Firebase</h1>
+      <p>Use esta tela uma vez para copiar as perguntas de <strong>data/questions.json</strong> para o Realtime Database. Depois disso, o jogo sorteia perguntas direto do Firebase.</p>
+      <button id="importBtn" type="button">Importar perguntas</button>
+      <div id="status" class="status">Aguardando importacao.</div>
+    </main>
+
+    <script src="js/firebase-config.js?v=20260518-turma13"></script>
+    <script type="module">
+      import { FirebaseQuestions } from './js/firebase-questions.js?v=20260518-turma13';
+
+      const button = document.getElementById('importBtn');
+      const status = document.getElementById('status');
+
+      button.addEventListener('click', async function() {
+        button.disabled = true;
+        button.textContent = 'Importando';
+        status.textContent = 'Enviando perguntas para o Firebase.';
+
+        try {
+          const result = await FirebaseQuestions.importLocalToFirebase();
+          status.textContent = 'Pronto: ' + result.total + ' perguntas importadas em ' + result.servers.join(', ') + '.';
+          button.textContent = 'Importacao concluida';
+        } catch (error) {
+          status.textContent = error.message || String(error);
+          button.disabled = false;
+          button.textContent = 'Tentar novamente';
+        }
+      });
+    </script>
+  </body>
+</html>

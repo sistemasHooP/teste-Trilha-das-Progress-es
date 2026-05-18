@@ -1,4 +1,5 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+﻿import { FirebaseQuestions } from './firebase-questions.js?v=20260518-turma13';
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
   getDatabase,
@@ -18,6 +19,7 @@ const ClassroomChallenge = (function() {
   const ROOT = 'classroom';
   const SCORE_FASTEST = [10, 8, 7];
   const SCORE_CORRECT = 5;
+  const AUTO_NEXT_RESULTS_MS = 8000;
 
   const state = {
     contexts: {},
@@ -33,12 +35,15 @@ const ClassroomChallenge = (function() {
     answers: {},
     results: {},
     selectedAnswer: '',
+    selectedQuestionIndex: null,
     unsubs: [],
     heartbeatId: null,
     timerId: null,
     autoClosing: false,
+    autoAdvancing: false,
     initialized: false,
-    busy: false
+    busy: false,
+    leaving: false
   };
 
   function init() {
@@ -67,10 +72,11 @@ const ClassroomChallenge = (function() {
     byId('challengeNextBtn').addEventListener('click', nextQuestion);
     byId('challengeEndBtn').addEventListener('click', endChallenge);
     byId('challengeLeaveBtn').addEventListener('click', leaveChallenge);
+    byId('challengeSubmitAnswerBtn').addEventListener('click', submitSelectedAnswer);
     byId('challengeOptions').addEventListener('click', function(event) {
       const button = event.target.closest('[data-challenge-answer]');
       if (button) {
-        submitAnswer(button.dataset.challengeAnswer);
+        selectAnswer(button.dataset.challengeAnswer);
       }
     });
   }
@@ -231,7 +237,7 @@ const ClassroomChallenge = (function() {
     if (options.lockHome) {
       setHomeBusy(true, options.activeButton, options.busyText || 'Entrando');
     }
-    setBusy(true, 'Conferindo codigo');
+    setBusy(true, 'Conferindo código');
 
     try {
       const found = await findRoomByCode(code);
@@ -244,7 +250,7 @@ const ClassroomChallenge = (function() {
       if (!joined) {
         return false;
       }
-      toast('Voce entrou no Desafio da Turma.');
+      toast('Você entrou no Desafio da Turma.');
       return true;
     } catch (error) {
       toast(error.message || String(error), 'error');
@@ -283,6 +289,7 @@ const ClassroomChallenge = (function() {
 
   async function enterRoom(context, roomId, code, role, name) {
     stopListeners();
+    state.leaving = false;
     state.context = context;
     state.uid = context.uid;
     state.role = role;
@@ -290,6 +297,7 @@ const ClassroomChallenge = (function() {
     state.code = code;
     state.name = name;
     state.selectedAnswer = '';
+    resetChallengeLobbyScreen();
 
     await setOnline(true);
     onDisconnect(ref(context.db, path('participants', roomId, context.uid))).update({
@@ -306,6 +314,9 @@ const ClassroomChallenge = (function() {
     const db = state.context.db;
     const roomId = state.roomId;
     state.unsubs.push(onValue(ref(db, path('rooms', roomId)), function(snapshot) {
+      if (state.leaving) {
+        return;
+      }
       state.room = snapshot.val();
       if (!state.room) {
         leaveLocal();
@@ -315,18 +326,30 @@ const ClassroomChallenge = (function() {
       render();
     }));
     state.unsubs.push(onValue(ref(db, path('participants', roomId)), function(snapshot) {
+      if (state.leaving) {
+        return;
+      }
       state.participants = snapshot.val() || {};
       render();
     }));
     state.unsubs.push(onValue(ref(db, path('questions', roomId)), function(snapshot) {
+      if (state.leaving) {
+        return;
+      }
       state.questions = snapshot.val() || {};
       render();
     }));
     state.unsubs.push(onValue(ref(db, path('answers', roomId)), function(snapshot) {
+      if (state.leaving) {
+        return;
+      }
       state.answers = snapshot.val() || {};
       render();
     }));
     state.unsubs.push(onValue(ref(db, path('results', roomId)), function(snapshot) {
+      if (state.leaving) {
+        return;
+      }
       state.results = snapshot.val() || {};
       render();
     }));
@@ -338,10 +361,13 @@ const ClassroomChallenge = (function() {
     }
 
     const now = Date.now();
+    state.selectedAnswer = '';
+    state.selectedQuestionIndex = 0;
     await update(ref(state.context.db, path('rooms', state.roomId)), {
       status: 'RUNNING',
       phase: 'QUESTION',
       questionIndex: 0,
+      startedAt: now,
       questionStartedAt: now,
       questionEndsAt: now + (CLASSROOM_CONFIG.questionSeconds * 1000),
       updatedAt: now
@@ -364,18 +390,22 @@ const ClassroomChallenge = (function() {
 
       const answers = state.answers[questionIndex] || {};
       const students = getStudents();
+      const onlineStudents = getOnlineStudents();
+      const question = state.questions[questionIndex] || {};
       const correctAnswers = [];
+      const answeredStudentIds = {};
       let answeredCount = 0;
       let correctCount = 0;
-      let wrongCount = 0;
+      let explicitWrongCount = 0;
 
       Object.keys(answers).forEach(function(uid) {
         const participant = state.participants[uid];
-        if (!participant || participant.role !== 'student') {
+        if (!participant || participant.role !== 'student' || participant.removed) {
           return;
         }
 
         const answer = answers[uid];
+        answeredStudentIds[uid] = true;
         answeredCount++;
         const correct = answer.answer === secret.correta;
         if (correct) {
@@ -386,9 +416,15 @@ const ClassroomChallenge = (function() {
             elapsedMs: Number(answer.elapsedMs || 0)
           });
         } else {
-          wrongCount++;
+          explicitWrongCount++;
         }
       });
+
+      const missedStudents = students.filter(function(player) {
+        return !answeredStudentIds[player.uid];
+      });
+      const noAnswerCount = missedStudents.length;
+      const wrongCount = explicitWrongCount + noAnswerCount;
 
       correctAnswers.sort(function(a, b) {
         return a.elapsedMs - b.elapsedMs;
@@ -402,7 +438,7 @@ const ClassroomChallenge = (function() {
       const updates = {};
       Object.keys(answers).forEach(function(uid) {
         const participant = state.participants[uid];
-        if (!participant || participant.role !== 'student') {
+        if (!participant || participant.role !== 'student' || participant.removed) {
           return;
         }
 
@@ -416,15 +452,33 @@ const ClassroomChallenge = (function() {
         updates[path('answers', state.roomId, questionIndex, uid, 'scoreGained')] = gained;
       });
 
+      missedStudents.forEach(function(player) {
+        updates[path('participants', state.roomId, player.uid, 'answeredCount')] = Number(player.answeredCount || 0) + 1;
+        updates[path('answers', state.roomId, questionIndex, player.uid)] = {
+          uid: player.uid,
+          name: player.name,
+          answer: '',
+          elapsedMs: Math.max(0, Date.now() - Number(state.room.questionStartedAt || Date.now())),
+          submittedAt: Date.now(),
+          correct: false,
+          scoreGained: 0,
+          missed: true
+        };
+      });
+
       const totalStudents = students.length;
       updates[path('results', state.roomId, questionIndex)] = {
         correta: secret.correta,
         explicacao: secret.explicacao || '',
+        questionNumber: questionIndex + 1,
+        questionText: question.enunciado || '',
         totalStudents: totalStudents,
+        totalOnlineStudents: onlineStudents.length,
         answeredCount: answeredCount,
         correctCount: correctCount,
         wrongCount: wrongCount,
-        noAnswerCount: Math.max(0, totalStudents - answeredCount),
+        noAnswerCount: noAnswerCount,
+        noAnswerCountsAsWrong: true,
         best: correctAnswers.slice(0, 10).map(function(item) {
           return {
             uid: item.uid,
@@ -458,6 +512,7 @@ const ClassroomChallenge = (function() {
 
     const now = Date.now();
     state.selectedAnswer = '';
+    state.selectedQuestionIndex = nextIndex;
     await update(ref(state.context.db, path('rooms', state.roomId)), {
       phase: 'QUESTION',
       questionIndex: nextIndex,
@@ -477,6 +532,9 @@ const ClassroomChallenge = (function() {
 
   async function finishChallenge(message) {
     const now = Date.now();
+    if (isTeacher()) {
+      await saveChallengeRanking(now);
+    }
     await update(ref(state.context.db, path('rooms', state.roomId)), {
       status: 'FINISHED',
       phase: 'FINAL',
@@ -485,6 +543,47 @@ const ClassroomChallenge = (function() {
       finishReason: message || 'Desafio finalizado.'
     });
     await remove(ref(state.context.db, path('codes', state.code)));
+  }
+
+  async function saveChallengeRanking(now) {
+    const students = getStudents().filter(function(player) {
+      return Number(player.score || 0) > 0 || Number(player.correctCount || 0) > 0;
+    }).sort(function(a, b) {
+      if (Number(b.score || 0) !== Number(a.score || 0)) {
+        return Number(b.score || 0) - Number(a.score || 0);
+      }
+      if (Number(b.correctCount || 0) !== Number(a.correctCount || 0)) {
+        return Number(b.correctCount || 0) - Number(a.correctCount || 0);
+      }
+      return String(a.name || '').localeCompare(String(b.name || ''));
+    });
+
+    if (!students.length) {
+      return;
+    }
+
+    const winner = students[0];
+    const duration = Math.max(1, Math.round((now - Number(state.room.startedAt || state.room.createdAt || now)) / 1000));
+    const rankingId = sanitizeFirebaseKey(['CLASSROOM', state.roomId, winner.uid].join('_'));
+
+    await set(ref(state.context.db, 'ranking/entries/' + rankingId), {
+      rankingId: rankingId,
+      uid: state.uid,
+      salaId: state.roomId || '',
+      codigoSala: state.code || '',
+      playerId: winner.uid || '',
+      nome: String(winner.name || 'Aluno').slice(0, 40),
+      modo: 'CLASSROOM',
+      pontos: Number(winner.score || 0),
+      acertos: Number(winner.correctCount || 0),
+      totalPerguntas: Number(state.room.totalQuestions || CLASSROOM_CONFIG.totalQuestions || 10),
+      duracaoSegundos: duration,
+      motivoEncerramento: 'DESAFIO_CONCLUIDO',
+      concluiu: true,
+      createdAt: now,
+      criadoEm: new Date(now).toISOString(),
+      origem: 'classroom-ranking-v1'
+    });
   }
 
   async function submitAnswer(letter) {
@@ -511,7 +610,8 @@ const ClassroomChallenge = (function() {
     });
 
     if (result.committed) {
-      state.selectedAnswer = letter;
+      state.selectedAnswer = '';
+      state.selectedQuestionIndex = null;
       toast('Resposta enviada.');
     } else {
       toast('Você já respondeu esta pergunta.', 'warn');
@@ -519,8 +619,28 @@ const ClassroomChallenge = (function() {
     render();
   }
 
+  function selectAnswer(letter) {
+    if (state.role !== 'student' || !state.room || state.room.phase !== 'QUESTION' || getMyCurrentAnswer() || isCurrentUserRemoved()) {
+      return;
+    }
+
+    state.selectedQuestionIndex = Number(state.room.questionIndex || 0);
+    state.selectedAnswer = letter;
+    renderQuestion();
+  }
+
+  async function submitSelectedAnswer() {
+    if (!state.selectedAnswer) {
+      toast('Escolha uma alternativa antes de confirmar.', 'warn');
+      return;
+    }
+
+    const letter = state.selectedAnswer;
+    await submitAnswer(letter);
+  }
+
   function render() {
-    if (!state.room) {
+    if (state.leaving || !state.room) {
       return;
     }
 
@@ -546,6 +666,8 @@ const ClassroomChallenge = (function() {
     byId('challengeProgress').textContent = 'Pergunta ' + progress + '/' + (room.totalQuestions || CLASSROOM_CONFIG.totalQuestions);
     byId('challengeResultBox').hidden = true;
     byId('challengeStudentWaiting').hidden = true;
+    byId('challengeSubmitAnswerBtn').hidden = true;
+    byId('challengeSubmitAnswerBtn').disabled = true;
 
     if (isCurrentUserRemoved()) {
       byId('challengeQuestionType').textContent = 'Aviso';
@@ -573,9 +695,14 @@ const ClassroomChallenge = (function() {
     byId('challengeQuestionText').textContent = question.enunciado;
 
     const answer = getMyCurrentAnswer();
+    if (!answer && state.selectedQuestionIndex !== index) {
+      state.selectedAnswer = '';
+      state.selectedQuestionIndex = index;
+    }
+    const selectedAnswer = answer ? answer.answer : state.selectedAnswer;
     const isAnswerLocked = !!answer || room.phase !== 'QUESTION' || isTeacher();
     byId('challengeOptions').innerHTML = Object.keys(question.alternativas).map(function(letter) {
-      const selected = answer && answer.answer === letter;
+      const selected = selectedAnswer === letter;
       const correct = result && result.correta === letter;
       const classes = [
         'answer-option',
@@ -591,6 +718,10 @@ const ClassroomChallenge = (function() {
         '</button>'
       ].join('');
     }).join('');
+
+    const submitButton = byId('challengeSubmitAnswerBtn');
+    submitButton.hidden = isTeacher() || room.phase !== 'QUESTION' || !!answer;
+    submitButton.disabled = !state.selectedAnswer || !!answer || room.phase !== 'QUESTION';
 
     if (answer && room.phase === 'QUESTION') {
       byId('challengeStudentWaiting').hidden = false;
@@ -610,7 +741,7 @@ const ClassroomChallenge = (function() {
 
     const total = Number(result.totalStudents || 0);
     const correct = Number(result.correctCount || 0);
-    const wrong = Number(result.wrongCount || 0);
+    const wrong = getResultWrongTotal(result);
     const noAnswer = Number(result.noAnswerCount || 0);
     const percent = total ? Math.round((correct / total) * 100) : 0;
     const best = result.best || [];
@@ -620,7 +751,7 @@ const ClassroomChallenge = (function() {
     box.innerHTML = [
       '<div class="feedback-title"><span>Resultado</span><strong>Resposta correta: ' + escapeHtml(result.correta) + '</strong></div>',
       '<p>' + escapeHtml(result.explicacao || '') + '</p>',
-      '<p>Acertos: ' + correct + ' (' + percent + '%) · Erros: ' + wrong + ' · Sem resposta: ' + noAnswer + '</p>',
+      '<p>Acertos: ' + correct + ' (' + percent + '%) · Erros: ' + wrong + (noAnswer ? ' (' + noAnswer + ' sem resposta)' : '') + '</p>',
       best.length ? '<p>Mais rápidos: ' + best.slice(0, 3).map(function(item, index) {
         return (index + 1) + 'º ' + escapeHtml(item.name) + ' (+' + item.score + ')';
       }).join(' · ') + '</p>' : '<p>Ninguém acertou esta pergunta.</p>'
@@ -636,30 +767,156 @@ const ClassroomChallenge = (function() {
     const index = Number(room.questionIndex || 0);
     const answers = state.answers[index] || {};
     const result = state.results[index];
-    const students = getStudents();
-    const answered = Object.keys(answers).filter(function(uid) {
-      return state.participants[uid] && state.participants[uid].role === 'student';
+    const onlineStudents = getOnlineStudents();
+    const answeredOnline = onlineStudents.filter(function(player) {
+      return !!answers[player.uid];
     }).length;
+    const inLobby = room.status === 'LOBBY';
 
-    byId('challengeAnsweredBadge').textContent = answered + '/' + students.length + ' respostas';
+    byId('challengeControlTitle').textContent = inLobby ? 'Sala da turma' : 'Controle';
+    byId('challengeAnsweredBadge').hidden = inLobby;
+    byId('challengeQuestionStats').hidden = inLobby;
+    byId('challengeOverallStats').hidden = inLobby;
+    byId('challengeAnsweredBadge').textContent = answeredOnline + '/' + onlineStudents.length + ' online';
     if (result) {
       const total = Number(result.totalStudents || 0);
       byId('challengeCorrectRate').textContent = total ? Math.round((Number(result.correctCount || 0) / total) * 100) + '%' : '0%';
-      byId('challengeWrongRate').textContent = total ? Math.round((Number(result.wrongCount || 0) / total) * 100) + '%' : '0%';
+      byId('challengeWrongRate').textContent = total ? Math.round((getResultWrongTotal(result) / total) * 100) + '%' : '0%';
     } else {
       byId('challengeCorrectRate').textContent = '0%';
       byId('challengeWrongRate').textContent = '0%';
     }
 
+    renderOverallStats();
+    renderFlowHint();
+
     byId('challengeStartBtn').hidden = room.status !== 'LOBBY';
     byId('challengeRevealBtn').hidden = room.phase !== 'QUESTION';
     byId('challengeNextBtn').hidden = room.phase !== 'RESULTS';
+    byId('challengeEndBtn').hidden = inLobby;
     byId('challengeNextBtn').textContent = Number(room.questionIndex || 0) + 1 >= Number(room.totalQuestions || CLASSROOM_CONFIG.totalQuestions)
       ? 'Finalizar desafio'
       : 'Próxima pergunta';
   }
 
+  function renderOverallStats() {
+    const results = Object.keys(state.results || {}).map(function(index) {
+      return Object.assign({ index: Number(index) }, state.results[index]);
+    }).filter(function(result) {
+      return result && result.revealedAt;
+    });
+
+    let totalCorrect = 0;
+    let totalWrong = 0;
+    let totalNoAnswer = 0;
+
+    results.forEach(function(result) {
+      totalCorrect += Number(result.correctCount || 0);
+      totalWrong += getResultWrongTotal(result);
+      totalNoAnswer += Number(result.noAnswerCount || 0);
+    });
+
+    const total = totalCorrect + totalWrong;
+    byId('challengeOverallCorrectRate').textContent = total ? Math.round((totalCorrect / total) * 100) + '%' : '0%';
+    byId('challengeOverallWrongRate').textContent = total ? Math.round((totalWrong / total) * 100) + '%' : '0%';
+    byId('challengeOverallCorrectText').textContent = totalCorrect + ' acertos';
+    byId('challengeOverallWrongText').textContent = totalWrong + ' erros' + (totalNoAnswer ? ' (' + totalNoAnswer + ' sem resposta)' : '');
+
+    const best = getQuestionExtreme(results, 'correct');
+    const hard = getQuestionExtreme(results, 'wrong');
+    byId('challengeBestQuestion').textContent = best ? formatQuestionExtreme(best, 'acertos') : 'Aguardando resultados.';
+    byId('challengeHardQuestion').textContent = hard ? formatQuestionExtreme(hard, 'erros') : 'Aguardando resultados.';
+  }
+
+  function getQuestionExtreme(results, kind) {
+    if (!results.length) {
+      return null;
+    }
+
+    return results.slice().sort(function(a, b) {
+      const aTotal = Math.max(1, Number(a.totalStudents || 0));
+      const bTotal = Math.max(1, Number(b.totalStudents || 0));
+      const aValue = kind === 'correct' ? Number(a.correctCount || 0) : getResultWrongTotal(a);
+      const bValue = kind === 'correct' ? Number(b.correctCount || 0) : getResultWrongTotal(b);
+      const rateDiff = (bValue / bTotal) - (aValue / aTotal);
+      if (rateDiff !== 0) {
+        return rateDiff;
+      }
+      return Number(a.index || 0) - Number(b.index || 0);
+    })[0];
+  }
+
+  function formatQuestionExtreme(result, label) {
+    const actualTotal = Number(result.totalStudents || 0);
+    if (actualTotal <= 0) {
+      return 'Pergunta ' + (Number(result.questionNumber || result.index + 1)) + ': sem respostas';
+    }
+
+    const total = Math.max(1, actualTotal);
+    const value = label === 'acertos'
+      ? Number(result.correctCount || 0)
+      : getResultWrongTotal(result);
+    const percent = Math.round((value / total) * 100);
+    return 'Pergunta ' + (Number(result.questionNumber || result.index + 1)) + ': ' + percent + '% de ' + label + ' (' + value + '/' + total + ')';
+  }
+
+  function getResultWrongTotal(result) {
+    if (!result) {
+      return 0;
+    }
+
+    const wrong = Number(result.wrongCount || 0);
+    const noAnswer = Number(result.noAnswerCount || 0);
+    return result.noAnswerCountsAsWrong ? wrong : wrong + noAnswer;
+  }
+
+  function renderFlowHint() {
+    const hint = byId('challengeFlowHint');
+    if (!hint || !state.room) {
+      return;
+    }
+
+    const room = state.room;
+    if (room.status === 'LOBBY') {
+      hint.textContent = 'Inicie quando os alunos entrarem na sala.';
+      return;
+    }
+
+    if (room.phase === 'QUESTION') {
+      const online = getOnlineStudents();
+      const answered = getAnsweredOnlineCount();
+      hint.textContent = online.length
+        ? 'Resultado automático quando ' + answered + '/' + online.length + ' alunos online responderem.'
+        : 'Aguardando alunos online. Você pode mostrar o resultado manualmente.';
+      return;
+    }
+
+    if (room.phase === 'RESULTS') {
+      const result = state.results[Number(room.questionIndex || 0)];
+      const seconds = result && result.revealedAt
+        ? Math.max(0, Math.ceil((AUTO_NEXT_RESULTS_MS - (Date.now() - Number(result.revealedAt || 0))) / 1000))
+        : 0;
+      hint.textContent = seconds > 0
+        ? 'Próxima pergunta automática em ' + seconds + 's. O botão continua disponível para adiantar.'
+        : 'Avançando para a próxima pergunta.';
+      return;
+    }
+
+    hint.textContent = 'Desafio finalizado.';
+  }
+
   function renderRanking() {
+    const panel = byId('challengeRankingPanel');
+    if (panel && state.room) {
+      panel.hidden = state.room.status === 'LOBBY';
+    }
+
+    if (state.room && state.room.status === 'LOBBY') {
+      byId('challengeStudentCount').textContent = getStudents().length + ' alunos';
+      byId('challengeRankingList').innerHTML = '';
+      return;
+    }
+
     const ranking = getStudents().sort(function(a, b) {
       if (Number(b.score || 0) !== Number(a.score || 0)) {
         return Number(b.score || 0) - Number(a.score || 0);
@@ -717,8 +974,71 @@ const ClassroomChallenge = (function() {
     }
     byId('challengeTimer').textContent = formatClock(seconds);
 
-    if (isTeacher() && state.room.phase === 'QUESTION' && seconds <= 0) {
-      revealCurrentQuestion();
+    if (!isTeacher()) {
+      return;
+    }
+
+    renderFlowHint();
+
+    if (state.room.phase === 'QUESTION') {
+      if (allOnlineStudentsAnswered()) {
+        revealCurrentQuestion();
+        return;
+      }
+
+      if (seconds <= 0) {
+        revealCurrentQuestion();
+      }
+      return;
+    }
+
+    if (state.room.phase === 'RESULTS') {
+      autoAdvanceAfterResults();
+    }
+  }
+
+  function allOnlineStudentsAnswered() {
+    const onlineStudents = getOnlineStudents();
+    if (!onlineStudents.length || !state.room) {
+      return false;
+    }
+
+    const answers = state.answers[Number(state.room.questionIndex || 0)] || {};
+    return onlineStudents.every(function(player) {
+      return !!answers[player.uid];
+    });
+  }
+
+  function getAnsweredOnlineCount() {
+    if (!state.room) {
+      return 0;
+    }
+
+    const answers = state.answers[Number(state.room.questionIndex || 0)] || {};
+    return getOnlineStudents().filter(function(player) {
+      return !!answers[player.uid];
+    }).length;
+  }
+
+  async function autoAdvanceAfterResults() {
+    if (state.autoAdvancing || !state.room || state.room.phase !== 'RESULTS') {
+      return;
+    }
+
+    const result = state.results[Number(state.room.questionIndex || 0)];
+    if (!result || !result.revealedAt) {
+      return;
+    }
+
+    if (Date.now() - Number(result.revealedAt || 0) < AUTO_NEXT_RESULTS_MS) {
+      return;
+    }
+
+    state.autoAdvancing = true;
+    try {
+      await nextQuestion();
+    } finally {
+      state.autoAdvancing = false;
     }
   }
 
@@ -773,6 +1093,22 @@ const ClassroomChallenge = (function() {
   }
 
   async function leaveChallenge() {
+    if (state.leaving) {
+      return;
+    }
+
+    state.leaving = true;
+    state.busy = true;
+    if (window.UI && typeof UI.setLeaving === 'function') {
+      UI.setLeaving(true);
+    }
+    resetChallengeLobbyScreen();
+    UI.showView('home');
+    setHomeBusy(true, null);
+    UI.setConnection('idle', 'Saindo do desafio');
+    stopListeners();
+    stopHeartbeat();
+
     try {
       if (isTeacher() && state.room && state.room.status !== 'FINISHED') {
         await finishChallenge('Desafio encerrado pelo professor.');
@@ -799,6 +1135,14 @@ const ClassroomChallenge = (function() {
     state.answers = {};
     state.results = {};
     state.selectedAnswer = '';
+    state.selectedQuestionIndex = null;
+    state.leaving = false;
+    state.busy = false;
+    resetChallengeLobbyScreen();
+    setHomeBusy(false);
+    if (window.UI && typeof UI.setLeaving === 'function') {
+      UI.setLeaving(false);
+    }
     UI.showView('home');
     UI.setConnection('idle', 'Pronto para jogar');
   }
@@ -813,14 +1157,11 @@ const ClassroomChallenge = (function() {
   }
 
   async function loadChallengeQuestions() {
-    if (!window.ApiClient || !window.ApiClient.isConfigured()) {
-      throw new Error('Configure a API do Google Apps Script para sortear perguntas.');
+    const questions = await FirebaseQuestions.load(CLASSROOM_CONFIG.totalQuestions);
+    if (!questions.length) {
+      throw new Error('Nenhuma pergunta encontrada no Firebase.');
     }
-
-    const data = await window.ApiClient.request('getPerguntasDesafio', {
-      quantidade: CLASSROOM_CONFIG.totalQuestions
-    });
-    return data.perguntas || [];
+    return questions;
   }
 
   async function chooseServer() {
@@ -867,20 +1208,28 @@ const ClassroomChallenge = (function() {
     const contexts = [];
     for (const server of servers) {
       if (!state.contexts[server.id]) {
-        const app = initializeApp(server.firebaseConfig, 'classroom-' + server.id);
+        const app = getSharedApp(server);
         const auth = getAuth(app);
-        const credential = await signInAnonymously(auth);
+        const user = auth.currentUser || (await signInAnonymously(auth)).user;
         state.contexts[server.id] = {
           server: server,
           app: app,
           auth: auth,
-          uid: credential.user.uid,
+          uid: user.uid,
           db: getDatabase(app)
         };
       }
       contexts.push(state.contexts[server.id]);
     }
     return contexts;
+  }
+
+  function getSharedApp(server) {
+    const appName = 'trilha-' + server.id;
+    const existing = getApps().find(function(app) {
+      return app.name === appName;
+    });
+    return existing || initializeApp(server.firebaseConfig, appName);
   }
 
   async function createUniqueCode(context) {
@@ -986,6 +1335,12 @@ const ClassroomChallenge = (function() {
     });
   }
 
+  function getOnlineStudents() {
+    return getStudents().filter(function(player) {
+      return player.online !== false;
+    });
+  }
+
   function getMyCurrentAnswer() {
     if (!state.room) {
       return null;
@@ -1034,8 +1389,64 @@ const ClassroomChallenge = (function() {
   }
 
   function showChallengeView() {
+    if (!state.room) {
+      resetChallengeLobbyScreen();
+    }
     UI.showView('challenge');
     UI.setConnection('ok', getChallengeStatusText());
+  }
+
+  function resetChallengeLobbyScreen() {
+    const rankingPanel = byId('challengeRankingPanel');
+    const teacherPanel = byId('challengeTeacherPanel');
+    const questionStats = byId('challengeQuestionStats');
+    const overallStats = byId('challengeOverallStats');
+    const answeredBadge = byId('challengeAnsweredBadge');
+    const revealButton = byId('challengeRevealBtn');
+    const nextButton = byId('challengeNextBtn');
+    const endButton = byId('challengeEndBtn');
+    const startButton = byId('challengeStartBtn');
+    const controlTitle = byId('challengeControlTitle');
+    const rankingList = byId('challengeRankingList');
+    const studentCount = byId('challengeStudentCount');
+    const resultBox = byId('challengeResultBox');
+    const waitingBox = byId('challengeStudentWaiting');
+    const flowHint = byId('challengeFlowHint');
+    const progress = byId('challengeProgress');
+    const timer = byId('challengeTimer');
+    const questionType = byId('challengeQuestionType');
+    const questionText = byId('challengeQuestionText');
+    const options = byId('challengeOptions');
+    const submitButton = byId('challengeSubmitAnswerBtn');
+    const participants = byId('challengeParticipantsList');
+
+    if (rankingPanel) rankingPanel.hidden = true;
+    if (teacherPanel) teacherPanel.hidden = !isTeacher();
+    if (questionStats) questionStats.hidden = true;
+    if (overallStats) overallStats.hidden = true;
+    if (answeredBadge) answeredBadge.hidden = true;
+    if (revealButton) revealButton.hidden = true;
+    if (nextButton) nextButton.hidden = true;
+    if (endButton) endButton.hidden = true;
+    if (startButton) startButton.hidden = !isTeacher();
+    if (controlTitle) controlTitle.textContent = 'Sala da turma';
+    if (rankingList) rankingList.innerHTML = '';
+    if (studentCount) studentCount.textContent = '0 alunos';
+    if (resultBox) resultBox.hidden = true;
+    if (waitingBox) waitingBox.hidden = true;
+    if (flowHint) flowHint.textContent = 'Inicie quando os alunos entrarem na sala.';
+    if (progress) progress.textContent = 'Pergunta 1/' + (CLASSROOM_CONFIG.totalQuestions || 10);
+    if (timer) timer.textContent = '00:00';
+    if (questionType) questionType.textContent = 'Quiz';
+    if (questionText) questionText.textContent = isTeacher()
+      ? 'Compartilhe o código e inicie quando a turma entrar.'
+      : 'Aguardando o professor iniciar o desafio.';
+    if (options) options.innerHTML = '';
+    if (submitButton) {
+      submitButton.hidden = true;
+      submitButton.disabled = true;
+    }
+    if (participants) participants.innerHTML = '';
   }
 
   function getChallengeStatusText() {
@@ -1124,6 +1535,12 @@ const ClassroomChallenge = (function() {
     return prefix + '_' + Array.from(array).map(function(value) {
       return value.toString(16).toUpperCase();
     }).join('');
+  }
+
+  function sanitizeFirebaseKey(value) {
+    return String(value || '')
+      .replace(/[.#$\[\]\/]/g, '_')
+      .slice(0, 160);
   }
 
   function randomInt(min, max) {

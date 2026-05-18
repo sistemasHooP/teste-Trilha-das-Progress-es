@@ -1,16 +1,53 @@
-const App = (function() {
+﻿const App = (function() {
   const STORAGE_KEYS = {
     salaId: 'trilha.salaId',
     playerId: 'trilha.playerId',
-    playerName: 'trilha.playerName'
+    playerName: 'trilha.playerName',
+    engine: 'trilha.engine',
+    serverId: 'trilha.serverId'
   };
-  const DICE_RESULT_DELAY = 420;
+  const DICE_MIN_ROLL_MS = 1300;
+  const QUESTION_AFTER_DICE_MS = 520;
   const HEARTBEAT_INTERVAL = 10000;
+  const MODE_INFOS = {
+    race: {
+      badge: 'Grupo',
+      title: 'Corrida das Progressões',
+      text: 'Modo de tabuleiro para jogar em grupo, com sala pequena e turnos sincronizados.',
+      items: [
+        'Ideal para 2 a 4 jogadores.',
+        'Cada jogador rola o dado na sua vez.',
+        'Para avançar, precisa acertar a pergunta de PA ou PG.'
+      ]
+    },
+    solo: {
+      badge: 'Solo',
+      title: 'Missão PA & PG',
+      text: 'Modo individual para treinar no mesmo tabuleiro, sem precisar esperar outros jogadores.',
+      items: [
+        'Ideal para estudar sozinho.',
+        'O aluno joga no próprio ritmo.',
+        'Boa opção para testar as casas especiais.'
+      ]
+    },
+    classroom: {
+      badge: 'Turma',
+      title: 'Desafio da Turma',
+      text: 'Modo rápido para o professor criar uma disputa com muitos alunos ao mesmo tempo.',
+      items: [
+        'Todos respondem as mesmas perguntas.',
+        'O ranking valoriza acerto e velocidade.',
+        'Melhor modo para sala cheia ou campeonato.'
+      ]
+    }
+  };
 
   const state = {
     salaId: '',
     playerId: '',
     playerName: '',
+    engine: '',
+    serverId: '',
     estado: null,
     pollingId: null,
     modalMode: '',
@@ -18,9 +55,11 @@ const App = (function() {
     busyAction: false,
     delayQuestionOpen: false,
     lastAnswerReview: null,
+    syncedRankingIds: {},
     ignoreStateUpdates: false,
     sessionVersion: 0,
-    heartbeatId: null
+    heartbeatId: null,
+    reconnecting: false
   };
 
   function init() {
@@ -33,6 +72,8 @@ const App = (function() {
     } else {
       UI.setConnection('idle', 'Pronto para jogar');
     }
+
+    loadHomeRanking();
   }
 
   function bindEvents() {
@@ -50,6 +91,14 @@ const App = (function() {
     UI.$('#reviewAnswerBtn').addEventListener('click', showAnswerReview);
     UI.$('#adminBackBtn').addEventListener('click', adminBackOneHouse);
     UI.$('#houseInfoClose').addEventListener('click', UI.hideHouseInfo);
+    UI.$('#modeInfoClose').addEventListener('click', UI.hideModeInfo);
+    UI.$('#modeInfoOk').addEventListener('click', UI.hideModeInfo);
+    UI.$('#modeInfoScrim').addEventListener('click', UI.hideModeInfo);
+    document.querySelectorAll('[data-mode-info]').forEach(function(button) {
+      button.addEventListener('click', function() {
+        UI.showModeInfo(MODE_INFOS[button.dataset.modeInfo]);
+      });
+    });
     UI.$('#boardMount').addEventListener('click', function(event) {
       const cell = event.target.closest('[data-position]');
       if (!cell) {
@@ -80,18 +129,62 @@ const App = (function() {
     state.salaId = localStorage.getItem(STORAGE_KEYS.salaId) || '';
     state.playerId = localStorage.getItem(STORAGE_KEYS.playerId) || '';
     state.playerName = localStorage.getItem(STORAGE_KEYS.playerName) || '';
+    state.engine = localStorage.getItem(STORAGE_KEYS.engine) || (state.salaId && state.playerId ?'gas' : '');
+    state.serverId = localStorage.getItem(STORAGE_KEYS.serverId) || '';
 
     if (state.playerName) {
       UI.$('#playerName').value = state.playerName;
     }
 
-    if (state.salaId && state.playerId && ApiClient.isConfigured()) {
+    if (state.salaId && state.playerId && state.engine === 'firebase') {
+      state.reconnecting = true;
+      UI.setReconnect(true);
+      restoreFirebaseSession();
+    } else if (state.salaId && state.playerId && ApiClient.isConfigured()) {
+      state.reconnecting = true;
+      UI.setReconnect(true);
       startHeartbeat();
       refreshState(true);
       startPolling();
     } else {
       UI.showView('home');
     }
+  }
+
+  async function restoreFirebaseSession() {
+    UI.setConnection('idle', 'Reconectando');
+
+    try {
+      const firebaseGame = await waitForFirebaseGame(2200);
+      if (!firebaseGame || !firebaseGame.isConfigured || !firebaseGame.isConfigured()) {
+        throw new Error('Firebase do jogo não carregou.');
+      }
+
+      await firebaseGame.subscribe(state.salaId, state.playerId, handleEstado, state.serverId);
+      UI.setConnection('ok', 'Conectado');
+    } catch (error) {
+      state.reconnecting = false;
+      UI.setReconnect(false);
+      clearSession();
+      UI.showView('home');
+      UI.toast('Sessao anterior encerrada neste aparelho.', 'warn');
+      window.setTimeout(function() {
+        state.ignoreStateUpdates = false;
+      }, 200);
+    }
+  }
+
+  async function activateFirebaseSession(data, name) {
+    const firebaseGame = await waitForFirebaseGame(2200);
+    if (!firebaseGame || !firebaseGame.subscribe) {
+      throw new Error('Firebase do jogo não carregou.');
+    }
+
+    stopPolling();
+    stopHeartbeat();
+    saveSession(data.sala.salaId, data.jogador.playerId, name, 'firebase', data.sala.serverId || data.serverId || '');
+    handleEstado(data.estado);
+    await firebaseGame.subscribe(state.salaId, state.playerId, handleEstado, state.serverId);
   }
 
   async function createRoom() {
@@ -108,8 +201,20 @@ const App = (function() {
     UI.setHomeBusy(true, button, 'Criando');
 
     try {
+      const firebaseGame = await waitForFirebaseGame(1200);
+      if (firebaseGame && firebaseGame.isConfigured && firebaseGame.isConfigured()) {
+        const data = await firebaseGame.createRoom(name, 'MULTI');
+        await activateFirebaseSession(data, name);
+        UI.toast('Corrida das Progressões criada.');
+        return;
+      }
+
+      if (!ApiClient.isConfigured()) {
+        throw new Error('Configure o Firebase ou a URL da API para criar sala.');
+      }
+
       const data = await ApiClient.request('criarSala', { nome: name });
-      saveSession(data.sala.salaId, data.jogador.playerId, name);
+      saveSession(data.sala.salaId, data.jogador.playerId, name, 'gas');
       handleEstado(data.estado);
       startHeartbeat();
       startPolling();
@@ -150,12 +255,27 @@ const App = (function() {
         }
       }
 
+      const firebaseGame = await waitForFirebaseGame(1200);
+      if (firebaseGame && firebaseGame.isConfigured && firebaseGame.isConfigured()) {
+        UI.setHomeBusy(true, button, 'Entrando');
+        const data = await firebaseGame.joinRoom(name, code);
+        if (data) {
+          await activateFirebaseSession(data, name);
+          UI.toast('Você entrou na sala.');
+          return;
+        }
+      }
+
+      if (!ApiClient.isConfigured()) {
+        throw new Error('Sala não encontrada.');
+      }
+
       UI.setHomeBusy(true, button, 'Entrando');
       const data = await ApiClient.request('entrarSala', {
         codigoSala: code,
         nome: name
       });
-      saveSession(data.sala.salaId, data.jogador.playerId, name);
+      saveSession(data.sala.salaId, data.jogador.playerId, name, 'gas');
       handleEstado(data.estado);
       startHeartbeat();
       startPolling();
@@ -182,8 +302,20 @@ const App = (function() {
     UI.setHomeBusy(true, button, 'Criando');
 
     try {
+      const firebaseGame = await waitForFirebaseGame(1200);
+      if (firebaseGame && firebaseGame.isConfigured && firebaseGame.isConfigured()) {
+        const data = await firebaseGame.createRoom(name, 'SOLO');
+        await activateFirebaseSession(data, name);
+        UI.toast('Missão PA & PG iniciada.');
+        return;
+      }
+
+      if (!ApiClient.isConfigured()) {
+        throw new Error('Configure o Firebase ou a URL da API para jogar solo.');
+      }
+
       const data = await ApiClient.request('criarSalaSolo', { nome: name });
-      saveSession(data.sala.salaId, data.jogador.playerId, name);
+      saveSession(data.sala.salaId, data.jogador.playerId, name, 'gas');
       handleEstado(data.estado);
       startHeartbeat();
       startPolling();
@@ -206,6 +338,17 @@ const App = (function() {
     UI.setButtonBusy(button, true, 'Iniciando');
 
     try {
+      if (state.engine === 'firebase') {
+        const firebaseGame = await waitForFirebaseGame(1500);
+        if (!firebaseGame) {
+          throw new Error('Firebase do jogo não carregou.');
+        }
+        const data = await firebaseGame.startGame(state.salaId, state.playerId);
+        handleEstado(data.estado);
+        UI.toast('Partida iniciada.');
+        return;
+      }
+
       const data = await ApiClient.request('iniciarJogo', {
         salaId: state.salaId,
         playerId: state.playerId
@@ -229,6 +372,7 @@ const App = (function() {
     const button = UI.$('#rollDiceBtn');
     let rolledValue = null;
     let pendingToOpen = null;
+    const rollStartedAt = Date.now();
     state.busyAction = true;
     state.delayQuestionOpen = true;
     state.lastAnswerReview = null;
@@ -246,7 +390,16 @@ const App = (function() {
         payload.dadoForcado = forcedDice;
       }
 
-      const data = await ApiClient.request('rolarDado', payload);
+      let data;
+      if (state.engine === 'firebase') {
+        const firebaseGame = await waitForFirebaseGame(1500);
+        if (!firebaseGame) {
+          throw new Error('Firebase do jogo não carregou.');
+        }
+        data = await firebaseGame.rollDice(state.salaId, state.playerId, payload);
+      } else {
+        data = await ApiClient.request('rolarDado', payload);
+      }
       handleEstado(data.estado);
 
       if (data.dado) {
@@ -264,6 +417,8 @@ const App = (function() {
     } catch (error) {
       handleError(error);
     } finally {
+      const elapsed = Date.now() - rollStartedAt;
+      const delay = Math.max(0, DICE_MIN_ROLL_MS - elapsed);
       window.setTimeout(function() {
         UI.setDiceRolling(false, rolledValue || Game.lastDice(state.estado));
         UI.setButtonBusy(button, false, null, false);
@@ -274,9 +429,13 @@ const App = (function() {
           UI.renderGame(state.estado, state.playerId);
         }
         if (pendingToOpen && state.estado && state.estado.sala.status === 'EM_ANDAMENTO') {
-          openPendingQuestion(pendingToOpen);
+          window.setTimeout(function() {
+            if (state.estado && state.estado.sala.status === 'EM_ANDAMENTO' && !state.busyAction) {
+              openPendingQuestion(pendingToOpen);
+            }
+          }, QUESTION_AFTER_DICE_MS);
         }
-      }, DICE_RESULT_DELAY);
+      }, delay);
     }
   }
 
@@ -294,27 +453,34 @@ const App = (function() {
 
     const button = UI.$('#answerQuestionBtn');
     state.busyAction = true;
-    UI.setWorking(true, 'Conferindo resposta', 'Aguarde um instante.');
     UI.setButtonBusy(button, true, 'Enviando');
     state.modalMode = '';
     state.modalQuestionId = '';
     UI.closeQuestion();
 
     try {
-      const data = await ApiClient.request('responderPergunta', {
-        salaId: state.salaId,
-        playerId: state.playerId,
-        perguntaId: pending.perguntaId,
-        resposta: answer
-      });
-      state.lastAnswerReview = data.feedback.correta ? null : data.feedback;
-      UI.toast(data.feedback.correta ? 'Resposta correta!' : getWrongAnswerMessage(data.feedback), data.feedback.correta ? 'info' : 'error');
+      let data;
+      if (state.engine === 'firebase') {
+        const firebaseGame = await waitForFirebaseGame(1500);
+        if (!firebaseGame) {
+          throw new Error('Firebase do jogo não carregou.');
+        }
+        data = await firebaseGame.answerQuestion(state.salaId, state.playerId, pending.perguntaId, answer);
+      } else {
+        data = await ApiClient.request('responderPergunta', {
+          salaId: state.salaId,
+          playerId: state.playerId,
+          perguntaId: pending.perguntaId,
+          resposta: answer
+        });
+      }
+      state.lastAnswerReview = data.feedback.correta ?null : data.feedback;
+      UI.toast(data.feedback.correta ?'Resposta correta!' : getWrongAnswerMessage(data.feedback), data.feedback.correta ?'info' : 'error');
       handleEstado(data.estado);
     } catch (error) {
       handleError(error);
     } finally {
       state.busyAction = false;
-      UI.setWorking(false);
       UI.setButtonBusy(button, false);
     }
   }
@@ -335,11 +501,20 @@ const App = (function() {
     UI.setButtonBusy(button, true, 'Trocando');
 
     try {
-      const data = await ApiClient.request('trocarPergunta', {
-        salaId: state.salaId,
-        playerId: state.playerId,
-        perguntaIdAtual: pending.perguntaId
-      });
+      let data;
+      if (state.engine === 'firebase') {
+        const firebaseGame = await waitForFirebaseGame(1500);
+        if (!firebaseGame) {
+          throw new Error('Firebase do jogo não carregou.');
+        }
+        data = await firebaseGame.swapQuestion(state.salaId, state.playerId, pending.perguntaId);
+      } else {
+        data = await ApiClient.request('trocarPergunta', {
+          salaId: state.salaId,
+          playerId: state.playerId,
+          perguntaIdAtual: pending.perguntaId
+        });
+      }
       handleEstado(data.estado);
       openPendingQuestion(data.estado.perguntaPendente);
       UI.toast('Pergunta trocada.');
@@ -368,10 +543,19 @@ const App = (function() {
     UI.setButtonBusy(button, true, 'Voltando');
 
     try {
-      const data = await ApiClient.request('adminVoltarUmaCasa', {
-        salaId: state.salaId,
-        playerId: state.playerId
-      });
+      let data;
+      if (state.engine === 'firebase') {
+        const firebaseGame = await waitForFirebaseGame(1500);
+        if (!firebaseGame) {
+          throw new Error('Firebase do jogo não carregou.');
+        }
+        data = await firebaseGame.adminBackOneHouse(state.salaId, state.playerId);
+      } else {
+        data = await ApiClient.request('adminVoltarUmaCasa', {
+          salaId: state.salaId,
+          playerId: state.playerId
+        });
+      }
       handleEstado(data.estado);
     } catch (error) {
       handleError(error);
@@ -383,6 +567,10 @@ const App = (function() {
   }
 
   async function refreshState(silent) {
+    if (state.engine === 'firebase') {
+      return;
+    }
+
     if (!state.salaId || !state.playerId || !ApiClient.isConfigured()) {
       return;
     }
@@ -412,7 +600,11 @@ const App = (function() {
       }
 
       const busy = /ocupado|bloqueio|lock/i.test(error.message || '');
-      UI.setConnection(busy ? 'warn' : 'error', busy ? 'Sincronizando' : 'Sem conexão');
+      UI.setConnection(busy ?'warn' : 'error', busy ?'Sincronizando' : 'Sem conexão');
+      if (state.reconnecting) {
+        state.reconnecting = false;
+        UI.setReconnect(false);
+      }
       if (!silent) {
         handleError(error);
       }
@@ -440,6 +632,10 @@ const App = (function() {
 
     state.estado = estado;
     UI.setConnection('ok', 'Conectado');
+    if (state.reconnecting) {
+      state.reconnecting = false;
+      UI.setReconnect(false);
+    }
 
     if (estado.sala.status === 'AGUARDANDO') {
       UI.renderLobby(estado, state.playerId, state.busyAction);
@@ -456,6 +652,7 @@ const App = (function() {
       state.modalMode = '';
       UI.closeQuestion();
       UI.renderFinal(estado);
+      syncFinalRanking(estado);
     }
 
     const pending = Game.getMyPendingQuestion(estado, state.playerId);
@@ -486,7 +683,7 @@ const App = (function() {
     }
 
     const select = UI.$('#forcedDiceSelect');
-    return select ? select.value : '';
+    return select ?select.value : '';
   }
 
   function getWrongAnswerMessage(feedback) {
@@ -537,6 +734,10 @@ const App = (function() {
   }
 
   async function sendHeartbeat(silent) {
+    if (state.engine === 'firebase') {
+      return;
+    }
+
     if (!state.salaId || !state.playerId || !ApiClient.isConfigured() || state.ignoreStateUpdates) {
       return;
     }
@@ -568,32 +769,47 @@ const App = (function() {
     }
   }
 
-  function saveSession(salaId, playerId, playerName) {
+  function saveSession(salaId, playerId, playerName, engine, serverId) {
     state.sessionVersion += 1;
     state.ignoreStateUpdates = false;
     state.salaId = salaId;
     state.playerId = playerId;
     state.playerName = playerName;
+    state.engine = engine || 'gas';
+    state.serverId = serverId || '';
     localStorage.setItem(STORAGE_KEYS.salaId, salaId);
     localStorage.setItem(STORAGE_KEYS.playerId, playerId);
     localStorage.setItem(STORAGE_KEYS.playerName, playerName);
+    localStorage.setItem(STORAGE_KEYS.engine, state.engine);
+    if (state.serverId) {
+      localStorage.setItem(STORAGE_KEYS.serverId, state.serverId);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.serverId);
+    }
   }
 
   function clearSession() {
     stopPolling();
     stopHeartbeat();
+    disconnectFirebaseGame();
     state.sessionVersion += 1;
     state.ignoreStateUpdates = true;
     state.salaId = '';
     state.playerId = '';
+    state.engine = '';
+    state.serverId = '';
     state.estado = null;
     state.modalMode = '';
     state.modalQuestionId = '';
     state.busyAction = false;
     state.delayQuestionOpen = false;
     state.lastAnswerReview = null;
+    state.reconnecting = false;
+    UI.setReconnect(false);
     localStorage.removeItem(STORAGE_KEYS.salaId);
     localStorage.removeItem(STORAGE_KEYS.playerId);
+    localStorage.removeItem(STORAGE_KEYS.engine);
+    localStorage.removeItem(STORAGE_KEYS.serverId);
   }
 
   function leaveToHome() {
@@ -601,6 +817,7 @@ const App = (function() {
     clearSession();
     UI.closeQuestion();
     UI.showView('home');
+    loadHomeRanking();
     window.setTimeout(function() {
       state.ignoreStateUpdates = false;
     }, 200);
@@ -609,13 +826,19 @@ const App = (function() {
   async function leaveCurrentRoom() {
     const salaId = state.salaId;
     const playerId = state.playerId;
+    const engine = state.engine;
 
     stopPolling();
     stopHeartbeat();
     UI.setLeaving(true);
 
     try {
-      if (salaId && playerId && ApiClient.isConfigured()) {
+      if (salaId && playerId && engine === 'firebase') {
+        const firebaseGame = await waitForFirebaseGame(1200);
+        if (firebaseGame && firebaseGame.leaveRoom) {
+          await firebaseGame.leaveRoom(salaId, playerId);
+        }
+      } else if (salaId && playerId && ApiClient.isConfigured()) {
         await ApiClient.request('sairSala', {
           salaId: salaId,
           playerId: playerId
@@ -628,6 +851,7 @@ const App = (function() {
       clearSession();
       UI.closeQuestion();
       UI.showView('home');
+      loadHomeRanking();
       window.setTimeout(function() {
         state.ignoreStateUpdates = false;
       }, 200);
@@ -644,8 +868,79 @@ const App = (function() {
   }
 
   function handleError(error) {
-    UI.setConnection(ApiClient.isConfigured() ? 'error' : 'warn', ApiClient.isConfigured() ? 'Erro' : 'Configurar API');
+    if (state.reconnecting) {
+      state.reconnecting = false;
+      UI.setReconnect(false);
+    }
+    const hasConnection = ApiClient.isConfigured() || (window.FirebaseGame && window.FirebaseGame.isConfigured && window.FirebaseGame.isConfigured());
+    UI.setConnection(hasConnection ?'error' : 'warn', hasConnection ?'Erro' : 'Configurar API');
     UI.toast(error.message || String(error), 'error');
+  }
+
+  async function loadHomeRanking() {
+    const firebaseRanking = await waitForFirebaseRanking(1200);
+    if (firebaseRanking && firebaseRanking.isConfigured && firebaseRanking.isConfigured()) {
+      try {
+        const ranking = firebaseRanking.loadByCategories
+          ? await firebaseRanking.loadByCategories(3)
+          : await firebaseRanking.load(5);
+        UI.renderHomeRanking(ranking);
+        return;
+      } catch (error) {
+        console.warn('Ranking Firebase indisponível:', error);
+      }
+    }
+
+    if (!ApiClient.isConfigured()) {
+      UI.renderHomeRankingError();
+      return;
+    }
+
+    try {
+      const data = await ApiClient.request('getRanking', { limit: 5 });
+      UI.renderHomeRanking({ race: data.ranking || [], solo: [], classroom: [] });
+    } catch (error) {
+      UI.renderHomeRankingError();
+    }
+  }
+
+  async function syncFinalRanking(estado) {
+    if (!isRankableFinal(estado)) {
+      return;
+    }
+
+    const key = [estado.sala.modo || 'MULTI', estado.sala.salaId, estado.vencedor.playerId].join(':');
+    if (state.syncedRankingIds[key]) {
+      return;
+    }
+    state.syncedRankingIds[key] = true;
+
+    const firebaseRanking = await waitForFirebaseRanking(1600);
+    if (!firebaseRanking || !firebaseRanking.isConfigured || !firebaseRanking.isConfigured()) {
+      return;
+    }
+
+    try {
+      await firebaseRanking.saveResult(estado);
+      const ranking = firebaseRanking.loadMode
+        ? await firebaseRanking.loadMode(5, estado.sala.modo || 'MULTI')
+        : await firebaseRanking.load(5);
+      if (state.estado && state.estado.sala && state.estado.sala.salaId === estado.sala.salaId) {
+        state.estado.rankingGeral = ranking;
+        UI.renderFinal(state.estado);
+      }
+    } catch (error) {
+      console.warn('Ranking Firebase não foi gravado:', error);
+    }
+  }
+
+  function isRankableFinal(estado) {
+    return !!(estado &&
+      estado.sala &&
+      estado.vencedor &&
+      estado.sala.status === 'ENCERRADA' &&
+      estado.sala.motivoEncerramento === 'VITORIA_PERGUNTA' &&
+      Number(estado.sala.tempoDecorridoSegundos || 0) > 0);
   }
 
   function waitForClassroomClient(timeoutMs) {
@@ -662,6 +957,44 @@ const App = (function() {
         }
       }, 50);
     });
+  }
+
+  function waitForFirebaseRanking(timeoutMs) {
+    if (window.FirebaseRanking) {
+      return Promise.resolve(window.FirebaseRanking);
+    }
+
+    return new Promise(function(resolve) {
+      const started = Date.now();
+      const timer = window.setInterval(function() {
+        if (window.FirebaseRanking || Date.now() - started >= timeoutMs) {
+          window.clearInterval(timer);
+          resolve(window.FirebaseRanking || null);
+        }
+      }, 50);
+    });
+  }
+
+  function waitForFirebaseGame(timeoutMs) {
+    if (window.FirebaseGame) {
+      return Promise.resolve(window.FirebaseGame);
+    }
+
+    return new Promise(function(resolve) {
+      const started = Date.now();
+      const timer = window.setInterval(function() {
+        if (window.FirebaseGame || Date.now() - started >= timeoutMs) {
+          window.clearInterval(timer);
+          resolve(window.FirebaseGame || null);
+        }
+      }, 50);
+    });
+  }
+
+  function disconnectFirebaseGame() {
+    if (window.FirebaseGame && typeof window.FirebaseGame.unsubscribe === 'function') {
+      window.FirebaseGame.unsubscribe();
+    }
   }
 
   function pauseForExternalMode() {
