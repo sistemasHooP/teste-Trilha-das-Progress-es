@@ -1,4 +1,4 @@
-﻿const UI = (function() {
+const UI = (function() {
   let selectedAnswer = '';
   let diceTimer = null;
   let gameClockTimer = null;
@@ -43,6 +43,12 @@
   function renderLobby(estado, playerId, isBusy) {
     showView('lobby');
     $('#roomCode').textContent = estado.sala.codigoSala;
+    
+    // Atualiza o código público no botão de copiar
+    $all('.copy-code-btn').forEach(function(btn) {
+      btn.dataset.code = estado.sala.codigoSala;
+    });
+
     const connectedCount = estado.jogadores.filter(function(player) {
       return !isDisconnected(player);
     }).length;
@@ -55,11 +61,11 @@
     const canStart = isCreator && connectedCount >= estado.regras.minimoJogadores;
     $('#startGameBtn').hidden = !isCreator;
     $('#startGameBtn').disabled = !canStart || !!isBusy;
-    $('#startGameBtn').textContent = isBusy ?'Iniciando jogo' : 'Iniciar jogo';
+    $('#startGameBtn').textContent = isBusy ? 'Iniciando jogo' : 'Iniciar jogo';
     $('#lobbyStatus').textContent = isBusy
-      ?'Preparando a partida.'
+      ? 'Preparando a partida.'
       : canStart
-      ?'A sala já pode iniciar.'
+      ? 'A sala já pode iniciar.'
       : 'Mínimo 2 jogadores e máximo 4.';
   }
 
@@ -69,7 +75,13 @@
 
     $('#roundValue').textContent = estado.sala.rodada || 1;
     $('#roomCodeGame').textContent = 'Sala ' + estado.sala.codigoSala;
-    $('#turnName').textContent = estado.jogadorDaVez ?estado.jogadorDaVez.nome : 'Aguardando';
+    
+    // Atualiza o código público no botão de copiar na tela do jogo
+    $all('.copy-code-btn').forEach(function(btn) {
+      btn.dataset.code = estado.sala.codigoSala;
+    });
+
+    $('#turnName').textContent = estado.jogadorDaVez ? estado.jogadorDaVez.nome : 'Aguardando';
     setGameClock(estado.sala.tempoRestanteSegundos);
     renderLastAction(estado);
     setDiceValue(Game.lastDice(estado));
@@ -77,17 +89,17 @@
     const canRoll = Game.isMyTurn(estado, playerId);
     const busyAction = document.body.classList.contains('is-busy-action');
     $('#rollDiceBtn').disabled = !canRoll || busyAction;
-    $('#rollDiceBtn').textContent = busyAction ?'Processando jogada' : (canRoll ?'Sua vez: rolar dado' : 'Aguardando vez');
+    $('#rollDiceBtn').textContent = busyAction ? 'Processando jogada' : (canRoll ? 'Sua vez: rolar dado' : 'Aguardando vez');
     $('#turnCard').classList.toggle('is-my-turn', canRoll);
     $('.turn-panel').classList.toggle('turn-panel--active', canRoll);
     $('#adminPanel').hidden = !Game.isAdmin(estado, playerId);
 
     $('#positionsList').innerHTML = estado.jogadores.map(function(player) {
       const color = Game.getPlayerColor(player.ordem);
-      const skip = player.pulouProximaRodada ?'<span class="mini-badge">Pula</span>' : '';
+      const skip = player.pulouProximaRodada ? '<span class="mini-badge">Pula</span>' : '';
       const connection = renderConnectionBadge(player);
       return [
-        '<li class="position-item' + (isDisconnected(player) ?' is-disconnected' : '') + '">',
+        '<li class="position-item' + (isDisconnected(player) ? ' is-disconnected' : '') + '">',
         '  <span class="player-name"><span class="player-dot" style="background:' + color + '"></span><span>' + escapeHtml(player.nome) + '</span></span>',
         '  <strong>' + formatHouseLabel(player.posicao) + '</strong>',
         connection,
@@ -102,7 +114,7 @@
     const winner = estado.vencedor;
     $('#finalTitle').textContent = winner ? 'Vitória!' : 'Fim da partida';
     $('#winnerName').textContent = winner
-      ?winner.nome + ' venceu em ' + formatDuration(estado.sala.tempoDecorridoSegundos) + '.'
+      ? winner.nome + ' venceu em ' + formatDuration(estado.sala.tempoDecorridoSegundos) + '.'
       : getFinalMessage(estado);
     $('#rankingList').innerHTML = Game.ranking(estado).map(function(player, index) {
       const color = Game.getPlayerColor(player.ordem);
@@ -117,7 +129,7 @@
 
     const fastest = estado.rankingGeral || [];
     $('#fastestRankingList').innerHTML = fastest.length
-      ?fastest.map(function(item, index) {
+      ? fastest.map(function(item, index) {
         return [
           '<div class="ranking-item ranking-item--fastest">',
           '  <span class="rank-number">' + (index + 1) + '</span>',
@@ -159,7 +171,7 @@
     }
 
     target.innerHTML = items.length
-      ?items.slice(0, 3).map(function(item, index) {
+      ? items.slice(0, 3).map(function(item, index) {
         return [
           '<div class="ranking-item ranking-item--fastest">',
           '  <span class="rank-number">' + (index + 1) + '</span>',
@@ -190,11 +202,11 @@
 
   function renderPlayerItem(player, playerId) {
     const color = Game.getPlayerColor(player.ordem);
-    const you = player.playerId === playerId ?'<span class="mini-badge">Você</span>' : '';
-    const creator = player.ordem === 0 ?'<span class="mini-badge">Criador</span>' : '';
+    const you = player.playerId === playerId ? '<span class="mini-badge">Você</span>' : '';
+    const creator = player.ordem === 0 ? '<span class="mini-badge">Criador</span>' : '';
     const connection = renderConnectionBadge(player);
     return [
-      '<li class="player-item' + (isDisconnected(player) ?' is-disconnected' : '') + '">',
+      '<li class="player-item' + (isDisconnected(player) ? ' is-disconnected' : '') + '">',
       '  <span class="player-name"><span class="player-dot" style="background:' + color + '"></span><span>' + escapeHtml(player.nome) + '</span></span>',
       '  <span>' + connection + you + creator + '</span>',
       '</li>'
@@ -265,13 +277,13 @@
       '  </span>',
       '  <span class="action-more" aria-hidden="true"></span>',
       '</summary>',
-      chips.length ?'<div class="action-body"><div class="action-chips">' + chips.join('') + '</div></div>' : ''
+      chips.length ? '<div class="action-body"><div class="action-chips">' + chips.join('') + '</div></div>' : ''
     ].join('');
     target.open = keepOpen;
   }
 
   function findPlayer(estado, playerId) {
-    const players = estado && estado.jogadores ?estado.jogadores : [];
+    const players = estado && estado.jogadores ? estado.jogadores : [];
     return players.find(function(player) {
       return player.playerId === playerId;
     });
@@ -315,7 +327,7 @@
     const question = pending.pergunta;
     $('#questionType').textContent = question.tipo;
     $('#questionDice').hidden = !pending.dado;
-    $('#questionDice').textContent = pending.dado ?'Dado ' + pending.dado : '';
+    $('#questionDice').textContent = pending.dado ? 'Dado ' + pending.dado : '';
     $('#questionHouse').textContent = 'Casa ' + pending.casa;
     $('#questionText').textContent = question.enunciado;
     $('#answerOptions').hidden = false;
@@ -354,17 +366,17 @@
   function showQuestionFeedback(feedback, autoClose) {
     const box = $('#questionFeedback');
     box.hidden = false;
-    box.className = 'question-feedback ' + (feedback.correta ?'question-feedback--ok' : 'question-feedback--bad');
+    box.className = 'question-feedback ' + (feedback.correta ? 'question-feedback--ok' : 'question-feedback--bad');
     $('#questionModal').classList.toggle('modal--success', feedback.correta);
     $('#questionModal').classList.toggle('modal--error', !feedback.correta);
     if (autoClose) {
       box.innerHTML = [
-        '<div class="feedback-title"><span>' + (feedback.correta ?'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ?'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
+        '<div class="feedback-title"><span>' + (feedback.correta ? 'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ? 'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
         '<p>Resposta correta: ' + escapeHtml(feedback.respostaCorreta) + '</p>'
       ].join('');
     } else {
       box.innerHTML = [
-        '<div class="feedback-title"><span>' + (feedback.correta ?'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ?'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
+        '<div class="feedback-title"><span>' + (feedback.correta ? 'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ? 'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
         '<p>Resposta correta: ' + escapeHtml(feedback.respostaCorreta) + '</p>',
         '<p>' + escapeHtml(feedback.explicacao) + '</p>',
         '<p>' + movementText(feedback.movimento) + '</p>'
@@ -431,7 +443,7 @@
 
     return Array.from({ length: 9 }, function(_, index) {
       const position = index + 1;
-      return '<span class="pip' + (pipMap[value].indexOf(position) !== -1 ?' is-on' : '') + '"></span>';
+      return '<span class="pip' + (pipMap[value].indexOf(position) !== -1 ? ' is-on' : '') + '"></span>';
     }).join('');
   }
 
@@ -676,7 +688,7 @@
   }
 
   function escapeHtml(value) {
-    return String(value == null ?'' : value)
+    return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
