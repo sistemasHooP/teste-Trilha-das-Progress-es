@@ -1,4 +1,4 @@
-﻿const App = (function() {
+const App = (function() {
   const STORAGE_KEYS = {
     salaId: 'trilha.salaId',
     playerId: 'trilha.playerId',
@@ -94,11 +94,13 @@
     UI.$('#modeInfoClose').addEventListener('click', UI.hideModeInfo);
     UI.$('#modeInfoOk').addEventListener('click', UI.hideModeInfo);
     UI.$('#modeInfoScrim').addEventListener('click', UI.hideModeInfo);
+    
     document.querySelectorAll('[data-mode-info]').forEach(function(button) {
       button.addEventListener('click', function() {
         UI.showModeInfo(MODE_INFOS[button.dataset.modeInfo]);
       });
     });
+    
     UI.$('#boardMount').addEventListener('click', function(event) {
       const cell = event.target.closest('[data-position]');
       if (!cell) {
@@ -107,6 +109,7 @@
 
       UI.showHouseInfo(Board.getHouseInfo(cell.dataset.position));
     });
+    
     UI.$('#continueQuestionBtn').addEventListener('click', function() {
       state.modalMode = '';
       state.modalQuestionId = '';
@@ -123,13 +126,28 @@
     UI.$('#homeForm').addEventListener('submit', function(event) {
       event.preventDefault();
     });
+
+    // Lógica para o botão de copiar o código
+    document.addEventListener('click', function(event) {
+      const copyBtn = event.target.closest('.copy-code-btn');
+      if (copyBtn) {
+        const codeToCopy = copyBtn.dataset.code || state.salaId;
+        if (codeToCopy) {
+          navigator.clipboard.writeText(codeToCopy).then(function() {
+            UI.toast('Código da sala copiado!', 'info');
+          }).catch(function() {
+            UI.toast('Erro ao copiar o código.', 'error');
+          });
+        }
+      }
+    });
   }
 
   function restoreSession() {
     state.salaId = localStorage.getItem(STORAGE_KEYS.salaId) || '';
     state.playerId = localStorage.getItem(STORAGE_KEYS.playerId) || '';
     state.playerName = localStorage.getItem(STORAGE_KEYS.playerName) || '';
-    state.engine = localStorage.getItem(STORAGE_KEYS.engine) || (state.salaId && state.playerId ?'gas' : '');
+    state.engine = localStorage.getItem(STORAGE_KEYS.engine) || (state.salaId && state.playerId ? 'gas' : '');
     state.serverId = localStorage.getItem(STORAGE_KEYS.serverId) || '';
 
     if (state.playerName) {
@@ -167,7 +185,7 @@
       UI.setReconnect(false);
       clearSession();
       UI.showView('home');
-      UI.toast('Sessao anterior encerrada neste aparelho.', 'warn');
+      UI.toast('Sessão anterior encerrada neste aparelho.', 'warn');
       window.setTimeout(function() {
         state.ignoreStateUpdates = false;
       }, 200);
@@ -190,7 +208,7 @@
   async function createRoom() {
     const name = UI.$('#playerName').value.trim();
     if (!name) {
-      UI.toast('Informe seu nome.', 'warn');
+      UI.toast('Informe o seu nome.', 'warn');
       return;
     }
 
@@ -231,7 +249,7 @@
     const code = UI.$('#roomCodeInput').value.trim();
 
     if (!name) {
-      UI.toast('Informe seu nome.', 'warn');
+      UI.toast('Informe o seu nome.', 'warn');
       return;
     }
 
@@ -261,7 +279,7 @@
         const data = await firebaseGame.joinRoom(name, code);
         if (data) {
           await activateFirebaseSession(data, name);
-          UI.toast('Você entrou na sala.');
+          UI.toast('Entrou na sala.');
           return;
         }
       }
@@ -279,7 +297,7 @@
       handleEstado(data.estado);
       startHeartbeat();
       startPolling();
-      UI.toast('Você entrou na sala.');
+      UI.toast('Entrou na sala.');
     } catch (error) {
       handleError(error);
     } finally {
@@ -290,7 +308,7 @@
   async function createSoloRoom() {
     const name = UI.$('#playerName').value.trim();
     if (!name) {
-      UI.toast('Informe seu nome.', 'warn');
+      UI.toast('Informe o seu nome.', 'warn');
       return;
     }
 
@@ -376,9 +394,9 @@
     state.busyAction = true;
     state.delayQuestionOpen = true;
     state.lastAnswerReview = null;
-    UI.setWorking(true, 'Rolando o dado', 'Preparando a pergunta.');
+    UI.setWorking(true, 'A rolar o dado', 'A preparar a pergunta.');
     UI.setDiceRolling(true);
-    UI.setButtonBusy(button, true, 'Rolando');
+    UI.setButtonBusy(button, true, 'A rolar');
 
     try {
       const payload = {
@@ -453,7 +471,7 @@
 
     const button = UI.$('#answerQuestionBtn');
     state.busyAction = true;
-    UI.setButtonBusy(button, true, 'Enviando');
+    UI.setButtonBusy(button, true, 'A enviar');
     state.modalMode = '';
     state.modalQuestionId = '';
     UI.closeQuestion();
@@ -474,8 +492,8 @@
           resposta: answer
         });
       }
-      state.lastAnswerReview = data.feedback.correta ?null : data.feedback;
-      UI.toast(data.feedback.correta ?'Resposta correta!' : getWrongAnswerMessage(data.feedback), data.feedback.correta ?'info' : 'error');
+      state.lastAnswerReview = data.feedback.correta ? null : data.feedback;
+      UI.toast(data.feedback.correta ? 'Resposta correta!' : getWrongAnswerMessage(data.feedback), data.feedback.correta ? 'info' : 'error');
       handleEstado(data.estado);
     } catch (error) {
       handleError(error);
@@ -497,8 +515,8 @@
 
     const button = UI.$('#swapQuestionBtn');
     state.busyAction = true;
-    UI.setWorking(true, 'Trocando pergunta', 'Buscando outra questão para este turno.');
-    UI.setButtonBusy(button, true, 'Trocando');
+    UI.setWorking(true, 'A trocar pergunta', 'A procurar outra questão para este turno.');
+    UI.setButtonBusy(button, true, 'A trocar');
 
     try {
       let data;
@@ -539,8 +557,8 @@
     const button = UI.$('#adminBackBtn');
     state.busyAction = true;
     state.lastAnswerReview = null;
-    UI.setWorking(true, 'Movendo teste', 'Voltando 1 casa.');
-    UI.setButtonBusy(button, true, 'Voltando');
+    UI.setWorking(true, 'A mover teste', 'A voltar 1 casa.');
+    UI.setButtonBusy(button, true, 'A voltar');
 
     try {
       let data;
@@ -600,7 +618,7 @@
       }
 
       const busy = /ocupado|bloqueio|lock/i.test(error.message || '');
-      UI.setConnection(busy ?'warn' : 'error', busy ?'Sincronizando' : 'Sem conexão');
+      UI.setConnection(busy ? 'warn' : 'error', busy ? 'A sincronizar' : 'Sem ligação');
       if (state.reconnecting) {
         state.reconnecting = false;
         UI.setReconnect(false);
@@ -626,7 +644,7 @@
       clearSession();
       UI.closeQuestion();
       UI.showView('home');
-      UI.toast('Você saiu dessa sala. Entre ou crie uma nova sala.', 'warn');
+      UI.toast('Saiu dessa sala. Entre ou crie uma nova sala.', 'warn');
       return;
     }
 
@@ -683,19 +701,19 @@
     }
 
     const select = UI.$('#forcedDiceSelect');
-    return select ?select.value : '';
+    return select ? select.value : '';
   }
 
   function getWrongAnswerMessage(feedback) {
     const moved = Math.abs(Number(feedback.movimento || 0));
     if (moved === 0) {
-      return 'Resposta errada. Você ficou na mesma casa.';
+      return 'Resposta errada. Ficou na mesma casa.';
     }
 
     if (moved > 1) {
-      return 'Resposta errada. Você voltou ' + moved + ' casas.';
+      return 'Resposta errada. Voltou ' + moved + ' casas.';
     }
-    return 'Resposta errada. Você não avançou.';
+    return 'Resposta errada. Não avançou.';
   }
 
   function showAnswerReview() {
@@ -845,7 +863,7 @@
         });
       }
     } catch (error) {
-      UI.toast('Você saiu neste aparelho. A sala antiga será ignorada aqui.', 'warn');
+      UI.toast('Saiu neste aparelho. A sala antiga será ignorada aqui.', 'warn');
     } finally {
       UI.setLeaving(false);
       clearSession();
@@ -873,7 +891,7 @@
       UI.setReconnect(false);
     }
     const hasConnection = ApiClient.isConfigured() || (window.FirebaseGame && window.FirebaseGame.isConfigured && window.FirebaseGame.isConfigured());
-    UI.setConnection(hasConnection ?'error' : 'warn', hasConnection ?'Erro' : 'Configurar API');
+    UI.setConnection(hasConnection ? 'error' : 'warn', hasConnection ? 'Erro' : 'Configurar API');
     UI.toast(error.message || String(error), 'error');
   }
 
