@@ -1,4 +1,4 @@
-import { FirebaseQuestions } from './firebase-questions.js?v=20260520-speed2';
+import { FirebaseQuestions } from './firebase-questions.js?v=20260520-link1';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
@@ -93,6 +93,14 @@ const MegaBattle = (function() {
     byId('createMegaConfirmBtn').addEventListener('click', createBattle);
     byId('megaJoinBackBtn').addEventListener('click', leaveLocal);
     byId('megaJoinConfirmBtn').addEventListener('click', joinSelectedTeam);
+    const inviteJoinButton = byId('megaInviteJoinBtn');
+    if (inviteJoinButton) {
+      inviteJoinButton.addEventListener('click', handleInviteLink);
+    }
+    const inviteCancelButton = byId('megaInviteCancelBtn');
+    if (inviteCancelButton) {
+      inviteCancelButton.addEventListener('click', cancelInviteLink);
+    }
     byId('copyMegaCodeBtn').addEventListener('click', function() {
       if (window.UI && typeof UI.copyText === 'function') {
         UI.copyText(state.code || byId('megaCode').textContent, 'Código da Mega Batalha copiado.');
@@ -138,6 +146,7 @@ const MegaBattle = (function() {
     inputs.forEach(function(input) {
       input.value = state.invite.code;
     });
+    renderInviteEntry();
 
     if (window.UI && typeof UI.setConnection === 'function') {
       UI.setConnection('idle', 'Link da turma recebido');
@@ -156,6 +165,56 @@ const MegaBattle = (function() {
       }
       toast('Link da turma recebido. Informe seu nome para entrar automaticamente.', 'info');
     }, 450);
+  }
+
+  function renderInviteEntry(teamName) {
+    const panel = byId('megaInvitePanel');
+    const homeForm = byId('homeForm');
+    if (!panel || !state.invite) {
+      return;
+    }
+
+    const codeTarget = byId('megaInviteCodeHome');
+    const teamTarget = byId('megaInviteTeamHome');
+    if (codeTarget) {
+      codeTarget.textContent = state.invite.code || '00000';
+    }
+    if (teamTarget) {
+      teamTarget.textContent = teamName || state.invite.teamName || formatInviteTeamFallback(state.invite.teamId);
+    }
+    panel.hidden = false;
+    if (homeForm) {
+      homeForm.classList.add('is-invite-mode');
+    }
+  }
+
+  function hideInviteEntry() {
+    const panel = byId('megaInvitePanel');
+    const homeForm = byId('homeForm');
+    if (panel) {
+      panel.hidden = true;
+    }
+    if (homeForm) {
+      homeForm.classList.remove('is-invite-mode');
+    }
+  }
+
+  function cancelInviteLink() {
+    clearInviteFromUrl();
+    state.invite = null;
+    state.inviteProcessed = false;
+    hideInviteEntry();
+    document.querySelectorAll('.mode-card--mega [data-code-input], #roomCodeInput').forEach(function(input) {
+      input.value = '';
+    });
+    if (window.UI && typeof UI.setConnection === 'function') {
+      UI.setConnection('idle', 'Pronto para jogar');
+    }
+  }
+
+  function formatInviteTeamFallback(teamId) {
+    const match = String(teamId || '').match(/\d+/);
+    return match ? 'Turma ' + match[0] : 'do link';
   }
 
   async function openSetup() {
@@ -337,6 +396,14 @@ const MegaBattle = (function() {
         room: room,
         name: name
       };
+
+      const inviteTeam = getInviteTeam(room, code, false);
+      if (inviteTeam) {
+        state.room = room;
+        renderInviteEntry(inviteTeam.name);
+        return Boolean(await joinTeam(inviteTeam, byId('megaInviteJoinBtn')));
+      }
+
       renderJoinView(room, code);
       if (tryApplyInviteToJoin(room, code)) {
         return true;
@@ -370,8 +437,16 @@ const MegaBattle = (function() {
       return;
     }
 
-    state.busy = true;
     const button = byId('megaJoinConfirmBtn');
+    await joinTeam(team, button);
+  }
+
+  async function joinTeam(team, button) {
+    if (state.busy || !state.pendingJoin || !team) {
+      return;
+    }
+
+    state.busy = true;
     setButtonBusy(button, true, 'Entrando');
     try {
       const context = await chooseParticipantServer(state.pendingJoin.roomId);
@@ -413,9 +488,12 @@ const MegaBattle = (function() {
       enterStudent(context, state.pendingJoin.roomId, state.pendingJoin.code, state.pendingJoin.name, team.teamId);
       clearInviteFromUrl();
       state.invite = null;
+      hideInviteEntry();
       toast('Você entrou na ' + team.name + '.');
+      return true;
     } catch (error) {
       toast(error.message || String(error), 'error');
+      return false;
     } finally {
       state.busy = false;
       setButtonBusy(button, false);
@@ -451,6 +529,7 @@ const MegaBattle = (function() {
     state.teamId = teamId;
     state.selectedAnswer = '';
     state.pendingJoin = null;
+    hideInviteEntry();
     parkUnusedContexts(context.server.id);
     saveSession('student', roomId, code, name, teamId, context.server.id);
     setOnline(true).catch(function(error) {
@@ -922,11 +1001,18 @@ const MegaBattle = (function() {
 
     const name = getPlayerName();
     if (!name) {
+      renderInviteEntry();
+      const nameInput = byId('playerName');
+      if (nameInput) {
+        nameInput.focus();
+      }
+      toast('Informe seu nome para entrar na turma.', 'warn');
       return;
     }
 
     state.inviteProcessed = true;
-    setHomeBusy(true, null, 'Entrando');
+    const inviteButton = byId('megaInviteJoinBtn');
+    setHomeBusy(true, inviteButton, 'Entrando');
     try {
       const joined = await withTimeout(
         tryJoinByCode(name, state.invite.code, { returnFalseOnError: true }),
@@ -949,13 +1035,8 @@ const MegaBattle = (function() {
   }
 
   function tryApplyInviteToJoin(room, code) {
-    if (!state.invite || normalizeCode(state.invite.code) !== normalizeCode(code)) {
-      return false;
-    }
-
-    const team = room.teams && room.teams[state.invite.teamId];
-    if (!team || normalizePin(team.pin) !== normalizePin(state.invite.pin)) {
-      toast('Este link de turma está inválido ou expirou.', 'error');
+    const team = getInviteTeam(room, code, true);
+    if (!team) {
       return false;
     }
 
@@ -969,6 +1050,21 @@ const MegaBattle = (function() {
     byId('megaJoinConfirmBtn').textContent = 'Entrando pelo link';
     window.setTimeout(joinSelectedTeam, 80);
     return true;
+  }
+
+  function getInviteTeam(room, code, showError) {
+    if (!state.invite || normalizeCode(state.invite.code) !== normalizeCode(code)) {
+      return null;
+    }
+
+    const team = room && room.teams && room.teams[state.invite.teamId];
+    if (!team || normalizePin(team.pin) !== normalizePin(state.invite.pin)) {
+      if (showError) {
+        toast('Este link de turma está inválido ou expirou.', 'error');
+      }
+      return null;
+    }
+    return team;
   }
 
   function renderTeamFields() {
@@ -2000,6 +2096,7 @@ const MegaBattle = (function() {
       const params = new URLSearchParams(window.location.search || '');
       const code = normalizeCode(params.get('mega') || params.get('megaCode') || params.get('code') || '');
       const teamId = String(params.get('team') || params.get('turma') || '').trim();
+      const teamName = String(params.get('teamName') || params.get('turmaNome') || '').trim();
       const pin = normalizePin(params.get('pin') || '');
       const roomId = sanitizeFirebaseKey(params.get('room') || params.get('roomId') || '');
       const serverId = String(params.get('server') || params.get('servidor') || '').trim();
@@ -2011,6 +2108,7 @@ const MegaBattle = (function() {
       return {
         code: code,
         teamId: teamId,
+        teamName: teamName,
         pin: pin,
         roomId: roomId,
         serverId: serverId
@@ -2026,6 +2124,7 @@ const MegaBattle = (function() {
     url.hash = '';
     url.searchParams.set('mega', normalizeCode(code));
     url.searchParams.set('team', team.teamId);
+    url.searchParams.set('teamName', team.name || team.teamId);
     url.searchParams.set('pin', normalizePin(team.pin));
     if (state.roomId) {
       url.searchParams.set('room', state.roomId);
@@ -2044,7 +2143,7 @@ const MegaBattle = (function() {
     }
 
     const url = new URL(window.location.href);
-    ['mega', 'megaCode', 'code', 'team', 'turma', 'pin', 'room', 'roomId', 'server', 'servidor'].forEach(function(key) {
+    ['mega', 'megaCode', 'code', 'team', 'turma', 'teamName', 'turmaNome', 'pin', 'room', 'roomId', 'server', 'servidor'].forEach(function(key) {
       url.searchParams.delete(key);
     });
     window.history.replaceState(null, document.title, url.pathname + url.search + url.hash);
@@ -2116,6 +2215,7 @@ const MegaBattle = (function() {
     state.autoAdvancing = false;
     state.studentScoreOpen = false;
     state.scorePhaseKey = '';
+    hideInviteEntry();
   }
 
   function pauseTrilhaMode() {

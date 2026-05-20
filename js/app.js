@@ -7,7 +7,7 @@ const App = (function() {
     serverId: 'trilha.serverId',
     clientVersion: 'trilha.clientVersion'
   };
-  const APP_BUILD_VERSION = '20260520-speed2';
+  const APP_BUILD_VERSION = '20260520-link1';
   const TRANSIENT_STORAGE_KEYS = [
     STORAGE_KEYS.salaId,
     STORAGE_KEYS.playerId,
