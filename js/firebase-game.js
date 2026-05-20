@@ -1,4 +1,4 @@
-import { FirebaseQuestions } from './firebase-questions.js?v=20260520-mega11';
+import { FirebaseQuestions } from './firebase-questions.js?v=20260520-speed2';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
@@ -23,6 +23,9 @@ const FirebaseGame = (function() {
   const CLEANUP_FINISHED_MS = 5 * 60 * 1000;
   const CLEANUP_IDLE_LOBBY_MS = 15 * 60 * 1000;
   const CLEANUP_RUNNING_MS = 60 * 60 * 1000;
+  const SERVER_CONNECT_TIMEOUT_MS = 9000;
+  const SERVER_READ_TIMEOUT_MS = 6000;
+  const SERVER_WRITE_TIMEOUT_MS = 8000;
 
   const SPECIAL_HOUSES = {
     8: { tipo: 'VOLTAR_2', titulo: 'Volte 2 casas', automatico: true, delta: -2 },
@@ -54,11 +57,17 @@ const FirebaseGame = (function() {
     return getConfiguredServers().length > 0;
   }
 
+  function getServerLabel(server) {
+    return (server && (server.label || server.name || server.id)) || 'servidor Firebase';
+  }
+
   async function createRoom(name, mode) {
     const context = await chooseServer();
     state.context = context;
     state.serverId = context.server.id;
-    await cleanupOldRooms(context);
+    cleanupOldRooms(context).catch(function(error) {
+      console.warn('Limpeza inicial da Corrida ignorada:', error);
+    });
     const now = Date.now();
     const roomId = createId('SALA');
     const playerId = createId('PLAYER');
@@ -94,11 +103,15 @@ const FirebaseGame = (function() {
     room.serverId = context.server.id;
 
     const player = makePlayer(playerId, roomId, name, 0, context.uid, now);
-    await update(ref(context.db), {
-      [path('rooms', roomId)]: room,
-      [path('players', roomId, playerId)]: player,
-      [path('codes', code)]: { salaId: roomId, serverId: context.server.id, createdAt: now }
-    });
+    await withTimeout(
+      update(ref(context.db), {
+        [path('rooms', roomId)]: room,
+        [path('players', roomId, playerId)]: player,
+        [path('codes', code)]: { salaId: roomId, serverId: context.server.id, createdAt: now }
+      }),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao criar a sala no ' + getServerLabel(context.server) + '.'
+    );
 
     await enterPresence(context, roomId, playerId);
     return {
@@ -118,10 +131,16 @@ const FirebaseGame = (function() {
     const context = found.context;
     state.context = context;
     state.serverId = context.server.id;
-    await cleanupOldRooms(context);
+    cleanupOldRooms(context).catch(function(error) {
+      console.warn('Limpeza ao entrar na Corrida ignorada:', error);
+    });
 
     const roomId = found.roomId;
-    const roomSnap = await get(ref(context.db, path('rooms', roomId)));
+    const roomSnap = await withTimeout(
+      get(ref(context.db, path('rooms', roomId))),
+      SERVER_READ_TIMEOUT_MS,
+      'Tempo limite ao abrir sala.'
+    );
     const room = roomSnap.val();
     if (!room || room.status !== 'AGUARDANDO') {
       throw new Error('Essa sala não está aguardando jogadores.');
@@ -138,8 +157,16 @@ const FirebaseGame = (function() {
     const playerId = createId('PLAYER');
     const now = Date.now();
     const player = makePlayer(playerId, roomId, name, activePlayers.length, context.uid, now);
-    await set(ref(context.db, path('players', roomId, playerId)), player);
-    await update(ref(context.db, path('rooms', roomId)), { atualizadoEmMs: now });
+    await withTimeout(
+      set(ref(context.db, path('players', roomId, playerId)), player),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao entrar na sala.'
+    );
+    await withTimeout(
+      update(ref(context.db, path('rooms', roomId)), { atualizadoEmMs: now }),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao atualizar sala.'
+    );
     await enterPresence(context, roomId, playerId);
 
     return {
@@ -704,7 +731,11 @@ const FirebaseGame = (function() {
   }
 
   async function getPlayers(context, roomId) {
-    const snapshot = await get(ref(context.db, path('players', roomId)));
+    const snapshot = await withTimeout(
+      get(ref(context.db, path('players', roomId))),
+      SERVER_READ_TIMEOUT_MS,
+      'Tempo limite ao ler jogadores.'
+    );
     const value = snapshot.val() || {};
     return Object.keys(value).map(function(id) {
       return value[id];
@@ -743,9 +774,17 @@ const FirebaseGame = (function() {
 
     const contexts = await getConfiguredContexts();
     for (const context of contexts) {
-      const playerSnap = await get(ref(context.db, path('players', roomId, playerId)));
-      if (playerSnap.exists()) {
-        return context;
+      try {
+        const playerSnap = await withTimeout(
+          get(ref(context.db, path('players', roomId, playerId))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao localizar jogador.'
+        );
+        if (playerSnap.exists()) {
+          return context;
+        }
+      } catch (error) {
+        console.warn('Busca de jogador ignorou servidor:', getServerLabel(context.server), error);
       }
     }
 
@@ -758,62 +797,99 @@ const FirebaseGame = (function() {
       throw new Error('Firebase não configurado.');
     }
 
-    const contexts = [];
-    for (const server of servers) {
+    const results = await Promise.all(servers.map(async function(server) {
       if (!state.contexts[server.id]) {
-        const app = getSharedApp(server);
-        const auth = getAuth(app);
-        const user = auth.currentUser || (await signInAnonymously(auth)).user;
-        state.contexts[server.id] = {
-          server: server,
-          app: app,
-          auth: auth,
-          uid: user.uid,
-          db: getDatabase(app)
-        };
+        try {
+          const app = getSharedApp(server);
+          const auth = getAuth(app);
+          const signIn = auth.currentUser
+            ? Promise.resolve({ user: auth.currentUser })
+            : signInAnonymously(auth);
+          const authResult = await withTimeout(
+            signIn,
+            SERVER_CONNECT_TIMEOUT_MS,
+            'Tempo limite ao conectar no ' + getServerLabel(server) + '.'
+          );
+          state.contexts[server.id] = {
+            server: server,
+            app: app,
+            auth: auth,
+            uid: authResult.user.uid,
+            db: getDatabase(app)
+          };
+        } catch (error) {
+          console.warn('Servidor da Corrida indisponível:', getServerLabel(server), error);
+          return null;
+        }
       }
-      contexts.push(state.contexts[server.id]);
+      return state.contexts[server.id];
+    }));
+    const contexts = results.filter(Boolean);
+    if (!contexts.length) {
+      throw new Error('Nenhum servidor Firebase respondeu. Tente novamente em alguns segundos.');
     }
     return contexts;
   }
 
   async function chooseServer() {
     const contexts = await getConfiguredContexts();
-    let best = contexts[0];
-    let bestCount = Infinity;
-
-    for (const context of contexts) {
-      await cleanupOldRooms(context);
-      const roomsSnap = await get(ref(context.db, path('rooms')));
-      const rooms = roomsSnap.val() || {};
-      const activeCount = Object.keys(rooms).filter(function(roomId) {
-        return rooms[roomId] && rooms[roomId].status !== 'ENCERRADA';
-      }).length;
-      if (activeCount < bestCount) {
-        best = context;
-        bestCount = activeCount;
+    const candidates = await Promise.all(contexts.map(async function(context) {
+      cleanupOldRooms(context).catch(function(error) {
+        console.warn('Limpeza da Corrida ignorada:', error);
+      });
+      try {
+        const roomsSnap = await withTimeout(
+          get(ref(context.db, path('rooms'))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao contar salas.'
+        );
+        const rooms = roomsSnap.val() || {};
+        const activeCount = Object.keys(rooms).filter(function(roomId) {
+          return rooms[roomId] && rooms[roomId].status !== 'ENCERRADA';
+        }).length;
+        return { context: context, activeCount: activeCount };
+      } catch (error) {
+        console.warn('Contagem de salas ignorada:', error);
+        return { context: context, activeCount: Infinity };
       }
-    }
+    }));
 
-    return best;
+    candidates.sort(function(a, b) {
+      return a.activeCount - b.activeCount;
+    });
+    return (candidates[0] && candidates[0].context) || contexts[0];
   }
 
   async function findRoomByCode(code) {
     const contexts = await getConfiguredContexts();
     for (const context of contexts) {
-      await cleanupOldRooms(context);
-      const codeSnap = await get(ref(context.db, path('codes', code)));
-      if (codeSnap.exists()) {
-        const roomId = codeSnap.val().salaId;
-        const roomSnap = await get(ref(context.db, path('rooms', roomId)));
-        const room = roomSnap.val();
-        if (!room || room.status === 'ENCERRADA') {
-          continue;
+      cleanupOldRooms(context).catch(function(error) {
+        console.warn('Limpeza ao entrar ignorada:', error);
+      });
+      try {
+        const codeSnap = await withTimeout(
+          get(ref(context.db, path('codes', code))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao buscar código.'
+        );
+        if (codeSnap.exists()) {
+          const roomId = codeSnap.val().salaId;
+          const roomSnap = await withTimeout(
+            get(ref(context.db, path('rooms', roomId))),
+            SERVER_READ_TIMEOUT_MS,
+            'Tempo limite ao abrir sala.'
+          );
+          const room = roomSnap.val();
+          if (!room || room.status === 'ENCERRADA') {
+            continue;
+          }
+          return {
+            context: context,
+            roomId: roomId
+          };
         }
-        return {
-          context: context,
-          roomId: roomId
-        };
+      } catch (error) {
+        console.warn('Busca de sala ignorou servidor:', getServerLabel(context.server), error);
       }
     }
     return null;
@@ -841,10 +917,18 @@ const FirebaseGame = (function() {
   }
 
   async function createUniqueCode(context) {
-    for (let attempt = 0; attempt < 50; attempt++) {
+    for (let attempt = 0; attempt < 12; attempt++) {
       const code = String(randomInt(1000, 9999));
-      const snapshot = await get(ref(context.db, path('codes', code)));
-      if (!snapshot.exists()) {
+      try {
+        const snapshot = await withTimeout(
+          get(ref(context.db, path('codes', code))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao conferir código.'
+        );
+        if (!snapshot.exists()) {
+          return code;
+        }
+      } catch (error) {
         return code;
       }
     }
@@ -856,7 +940,11 @@ const FirebaseGame = (function() {
       statusConexao: 'ONLINE',
       ultimoSinalEm: Date.now()
     };
-    await update(ref(context.db, path('players', roomId, playerId)), updates);
+    await withTimeout(
+      update(ref(context.db, path('players', roomId, playerId)), updates),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao atualizar presença.'
+    );
     onDisconnect(ref(context.db, path('players', roomId, playerId))).update({
       statusConexao: 'DESCONECTADO'
     });
@@ -864,9 +952,15 @@ const FirebaseGame = (function() {
       window.clearInterval(state.heartbeatId);
     }
     state.heartbeatId = window.setInterval(function() {
-      update(ref(context.db, path('players', roomId, playerId)), {
-        statusConexao: 'ONLINE',
-        ultimoSinalEm: Date.now()
+      withTimeout(
+        update(ref(context.db, path('players', roomId, playerId)), {
+          statusConexao: 'ONLINE',
+          ultimoSinalEm: Date.now()
+        }),
+        SERVER_WRITE_TIMEOUT_MS,
+        'Tempo limite ao renovar presença.'
+      ).catch(function(error) {
+        console.warn('Presença da Corrida ignorada:', error);
       });
     }, 10000);
   }
@@ -947,47 +1041,59 @@ const FirebaseGame = (function() {
   }
 
   async function cleanupOldRooms(context) {
-    const snapshot = await get(ref(context.db, path('rooms')));
-    const rooms = snapshot.val() || {};
-    const now = Date.now();
-    const updates = {};
+    try {
+      const snapshot = await withTimeout(
+        get(ref(context.db, path('rooms'))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao ler salas antigas.'
+      );
+      const rooms = snapshot.val() || {};
+      const now = Date.now();
+      const updates = {};
 
-    Object.keys(rooms).forEach(function(roomId) {
-      const room = rooms[roomId] || {};
-      const updatedAt = Number(room.atualizadoEmMs || room.criadoEmMs || 0);
-      const age = now - updatedAt;
+      Object.keys(rooms).forEach(function(roomId) {
+        const room = rooms[roomId] || {};
+        const updatedAt = Number(room.atualizadoEmMs || room.criadoEmMs || 0);
+        const age = now - updatedAt;
 
-      if (room.status === 'ENCERRADA' && age > CLEANUP_FINISHED_MS) {
-        updates[path('rooms', roomId)] = null;
-        updates[path('players', roomId)] = null;
-        if (room.codigoSala) {
-          updates[path('codes', room.codigoSala)] = null;
+        if (room.status === 'ENCERRADA' && age > CLEANUP_FINISHED_MS) {
+          updates[path('rooms', roomId)] = null;
+          updates[path('players', roomId)] = null;
+          if (room.codigoSala) {
+            updates[path('codes', room.codigoSala)] = null;
+          }
+          return;
         }
-        return;
-      }
 
-      if (room.status === 'AGUARDANDO' && age > CLEANUP_IDLE_LOBBY_MS) {
-        updates[path('rooms', roomId, 'status')] = 'ENCERRADA';
-        updates[path('rooms', roomId, 'encerradoEmMs')] = now;
-        updates[path('rooms', roomId, 'motivoEncerramento')] = 'LOBBY_INATIVO';
-        updates[path('rooms', roomId, 'lastAction')] = makeAction('JOGADOR_DESCONECTADO', 'Sala encerrada por inatividade.', '', '', '');
-        updates[path('rooms', roomId, 'atualizadoEmMs')] = now;
-        return;
-      }
+        if (room.status === 'AGUARDANDO' && age > CLEANUP_IDLE_LOBBY_MS) {
+          updates[path('rooms', roomId, 'status')] = 'ENCERRADA';
+          updates[path('rooms', roomId, 'encerradoEmMs')] = now;
+          updates[path('rooms', roomId, 'motivoEncerramento')] = 'LOBBY_INATIVO';
+          updates[path('rooms', roomId, 'lastAction')] = makeAction('JOGADOR_DESCONECTADO', 'Sala encerrada por inatividade.', '', '', '');
+          updates[path('rooms', roomId, 'atualizadoEmMs')] = now;
+          return;
+        }
 
-      if (room.status === 'EM_ANDAMENTO' && age > CLEANUP_RUNNING_MS) {
-        updates[path('rooms', roomId, 'status')] = 'ENCERRADA';
-        updates[path('rooms', roomId, 'vencedorPlayerId')] = '';
-        updates[path('rooms', roomId, 'encerradoEmMs')] = now;
-        updates[path('rooms', roomId, 'motivoEncerramento')] = 'TEMPO_MAXIMO';
-        updates[path('rooms', roomId, 'pendingQuestion')] = null;
-        updates[path('rooms', roomId, 'lastAction')] = makeAction('JOGO_ENCERRADO', 'Partida encerrada por tempo máximo.', '', '', '');
-        updates[path('rooms', roomId, 'atualizadoEmMs')] = now;
-      }
-    });
+        if (room.status === 'EM_ANDAMENTO' && age > CLEANUP_RUNNING_MS) {
+          updates[path('rooms', roomId, 'status')] = 'ENCERRADA';
+          updates[path('rooms', roomId, 'vencedorPlayerId')] = '';
+          updates[path('rooms', roomId, 'encerradoEmMs')] = now;
+          updates[path('rooms', roomId, 'motivoEncerramento')] = 'TEMPO_MAXIMO';
+          updates[path('rooms', roomId, 'pendingQuestion')] = null;
+          updates[path('rooms', roomId, 'lastAction')] = makeAction('JOGO_ENCERRADO', 'Partida encerrada por tempo máximo.', '', '', '');
+          updates[path('rooms', roomId, 'atualizadoEmMs')] = now;
+        }
+      });
 
-    if (Object.keys(updates).length) {
-      await update(ref(context.db), updates);
+      if (Object.keys(updates).length) {
+        await withTimeout(
+          update(ref(context.db), updates),
+          SERVER_WRITE_TIMEOUT_MS,
+          'Tempo limite ao limpar salas antigas.'
+        );
+      }
+    } catch (error) {
+      console.warn('Limpeza de salas antigas ignorada:', error);
     }
   }
 
@@ -1190,6 +1296,21 @@ const FirebaseGame = (function() {
 
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function withTimeout(promise, timeoutMs, message) {
+    let timer = null;
+    const timeout = new Promise(function(_, reject) {
+      timer = window.setTimeout(function() {
+        reject(new Error(message || 'Tempo limite atingido.'));
+      }, timeoutMs);
+    });
+
+    return Promise.race([promise, timeout]).finally(function() {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    });
   }
 
   function toIso(value) {

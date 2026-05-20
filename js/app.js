@@ -4,8 +4,21 @@ const App = (function() {
     playerId: 'trilha.playerId',
     playerName: 'trilha.playerName',
     engine: 'trilha.engine',
-    serverId: 'trilha.serverId'
+    serverId: 'trilha.serverId',
+    clientVersion: 'trilha.clientVersion'
   };
+  const APP_BUILD_VERSION = '20260520-speed2';
+  const TRANSIENT_STORAGE_KEYS = [
+    STORAGE_KEYS.salaId,
+    STORAGE_KEYS.playerId,
+    STORAGE_KEYS.engine,
+    STORAGE_KEYS.serverId,
+    'mega.role',
+    'mega.roomId',
+    'mega.code',
+    'mega.teamId',
+    'mega.serverId'
+  ];
   const DICE_MIN_ROLL_MS = 1300;
   const QUESTION_AFTER_DICE_MS = 520;
   const HEARTBEAT_INTERVAL = 10000;
@@ -73,6 +86,7 @@ const App = (function() {
   };
 
   function init() {
+    resetStaleClientState();
     bindEvents();
     restoreSession();
 
@@ -159,6 +173,18 @@ const App = (function() {
     UI.$('#homeForm').addEventListener('submit', function(event) {
       event.preventDefault();
     });
+  }
+
+  function resetStaleClientState() {
+    const currentVersion = localStorage.getItem(STORAGE_KEYS.clientVersion);
+    if (currentVersion === APP_BUILD_VERSION) {
+      return;
+    }
+
+    TRANSIENT_STORAGE_KEYS.forEach(function(key) {
+      localStorage.removeItem(key);
+    });
+    localStorage.setItem(STORAGE_KEYS.clientVersion, APP_BUILD_VERSION);
   }
 
   function restoreSession() {

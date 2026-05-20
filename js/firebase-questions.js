@@ -10,6 +10,9 @@ import {
 const FirebaseQuestions = (function() {
   const ROOT = 'gameQuestions';
   const LOCAL_QUESTIONS_URL = 'data/questions.json?v=20260517-questions1';
+  const SERVER_CONNECT_TIMEOUT_MS = 9000;
+  const SERVER_READ_TIMEOUT_MS = 6000;
+  const SERVER_WRITE_TIMEOUT_MS = 8000;
   const state = {
     contexts: null,
     cachedLocal: null
@@ -40,10 +43,18 @@ const FirebaseQuestions = (function() {
     const contexts = await getConfiguredContexts();
 
     for (const context of contexts) {
-      const snapshot = await get(ref(context.db, ROOT + '/items'));
-      const questions = normalizeCollection(snapshot.val());
-      if (questions.length) {
-        return pickQuestions(questions, limit);
+      try {
+        const snapshot = await withTimeout(
+          get(ref(context.db, ROOT + '/items')),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao carregar perguntas.'
+        );
+        const questions = normalizeCollection(snapshot.val());
+        if (questions.length) {
+          return pickQuestions(questions, limit);
+        }
+      } catch (error) {
+        console.warn('Perguntas indisponíveis no servidor:', getServerLabel(context.server), error);
       }
     }
 
@@ -75,10 +86,12 @@ const FirebaseQuestions = (function() {
       questionMap[sanitizeId(question.perguntaId)] = question;
     });
 
-    for (const context of contexts) {
-      await set(ref(context.db, ROOT + '/items'), questionMap);
-      await set(ref(context.db, ROOT + '/meta'), meta);
-    }
+    await Promise.all(contexts.map(function(context) {
+      return Promise.all([
+        withTimeout(set(ref(context.db, ROOT + '/items'), questionMap), SERVER_WRITE_TIMEOUT_MS, 'Tempo limite ao importar perguntas.'),
+        withTimeout(set(ref(context.db, ROOT + '/meta'), meta), SERVER_WRITE_TIMEOUT_MS, 'Tempo limite ao importar metadados.')
+      ]);
+    }));
 
     return {
       total: questions.length,
@@ -113,22 +126,36 @@ const FirebaseQuestions = (function() {
       throw new Error('Firebase não configurado.');
     }
 
-    const contexts = [];
-    for (const server of servers) {
-      const app = getSharedApp(server);
-      const auth = getAuth(app);
-      const user = auth.currentUser || (await signInAnonymously(auth)).user;
-      contexts.push({
-        server: server,
-        app: app,
-        auth: auth,
-        uid: user.uid,
-        db: getDatabase(app)
-      });
-    }
+    const results = await Promise.all(servers.map(async function(server) {
+      try {
+        const app = getSharedApp(server);
+        const auth = getAuth(app);
+        const signIn = auth.currentUser
+          ? Promise.resolve({ user: auth.currentUser })
+          : signInAnonymously(auth);
+        const authResult = await withTimeout(
+          signIn,
+          SERVER_CONNECT_TIMEOUT_MS,
+          'Tempo limite ao conectar no ' + getServerLabel(server) + '.'
+        );
+        return {
+          server: server,
+          app: app,
+          auth: auth,
+          uid: authResult.user.uid,
+          db: getDatabase(app)
+        };
+      } catch (error) {
+        console.warn('Servidor de perguntas indisponível:', getServerLabel(server), error);
+        return null;
+      }
+    }));
 
-    state.contexts = contexts;
-    return contexts;
+    state.contexts = results.filter(Boolean);
+    if (!state.contexts.length) {
+      throw new Error('Nenhum servidor de perguntas respondeu.');
+    }
+    return state.contexts;
   }
 
   function getSharedApp(server) {
@@ -150,6 +177,10 @@ const FirebaseQuestions = (function() {
         firebaseConfig.appId &&
         String(firebaseConfig.apiKey).indexOf('COLE_AQUI') === -1);
     });
+  }
+
+  function getServerLabel(server) {
+    return (server && (server.label || server.name || server.id)) || 'servidor Firebase';
   }
 
   function normalizeCollection(value) {
@@ -203,6 +234,21 @@ const FirebaseQuestions = (function() {
     return String(value || '')
       .replace(/[.#$\[\]\/]/g, '_')
       .slice(0, 120);
+  }
+
+  function withTimeout(promise, timeoutMs, message) {
+    let timer = null;
+    const timeout = new Promise(function(_, reject) {
+      timer = window.setTimeout(function() {
+        reject(new Error(message || 'Tempo limite atingido.'));
+      }, timeoutMs);
+    });
+
+    return Promise.race([promise, timeout]).finally(function() {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    });
   }
 
   return {

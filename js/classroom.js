@@ -1,4 +1,4 @@
-import { FirebaseQuestions } from './firebase-questions.js?v=20260520-mega11';
+import { FirebaseQuestions } from './firebase-questions.js?v=20260520-speed2';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
@@ -20,6 +20,9 @@ const ClassroomChallenge = (function() {
   const SCORE_FASTEST = [10, 8, 7];
   const SCORE_CORRECT = 5;
   const AUTO_NEXT_RESULTS_MS = 8000;
+  const SERVER_CONNECT_TIMEOUT_MS = 9000;
+  const SERVER_READ_TIMEOUT_MS = 6000;
+  const SERVER_WRITE_TIMEOUT_MS = 8000;
 
   const state = {
     contexts: {},
@@ -105,7 +108,9 @@ const ClassroomChallenge = (function() {
     setBusy(true, 'Criando desafio');
     try {
       const context = await chooseServer();
-      await cleanupServer(context);
+      cleanupServer(context).catch(function(error) {
+        console.warn('Limpeza inicial do Desafio ignorada:', error);
+      });
       const questions = await loadChallengeQuestions();
       const code = await createUniqueCode(context);
       const roomId = createId('DESAFIO');
@@ -126,21 +131,25 @@ const ClassroomChallenge = (function() {
         };
       });
 
-      await set(ref(context.db, path('rooms', roomId)), {
-        roomId: roomId,
-        code: code,
-        status: 'LOBBY',
-        phase: 'LOBBY',
-        hostUid: context.uid,
-        hostName: name,
-        createdAt: now,
-        updatedAt: now,
-        questionIndex: 0,
-        totalQuestions: CLASSROOM_CONFIG.totalQuestions,
-        questionSeconds: CLASSROOM_CONFIG.questionSeconds,
-        maxStudents: CLASSROOM_CONFIG.maxStudents,
-        serverId: context.server.id
-      });
+      await withTimeout(
+        set(ref(context.db, path('rooms', roomId)), {
+          roomId: roomId,
+          code: code,
+          status: 'LOBBY',
+          phase: 'LOBBY',
+          hostUid: context.uid,
+          hostName: name,
+          createdAt: now,
+          updatedAt: now,
+          questionIndex: 0,
+          totalQuestions: CLASSROOM_CONFIG.totalQuestions,
+          questionSeconds: CLASSROOM_CONFIG.questionSeconds,
+          maxStudents: CLASSROOM_CONFIG.maxStudents,
+          serverId: context.server.id
+        }),
+        SERVER_WRITE_TIMEOUT_MS,
+        'Tempo limite ao criar desafio no ' + getServerLabel(context.server) + '.'
+      );
 
       const updates = {};
       updates[path('codes', code)] = {
@@ -151,7 +160,11 @@ const ClassroomChallenge = (function() {
       updates[path('participants', roomId, context.uid)] = makeParticipant(name, 'teacher', now);
       updates[path('questions', roomId)] = publicQuestions;
       updates[path('secrets', roomId)] = secretQuestions;
-      await update(ref(context.db), updates);
+      await withTimeout(
+        update(ref(context.db), updates),
+        SERVER_WRITE_TIMEOUT_MS,
+        'Tempo limite ao gravar desafio no ' + getServerLabel(context.server) + '.'
+      );
 
       await enterRoom(context, roomId, code, 'teacher', name);
       toast('Desafio criado. Compartilhe o código com a turma.');
@@ -198,14 +211,24 @@ const ClassroomChallenge = (function() {
         throw new Error('Desafio não encontrado.');
       }
 
-      await cleanupServer(found.context);
-      const roomSnap = await get(ref(found.context.db, path('rooms', found.roomId)));
+      cleanupServer(found.context).catch(function(error) {
+        console.warn('Limpeza ao entrar no Desafio ignorada:', error);
+      });
+      const roomSnap = await withTimeout(
+        get(ref(found.context.db, path('rooms', found.roomId))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao abrir desafio.'
+      );
       const room = roomSnap.val();
       if (!room || room.status === 'FINISHED') {
         throw new Error('Esse desafio já foi encerrado.');
       }
 
-      const participantsSnap = await get(ref(found.context.db, path('participants', found.roomId)));
+      const participantsSnap = await withTimeout(
+        get(ref(found.context.db, path('participants', found.roomId))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao ler participantes.'
+      );
       const participants = participantsSnap.val() || {};
       const students = Object.keys(participants).filter(function(uid) {
         return participants[uid].role === 'student';
@@ -215,7 +238,11 @@ const ClassroomChallenge = (function() {
       }
 
       const now = Date.now();
-      await set(ref(found.context.db, path('participants', found.roomId, found.context.uid)), makeParticipant(name, 'student', now));
+      await withTimeout(
+        set(ref(found.context.db, path('participants', found.roomId, found.context.uid)), makeParticipant(name, 'student', now)),
+        SERVER_WRITE_TIMEOUT_MS,
+        'Tempo limite ao entrar no desafio.'
+      );
       await enterRoom(found.context, found.roomId, code, 'student', name);
       toast('Você entrou no Desafio da Turma.');
     } catch (error) {
@@ -271,14 +298,24 @@ const ClassroomChallenge = (function() {
   }
 
   async function joinFoundChallenge(found, code, name) {
-    await cleanupServer(found.context);
-    const roomSnap = await get(ref(found.context.db, path('rooms', found.roomId)));
+    cleanupServer(found.context).catch(function(error) {
+      console.warn('Limpeza ao entrar no Desafio ignorada:', error);
+    });
+    const roomSnap = await withTimeout(
+      get(ref(found.context.db, path('rooms', found.roomId))),
+      SERVER_READ_TIMEOUT_MS,
+      'Tempo limite ao abrir desafio.'
+    );
     const room = roomSnap.val();
     if (!room || room.status === 'FINISHED') {
       return false;
     }
 
-    const participantsSnap = await get(ref(found.context.db, path('participants', found.roomId)));
+    const participantsSnap = await withTimeout(
+      get(ref(found.context.db, path('participants', found.roomId))),
+      SERVER_READ_TIMEOUT_MS,
+      'Tempo limite ao ler participantes.'
+    );
     const participants = participantsSnap.val() || {};
     const students = Object.keys(participants).filter(function(uid) {
       return participants[uid].role === 'student';
@@ -288,7 +325,11 @@ const ClassroomChallenge = (function() {
     }
 
     const now = Date.now();
-    await set(ref(found.context.db, path('participants', found.roomId, found.context.uid)), makeParticipant(name, 'student', now));
+    await withTimeout(
+      set(ref(found.context.db, path('participants', found.roomId, found.context.uid)), makeParticipant(name, 'student', now)),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao entrar no desafio.'
+    );
     await enterRoom(found.context, found.roomId, code, 'student', name);
     return true;
   }
@@ -1094,8 +1135,12 @@ const ClassroomChallenge = (function() {
   function startHeartbeat() {
     stopHeartbeat();
     state.heartbeatId = window.setInterval(function() {
-      setOnline(true);
-      cleanupDisconnectedStudents();
+      setOnline(true).catch(function(error) {
+        console.warn('Presença do Desafio ignorada:', error);
+      });
+      cleanupDisconnectedStudents().catch(function(error) {
+        console.warn('Limpeza de alunos desconectados ignorada:', error);
+      });
     }, (CLASSROOM_CONFIG.heartbeatSeconds || 10) * 1000);
     state.timerId = window.setInterval(updateTimer, 500);
   }
@@ -1126,7 +1171,11 @@ const ClassroomChallenge = (function() {
     });
 
     if (Object.keys(updates).length) {
-      await update(ref(state.context.db), updates);
+      await withTimeout(
+        update(ref(state.context.db), updates),
+        SERVER_WRITE_TIMEOUT_MS,
+        'Tempo limite ao limpar alunos desconectados.'
+      );
     }
   }
 
@@ -1135,10 +1184,14 @@ const ClassroomChallenge = (function() {
       return;
     }
 
-    await update(ref(state.context.db, path('participants', state.roomId, state.uid)), {
-      online: online,
-      lastSeenAt: Date.now()
-    });
+    await withTimeout(
+      update(ref(state.context.db, path('participants', state.roomId, state.uid)), {
+        online: online,
+        lastSeenAt: Date.now()
+      }),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao atualizar presença.'
+    );
   }
 
   async function leaveChallenge() {
@@ -1215,34 +1268,50 @@ const ClassroomChallenge = (function() {
 
   async function chooseServer() {
     const contexts = await getConfiguredContexts();
-    let best = null;
-    let bestCount = Infinity;
-
-    for (const context of contexts) {
-      await cleanupServer(context);
-      const roomsSnap = await get(ref(context.db, path('rooms')));
-      const rooms = roomsSnap.val() || {};
-      const activeCount = Object.keys(rooms).filter(function(roomId) {
-        return rooms[roomId] && rooms[roomId].status !== 'FINISHED';
-      }).length;
-      if (activeCount < bestCount) {
-        best = context;
-        bestCount = activeCount;
+    const candidates = await Promise.all(contexts.map(async function(context) {
+      cleanupServer(context).catch(function(error) {
+        console.warn('Limpeza do Desafio ignorada:', error);
+      });
+      try {
+        const roomsSnap = await withTimeout(
+          get(ref(context.db, path('rooms'))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao contar desafios.'
+        );
+        const rooms = roomsSnap.val() || {};
+        const activeCount = Object.keys(rooms).filter(function(roomId) {
+          return rooms[roomId] && rooms[roomId].status !== 'FINISHED';
+        }).length;
+        return { context: context, activeCount: activeCount };
+      } catch (error) {
+        console.warn('Contagem de desafios ignorada:', getServerLabel(context.server), error);
+        return { context: context, activeCount: Infinity };
       }
-    }
+    }));
 
-    return best || contexts[0];
+    candidates.sort(function(a, b) {
+      return a.activeCount - b.activeCount;
+    });
+    return (candidates[0] && candidates[0].context) || contexts[0];
   }
 
   async function findRoomByCode(code) {
     const contexts = await getConfiguredContexts();
     for (const context of contexts) {
-      const codeSnap = await get(ref(context.db, path('codes', code)));
-      if (codeSnap.exists()) {
-        return {
-          context: context,
-          roomId: codeSnap.val().roomId
-        };
+      try {
+        const codeSnap = await withTimeout(
+          get(ref(context.db, path('codes', code))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao buscar código.'
+        );
+        if (codeSnap.exists()) {
+          return {
+            context: context,
+            roomId: codeSnap.val().roomId
+          };
+        }
+      } catch (error) {
+        console.warn('Busca de desafio ignorou servidor:', getServerLabel(context.server), error);
       }
     }
     return null;
@@ -1254,21 +1323,37 @@ const ClassroomChallenge = (function() {
       throw new Error('Nenhum servidor Firebase foi configurado.');
     }
 
-    const contexts = [];
-    for (const server of servers) {
+    const results = await Promise.all(servers.map(async function(server) {
       if (!state.contexts[server.id]) {
-        const app = getSharedApp(server);
-        const auth = getAuth(app);
-        const user = auth.currentUser || (await signInAnonymously(auth)).user;
-        state.contexts[server.id] = {
-          server: server,
-          app: app,
-          auth: auth,
-          uid: user.uid,
-          db: getDatabase(app)
-        };
+        try {
+          const app = getSharedApp(server);
+          const auth = getAuth(app);
+          const signIn = auth.currentUser
+            ? Promise.resolve({ user: auth.currentUser })
+            : signInAnonymously(auth);
+          const authResult = await withTimeout(
+            signIn,
+            SERVER_CONNECT_TIMEOUT_MS,
+            'Tempo limite ao conectar no ' + getServerLabel(server) + '.'
+          );
+          state.contexts[server.id] = {
+            server: server,
+            app: app,
+            auth: auth,
+            uid: authResult.user.uid,
+            db: getDatabase(app)
+          };
+        } catch (error) {
+          console.warn('Servidor do Desafio indisponível:', getServerLabel(server), error);
+          return null;
+        }
       }
-      contexts.push(state.contexts[server.id]);
+      return state.contexts[server.id];
+    }));
+
+    const contexts = results.filter(Boolean);
+    if (!contexts.length) {
+      throw new Error('Nenhum servidor Firebase respondeu. Tente novamente em alguns segundos.');
     }
     return contexts;
   }
@@ -1282,10 +1367,18 @@ const ClassroomChallenge = (function() {
   }
 
   async function createUniqueCode(context) {
-    for (let attempt = 0; attempt < 50; attempt++) {
+    for (let attempt = 0; attempt < 12; attempt++) {
       const code = String(randomInt(10000, 99999));
-      const snap = await get(ref(context.db, path('codes', code)));
-      if (!snap.exists()) {
+      try {
+        const snap = await withTimeout(
+          get(ref(context.db, path('codes', code))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao conferir código.'
+        );
+        if (!snap.exists()) {
+          return code;
+        }
+      } catch (error) {
         return code;
       }
     }
@@ -1294,9 +1387,17 @@ const ClassroomChallenge = (function() {
 
   async function cleanupServer(context) {
     try {
-      const roomsSnap = await get(ref(context.db, path('rooms')));
+      const roomsSnap = await withTimeout(
+        get(ref(context.db, path('rooms'))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao ler desafios antigos.'
+      );
       const rooms = roomsSnap.val() || {};
-      const codesSnap = await get(ref(context.db, path('codes')));
+      const codesSnap = await withTimeout(
+        get(ref(context.db, path('codes'))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao ler códigos antigos.'
+      );
       const codes = codesSnap.val() || {};
       const now = Date.now();
       const markUpdates = {};
@@ -1346,15 +1447,27 @@ const ClassroomChallenge = (function() {
       });
 
       if (Object.keys(markUpdates).length) {
-        await update(ref(context.db), markUpdates);
+        await withTimeout(
+          update(ref(context.db), markUpdates),
+          SERVER_WRITE_TIMEOUT_MS,
+          'Tempo limite ao marcar desafios antigos.'
+        );
       }
 
       if (Object.keys(dataDeleteUpdates).length) {
-        await update(ref(context.db), dataDeleteUpdates);
+        await withTimeout(
+          update(ref(context.db), dataDeleteUpdates),
+          SERVER_WRITE_TIMEOUT_MS,
+          'Tempo limite ao limpar dados antigos.'
+        );
       }
 
       if (Object.keys(roomDeleteUpdates).length) {
-        await update(ref(context.db), roomDeleteUpdates);
+        await withTimeout(
+          update(ref(context.db), roomDeleteUpdates),
+          SERVER_WRITE_TIMEOUT_MS,
+          'Tempo limite ao apagar desafios antigos.'
+        );
       }
     } catch (error) {
       console.warn('Limpeza do servidor ignorada:', error);
@@ -1423,6 +1536,10 @@ const ClassroomChallenge = (function() {
       config.projectId &&
       config.appId &&
       String(config.apiKey).indexOf('COLE_AQUI') === -1);
+  }
+
+  function getServerLabel(server) {
+    return (server && (server.label || server.name || server.id)) || 'servidor Firebase';
   }
 
   function isTeacher() {
@@ -1594,6 +1711,21 @@ const ClassroomChallenge = (function() {
 
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function withTimeout(promise, timeoutMs, message) {
+    let timer = null;
+    const timeout = new Promise(function(_, reject) {
+      timer = window.setTimeout(function() {
+        reject(new Error(message || 'Tempo limite atingido.'));
+      }, timeoutMs);
+    });
+
+    return Promise.race([promise, timeout]).finally(function() {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    });
   }
 
   function formatClock(seconds) {

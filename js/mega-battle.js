@@ -1,4 +1,4 @@
-import { FirebaseQuestions } from './firebase-questions.js?v=20260520-mega11';
+import { FirebaseQuestions } from './firebase-questions.js?v=20260520-speed2';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
@@ -32,6 +32,7 @@ const MegaBattle = (function() {
   const SCORE_SPEED_MAX = 5;
   const SERVER_CONNECT_TIMEOUT_MS = 9000;
   const SERVER_READ_TIMEOUT_MS = 6500;
+  const SERVER_WRITE_TIMEOUT_MS = 8000;
   const INVITE_JOIN_TIMEOUT_MS = 15000;
 
   const state = {
@@ -191,7 +192,9 @@ const MegaBattle = (function() {
     setButtonBusy(button, true, 'Criando batalha');
     try {
       const contexts = await getConfiguredContexts();
-      await cleanupAllServers(contexts);
+      cleanupAllServers(contexts).catch(function(error) {
+        console.warn('Limpeza inicial da Mega Batalha ignorada:', error);
+      });
       const questions = await FirebaseQuestions.load(Number(MEGA_CONFIG.totalQuestions || 10));
       if (!questions.length) {
         throw new Error('Nenhuma pergunta encontrada para a Mega Batalha.');
@@ -228,47 +231,50 @@ const MegaBattle = (function() {
         };
       });
 
-      for (const context of contexts) {
-        try {
-          await set(ref(context.db, path('rooms', roomId)), {
-            roomId: roomId,
-            code: code,
-            status: 'LOBBY',
-            phase: 'LOBBY',
-            hostUid: context.uid,
-            hostName: name,
-            createdAt: now,
-            updatedAt: now,
-            questionIndex: 0,
-            totalQuestions: Math.min(questions.length, Number(MEGA_CONFIG.totalQuestions || 10)),
-            questionSeconds: seconds,
-            teams: teamMap,
-            primaryServerId: primaryServerId,
-            serverId: context.server.id
-          });
+      const roomBase = {
+        roomId: roomId,
+        code: code,
+        status: 'LOBBY',
+        phase: 'LOBBY',
+        hostName: name,
+        createdAt: now,
+        updatedAt: now,
+        questionIndex: 0,
+        totalQuestions: Math.min(questions.length, Number(MEGA_CONFIG.totalQuestions || 10)),
+        questionSeconds: seconds,
+        teams: teamMap,
+        primaryServerId: primaryServerId
+      };
+      const sharedUpdates = {
+        [path('codes', code)]: {
+          roomId: roomId,
+          createdAt: now,
+          primaryServerId: primaryServerId
+        },
+        [path('questions', roomId)]: publicQuestions,
+        [path('teamScores', roomId)]: makeInitialTeamScores(teamMap)
+      };
+      const primary = contexts[0];
 
-          const updates = {
-            [path('codes', code)]: {
-              roomId: roomId,
-              createdAt: now,
-              primaryServerId: primaryServerId
-            },
-            [path('questions', roomId)]: publicQuestions,
-            [path('teamScores', roomId)]: makeInitialTeamScores(teamMap)
-          };
-
-          if (context.server.id === primaryServerId) {
-            updates[path('secrets', roomId)] = secretQuestions;
-          }
-
-          await update(ref(context.db), updates);
-        } catch (serverError) {
-          throw makeServerPermissionError(context, serverError);
-        }
+      try {
+        await writeMegaRoom(primary, roomBase, sharedUpdates, secretQuestions, true);
+      } catch (serverError) {
+        throw makeServerPermissionError(primary, serverError);
       }
 
-      enterTeacher(contexts, roomId, code, name);
-      toast('Mega Batalha criada. Compartilhe o código e os PINs das turmas.');
+      const secondaryContexts = await Promise.all(contexts.slice(1).map(async function(context) {
+        try {
+          await writeMegaRoom(context, roomBase, sharedUpdates, secretQuestions, false);
+          return context;
+        } catch (serverError) {
+          console.warn('Mega Batalha criada sem ' + getServerLabel(context.server) + ':', serverError);
+          return null;
+        }
+      }));
+      const activeContexts = [primary].concat(secondaryContexts.filter(Boolean));
+
+      enterTeacher(activeContexts, roomId, code, name);
+      toast('Mega Batalha criada em ' + activeContexts.length + ' servidor(es). Compartilhe o código e os PINs das turmas.');
     } catch (error) {
       toast(error.message || String(error), 'error');
     } finally {
@@ -276,6 +282,29 @@ const MegaBattle = (function() {
       setButtonBusy(button, false);
       setHomeBusy(false);
     }
+  }
+
+  async function writeMegaRoom(context, roomBase, sharedUpdates, secretQuestions, includeSecrets) {
+    const roomPayload = Object.assign({}, roomBase, {
+      hostUid: context.uid,
+      serverId: context.server.id
+    });
+    const updates = Object.assign({}, sharedUpdates);
+
+    if (includeSecrets) {
+      updates[path('secrets', roomBase.roomId)] = secretQuestions;
+    }
+
+    await withTimeout(
+      set(ref(context.db, path('rooms', roomBase.roomId)), roomPayload),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao criar sala no ' + getServerLabel(context.server) + '.'
+    );
+    await withTimeout(
+      update(ref(context.db), updates),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao gravar dados no ' + getServerLabel(context.server) + '.'
+    );
   }
 
   async function tryJoinByCode(name, rawCode, options) {
@@ -361,21 +390,25 @@ const MegaBattle = (function() {
       }
 
       const now = Date.now();
-      await set(ref(context.db, path('participants', state.pendingJoin.roomId, context.uid)), {
-        uid: context.uid,
-        name: String(state.pendingJoin.name || 'Aluno').slice(0, 40),
-        role: 'student',
-        teamId: team.teamId,
-        teamName: team.name,
-        score: 0,
-        correctCount: 0,
-        answeredCount: 0,
-        online: true,
-        joinedAt: now,
-        lastSeenAt: now,
-        removed: false,
-        serverId: context.server.id
-      });
+      await withTimeout(
+        set(ref(context.db, path('participants', state.pendingJoin.roomId, context.uid)), {
+          uid: context.uid,
+          name: String(state.pendingJoin.name || 'Aluno').slice(0, 40),
+          role: 'student',
+          teamId: team.teamId,
+          teamName: team.name,
+          score: 0,
+          correctCount: 0,
+          answeredCount: 0,
+          online: true,
+          joinedAt: now,
+          lastSeenAt: now,
+          removed: false,
+          serverId: context.server.id
+        }),
+        SERVER_WRITE_TIMEOUT_MS,
+        'Tempo limite ao entrar na turma.'
+      );
 
       enterStudent(context, state.pendingJoin.roomId, state.pendingJoin.code, state.pendingJoin.name, team.teamId);
       clearInviteFromUrl();
@@ -420,7 +453,9 @@ const MegaBattle = (function() {
     state.pendingJoin = null;
     parkUnusedContexts(context.server.id);
     saveSession('student', roomId, code, name, teamId, context.server.id);
-    setOnline(true);
+    setOnline(true).catch(function(error) {
+      console.warn('Presença da Mega Batalha ignorada:', error);
+    });
     onDisconnect(ref(context.db, path('participants', roomId, context.uid))).update({
       online: false,
       lastSeenAt: Date.now()
@@ -445,7 +480,11 @@ const MegaBattle = (function() {
     try {
       if (role === 'teacher') {
         const contexts = await getConfiguredContexts();
-        const roomSnap = await get(ref(contexts[0].db, path('rooms', roomId)));
+        const roomSnap = await withTimeout(
+          get(ref(contexts[0].db, path('rooms', roomId))),
+          SERVER_READ_TIMEOUT_MS,
+          'Tempo limite ao restaurar batalha.'
+        );
         if (!roomSnap.exists()) {
           clearSessionStorage();
           return;
@@ -455,7 +494,11 @@ const MegaBattle = (function() {
       }
 
       const context = await getContextByServerId(serverId);
-      const roomSnap = await get(ref(context.db, path('rooms', roomId)));
+      const roomSnap = await withTimeout(
+        get(ref(context.db, path('rooms', roomId))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao restaurar batalha.'
+      );
       if (!roomSnap.exists()) {
         clearSessionStorage();
         return;
@@ -976,7 +1019,11 @@ const MegaBattle = (function() {
     state.autoClosing = true;
     try {
       const index = Number(state.room.questionIndex || 0);
-      const secretSnap = await get(ref(state.contextList[0].db, path('secrets', state.roomId, index)));
+      const secretSnap = await withTimeout(
+        get(ref(state.contextList[0].db, path('secrets', state.roomId, index))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao buscar gabarito.'
+      );
       const secret = secretSnap.val();
       if (!secret) {
         throw new Error('Gabarito não encontrado.');
@@ -1376,7 +1423,9 @@ const MegaBattle = (function() {
   function startHeartbeat() {
     stopHeartbeat();
     state.heartbeatId = window.setInterval(function() {
-      setOnline(true);
+      setOnline(true).catch(function(error) {
+        console.warn('Presença da Mega Batalha ignorada:', error);
+      });
     }, Number(MEGA_CONFIG.heartbeatSeconds || 10) * 1000);
     state.timerId = window.setInterval(updateTimer, 500);
   }
@@ -1397,10 +1446,14 @@ const MegaBattle = (function() {
       return;
     }
 
-    await update(ref(state.context.db, path('participants', state.roomId, state.uid)), {
-      online: online,
-      lastSeenAt: Date.now()
-    });
+    await withTimeout(
+      update(ref(state.context.db, path('participants', state.roomId, state.uid)), {
+        online: online,
+        lastSeenAt: Date.now()
+      }),
+      SERVER_WRITE_TIMEOUT_MS,
+      'Tempo limite ao atualizar presença.'
+    );
   }
 
   function stopListeners() {
@@ -1421,8 +1474,22 @@ const MegaBattle = (function() {
   }
 
   async function broadcast(updates) {
-    for (const context of state.contextList) {
-      await update(ref(context.db), updates);
+    const results = await Promise.all(state.contextList.map(async function(context) {
+      try {
+        await withTimeout(
+          update(ref(context.db), updates),
+          SERVER_WRITE_TIMEOUT_MS,
+          'Tempo limite ao atualizar ' + getServerLabel(context.server) + '.'
+        );
+        return true;
+      } catch (error) {
+        console.warn('Atualização da Mega Batalha ignorou ' + getServerLabel(context.server) + ':', error);
+        return false;
+      }
+    }));
+
+    if (!results.some(Boolean)) {
+      throw new Error('Nenhum servidor respondeu à atualização da Mega Batalha.');
     }
   }
 
@@ -1432,9 +1499,17 @@ const MegaBattle = (function() {
       throw new Error('Nenhum servidor Firebase foi configurado.');
     }
 
-    const contexts = [];
-    for (const server of servers) {
-      contexts.push(await getContextForServer(server));
+    const results = await Promise.all(servers.map(async function(server) {
+      try {
+        return await getContextForServer(server);
+      } catch (error) {
+        console.warn('Servidor indisponível:', getServerLabel(server), error);
+        return null;
+      }
+    }));
+    const contexts = results.filter(Boolean);
+    if (!contexts.length) {
+      throw new Error('Nenhum servidor Firebase respondeu. Tente novamente em alguns segundos.');
     }
     return contexts;
   }
@@ -1612,16 +1687,21 @@ const MegaBattle = (function() {
   }
 
   async function createUniqueCode(contexts) {
-    for (let attempt = 0; attempt < 70; attempt++) {
+    for (let attempt = 0; attempt < 12; attempt++) {
       const code = String(randomInt(10000, 99999));
-      let exists = false;
-      for (const context of contexts) {
-        const snap = await get(ref(context.db, path('codes', code)));
-        if (snap.exists()) {
-          exists = true;
-          break;
+      const checks = await Promise.all(contexts.map(async function(context) {
+        try {
+          const snap = await withTimeout(
+            get(ref(context.db, path('codes', code))),
+            SERVER_READ_TIMEOUT_MS,
+            'Tempo limite ao conferir código.'
+          );
+          return snap.exists();
+        } catch (error) {
+          return false;
         }
-      }
+      }));
+      const exists = checks.some(Boolean);
       if (!exists) {
         return code;
       }
@@ -1630,14 +1710,24 @@ const MegaBattle = (function() {
   }
 
   async function cleanupAllServers(contexts) {
-    for (const context of contexts) {
-      await cleanupServer(context);
-    }
+    await Promise.all(contexts.map(function(context) {
+      return withTimeout(
+        cleanupServer(context),
+        SERVER_READ_TIMEOUT_MS + SERVER_WRITE_TIMEOUT_MS,
+        'Limpeza demorou no ' + getServerLabel(context.server) + '.'
+      ).catch(function(error) {
+        console.warn('Limpeza da Mega Batalha ignorou ' + getServerLabel(context.server) + ':', error);
+      });
+    }));
   }
 
   async function cleanupServer(context) {
     try {
-      const roomsSnap = await get(ref(context.db, path('rooms')));
+      const roomsSnap = await withTimeout(
+        get(ref(context.db, path('rooms'))),
+        SERVER_READ_TIMEOUT_MS,
+        'Tempo limite ao ler salas antigas.'
+      );
       const rooms = roomsSnap.val() || {};
       const now = Date.now();
       const updates = {};
@@ -1674,7 +1764,11 @@ const MegaBattle = (function() {
       });
 
       if (Object.keys(updates).length) {
-        await update(ref(context.db), updates);
+        await withTimeout(
+          update(ref(context.db), updates),
+          SERVER_WRITE_TIMEOUT_MS,
+          'Tempo limite ao limpar salas antigas.'
+        );
       }
     } catch (error) {
       console.warn('Limpeza da Mega Batalha ignorada:', error);
