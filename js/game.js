@@ -1,4 +1,4 @@
-const Game = (function() {
+﻿const Game = (function() {
   const PLAYER_COLORS = ['#e53935', '#1e88e5', '#f5a400', '#7b1fa2'];
 
   function isCreator(estado, playerId) {

@@ -51,7 +51,8 @@ const FirebaseRanking = (function() {
     const groups = {
       race: [],
       solo: [],
-      classroom: []
+      classroom: [],
+      mega: []
     };
     let entries = [];
 
@@ -80,7 +81,7 @@ const FirebaseRanking = (function() {
       return false;
     }
 
-    if (getModeGroup(item.modo) === 'classroom') {
+    if (getModeGroup(item.modo) === 'classroom' || getModeGroup(item.modo) === 'mega') {
       return Number(item.pontos || 0) > 0 || Number(item.acertos || 0) > 0;
     }
 
@@ -112,11 +113,14 @@ const FirebaseRanking = (function() {
     if (normalized === 'CLASSROOM' || normalized === 'DESAFIO') {
       return 'classroom';
     }
+    if (normalized === 'MEGA') {
+      return 'mega';
+    }
     return 'race';
   }
 
   function getSortValue(item) {
-    if (getModeGroup(item.modo) === 'classroom') {
+    if (getModeGroup(item.modo) === 'classroom' || getModeGroup(item.modo) === 'mega') {
       return (999999 - Number(item.pontos || 0) * 1000) + Number(item.duracaoSegundos || 0) / 100000;
     }
 

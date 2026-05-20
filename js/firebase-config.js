@@ -51,3 +51,19 @@
 };
 
 window.CLASSROOM_CONFIG = CLASSROOM_CONFIG;
+
+const MEGA_BATTLE_CONFIG = {
+  totalQuestions: 10,
+  questionSeconds: 45,
+  minTeams: 2,
+  maxTeams: 4,
+  maxStudentsPerTeam: 60,
+  heartbeatSeconds: 10,
+  disconnectSeconds: 30,
+  cleanupFinishedMinutes: 5,
+  cleanupIdleLobbyMinutes: 20,
+  cleanupRunningMinutes: 90,
+  servers: CLASSROOM_CONFIG.servers
+};
+
+window.MEGA_BATTLE_CONFIG = MEGA_BATTLE_CONFIG;

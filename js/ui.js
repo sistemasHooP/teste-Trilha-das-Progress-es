@@ -1,4 +1,4 @@
-const UI = (function() {
+﻿const UI = (function() {
   let selectedAnswer = '';
   let diceTimer = null;
   let gameClockTimer = null;
@@ -43,12 +43,6 @@ const UI = (function() {
   function renderLobby(estado, playerId, isBusy) {
     showView('lobby');
     $('#roomCode').textContent = estado.sala.codigoSala;
-    
-    // Atualiza o código público no botão de copiar
-    $all('.copy-code-btn').forEach(function(btn) {
-      btn.dataset.code = estado.sala.codigoSala;
-    });
-
     const connectedCount = estado.jogadores.filter(function(player) {
       return !isDisconnected(player);
     }).length;
@@ -61,11 +55,11 @@ const UI = (function() {
     const canStart = isCreator && connectedCount >= estado.regras.minimoJogadores;
     $('#startGameBtn').hidden = !isCreator;
     $('#startGameBtn').disabled = !canStart || !!isBusy;
-    $('#startGameBtn').textContent = isBusy ? 'Iniciando jogo' : 'Iniciar jogo';
+    $('#startGameBtn').textContent = isBusy ?'Iniciando jogo' : 'Iniciar jogo';
     $('#lobbyStatus').textContent = isBusy
-      ? 'Preparando a partida.'
+      ?'Preparando a partida.'
       : canStart
-      ? 'A sala já pode iniciar.'
+      ?'A sala já pode iniciar.'
       : 'Mínimo 2 jogadores e máximo 4.';
   }
 
@@ -75,13 +69,7 @@ const UI = (function() {
 
     $('#roundValue').textContent = estado.sala.rodada || 1;
     $('#roomCodeGame').textContent = 'Sala ' + estado.sala.codigoSala;
-    
-    // Atualiza o código público no botão de copiar na tela do jogo
-    $all('.copy-code-btn').forEach(function(btn) {
-      btn.dataset.code = estado.sala.codigoSala;
-    });
-
-    $('#turnName').textContent = estado.jogadorDaVez ? estado.jogadorDaVez.nome : 'Aguardando';
+    $('#turnName').textContent = estado.jogadorDaVez ?estado.jogadorDaVez.nome : 'Aguardando';
     setGameClock(estado.sala.tempoRestanteSegundos);
     renderLastAction(estado);
     setDiceValue(Game.lastDice(estado));
@@ -89,17 +77,17 @@ const UI = (function() {
     const canRoll = Game.isMyTurn(estado, playerId);
     const busyAction = document.body.classList.contains('is-busy-action');
     $('#rollDiceBtn').disabled = !canRoll || busyAction;
-    $('#rollDiceBtn').textContent = busyAction ? 'Processando jogada' : (canRoll ? 'Sua vez: rolar dado' : 'Aguardando vez');
+    $('#rollDiceBtn').textContent = busyAction ?'Processando jogada' : (canRoll ?'Sua vez: rolar dado' : 'Aguardando vez');
     $('#turnCard').classList.toggle('is-my-turn', canRoll);
     $('.turn-panel').classList.toggle('turn-panel--active', canRoll);
     $('#adminPanel').hidden = !Game.isAdmin(estado, playerId);
 
     $('#positionsList').innerHTML = estado.jogadores.map(function(player) {
       const color = Game.getPlayerColor(player.ordem);
-      const skip = player.pulouProximaRodada ? '<span class="mini-badge">Pula</span>' : '';
+      const skip = player.pulouProximaRodada ?'<span class="mini-badge">Pula</span>' : '';
       const connection = renderConnectionBadge(player);
       return [
-        '<li class="position-item' + (isDisconnected(player) ? ' is-disconnected' : '') + '">',
+        '<li class="position-item' + (isDisconnected(player) ?' is-disconnected' : '') + '">',
         '  <span class="player-name"><span class="player-dot" style="background:' + color + '"></span><span>' + escapeHtml(player.nome) + '</span></span>',
         '  <strong>' + formatHouseLabel(player.posicao) + '</strong>',
         connection,
@@ -114,7 +102,7 @@ const UI = (function() {
     const winner = estado.vencedor;
     $('#finalTitle').textContent = winner ? 'Vitória!' : 'Fim da partida';
     $('#winnerName').textContent = winner
-      ? winner.nome + ' venceu em ' + formatDuration(estado.sala.tempoDecorridoSegundos) + '.'
+      ?winner.nome + ' venceu em ' + formatDuration(estado.sala.tempoDecorridoSegundos) + '.'
       : getFinalMessage(estado);
     $('#rankingList').innerHTML = Game.ranking(estado).map(function(player, index) {
       const color = Game.getPlayerColor(player.ordem);
@@ -129,7 +117,7 @@ const UI = (function() {
 
     const fastest = estado.rankingGeral || [];
     $('#fastestRankingList').innerHTML = fastest.length
-      ? fastest.map(function(item, index) {
+      ?fastest.map(function(item, index) {
         return [
           '<div class="ranking-item ranking-item--fastest">',
           '  <span class="rank-number">' + (index + 1) + '</span>',
@@ -150,8 +138,8 @@ const UI = (function() {
     }
 
     const categories = Array.isArray(items)
-      ? { race: items, solo: [], classroom: [] }
-      : Object.assign({ race: [], solo: [], classroom: [] }, items || {});
+      ? { race: items, solo: [], classroom: [], mega: [] }
+      : Object.assign({ race: [], solo: [], classroom: [], mega: [] }, items || {});
     const total = Object.keys(categories).reduce(function(sum, key) {
       return sum + (Array.isArray(categories[key]) ? categories[key].length : 0);
     }, 0);
@@ -160,6 +148,7 @@ const UI = (function() {
     renderHomeRankingCategory('race', categories.race || []);
     renderHomeRankingCategory('solo', categories.solo || []);
     renderHomeRankingCategory('classroom', categories.classroom || []);
+    renderHomeRankingCategory('mega', categories.mega || []);
   }
 
   function renderHomeRankingCategory(category, ranking) {
@@ -171,9 +160,9 @@ const UI = (function() {
     }
 
     target.innerHTML = items.length
-      ? items.slice(0, 3).map(function(item, index) {
+      ?items.slice(0, 3).map(function(item, index) {
         return [
-          '<div class="ranking-item ranking-item--fastest">',
+          '<div class="ranking-item ranking-item--fastest' + (index === 0 ? ' ranking-item--first' : '') + '">',
           '  <span class="rank-number">' + (index + 1) + '</span>',
           '  <span><strong>' + escapeHtml(item.nome || 'Jogador') + '</strong><small>' + escapeHtml(getRankingSubtitle(item)) + '</small></span>',
           '  <strong>' + escapeHtml(getRankingValue(item)) + '</strong>',
@@ -192,7 +181,7 @@ const UI = (function() {
     }
 
     status.textContent = 'Indisponível';
-    ['race', 'solo', 'classroom'].forEach(function(category) {
+    ['race', 'solo', 'classroom', 'mega'].forEach(function(category) {
       const target = document.querySelector('[data-home-ranking="' + category + '"]');
       if (target) {
         target.innerHTML = '<p class="muted-text">Ranking indisponível no momento.</p>';
@@ -202,11 +191,11 @@ const UI = (function() {
 
   function renderPlayerItem(player, playerId) {
     const color = Game.getPlayerColor(player.ordem);
-    const you = player.playerId === playerId ? '<span class="mini-badge">Você</span>' : '';
-    const creator = player.ordem === 0 ? '<span class="mini-badge">Criador</span>' : '';
+    const you = player.playerId === playerId ?'<span class="mini-badge">Você</span>' : '';
+    const creator = player.ordem === 0 ?'<span class="mini-badge">Criador</span>' : '';
     const connection = renderConnectionBadge(player);
     return [
-      '<li class="player-item' + (isDisconnected(player) ? ' is-disconnected' : '') + '">',
+      '<li class="player-item' + (isDisconnected(player) ?' is-disconnected' : '') + '">',
       '  <span class="player-name"><span class="player-dot" style="background:' + color + '"></span><span>' + escapeHtml(player.nome) + '</span></span>',
       '  <span>' + connection + you + creator + '</span>',
       '</li>'
@@ -277,13 +266,13 @@ const UI = (function() {
       '  </span>',
       '  <span class="action-more" aria-hidden="true"></span>',
       '</summary>',
-      chips.length ? '<div class="action-body"><div class="action-chips">' + chips.join('') + '</div></div>' : ''
+      chips.length ?'<div class="action-body"><div class="action-chips">' + chips.join('') + '</div></div>' : ''
     ].join('');
     target.open = keepOpen;
   }
 
   function findPlayer(estado, playerId) {
-    const players = estado && estado.jogadores ? estado.jogadores : [];
+    const players = estado && estado.jogadores ?estado.jogadores : [];
     return players.find(function(player) {
       return player.playerId === playerId;
     });
@@ -327,7 +316,7 @@ const UI = (function() {
     const question = pending.pergunta;
     $('#questionType').textContent = question.tipo;
     $('#questionDice').hidden = !pending.dado;
-    $('#questionDice').textContent = pending.dado ? 'Dado ' + pending.dado : '';
+    $('#questionDice').textContent = pending.dado ?'Dado ' + pending.dado : '';
     $('#questionHouse').textContent = 'Casa ' + pending.casa;
     $('#questionText').textContent = question.enunciado;
     $('#answerOptions').hidden = false;
@@ -366,17 +355,17 @@ const UI = (function() {
   function showQuestionFeedback(feedback, autoClose) {
     const box = $('#questionFeedback');
     box.hidden = false;
-    box.className = 'question-feedback ' + (feedback.correta ? 'question-feedback--ok' : 'question-feedback--bad');
+    box.className = 'question-feedback ' + (feedback.correta ?'question-feedback--ok' : 'question-feedback--bad');
     $('#questionModal').classList.toggle('modal--success', feedback.correta);
     $('#questionModal').classList.toggle('modal--error', !feedback.correta);
     if (autoClose) {
       box.innerHTML = [
-        '<div class="feedback-title"><span>' + (feedback.correta ? 'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ? 'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
+        '<div class="feedback-title"><span>' + (feedback.correta ?'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ?'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
         '<p>Resposta correta: ' + escapeHtml(feedback.respostaCorreta) + '</p>'
       ].join('');
     } else {
       box.innerHTML = [
-        '<div class="feedback-title"><span>' + (feedback.correta ? 'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ? 'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
+        '<div class="feedback-title"><span>' + (feedback.correta ?'CERTO' : 'ERRO') + '</span><strong>' + (feedback.correta ?'Resposta correta!' : 'Resposta errada.') + '</strong></div>',
         '<p>Resposta correta: ' + escapeHtml(feedback.respostaCorreta) + '</p>',
         '<p>' + escapeHtml(feedback.explicacao) + '</p>',
         '<p>' + movementText(feedback.movimento) + '</p>'
@@ -443,7 +432,7 @@ const UI = (function() {
 
     return Array.from({ length: 9 }, function(_, index) {
       const position = index + 1;
-      return '<span class="pip' + (pipMap[value].indexOf(position) !== -1 ? ' is-on' : '') + '"></span>';
+      return '<span class="pip' + (pipMap[value].indexOf(position) !== -1 ?' is-on' : '') + '"></span>';
     }).join('');
   }
 
@@ -487,6 +476,7 @@ const UI = (function() {
 
   function setHomeBusy(isBusy, activeButton, textWhenBusy) {
     const buttons = $all('#homeForm button');
+    const codeInputs = $all('#homeForm [data-code-input]');
 
     buttons.forEach(function(button) {
       if (isBusy) {
@@ -509,6 +499,10 @@ const UI = (function() {
       }
       activeButton.textContent = textWhenBusy || 'Aguarde';
     }
+
+    codeInputs.forEach(function(input) {
+      input.disabled = !!isBusy;
+    });
   }
 
   function setWorking(isWorking, title, text) {
@@ -524,6 +518,39 @@ const UI = (function() {
 
   function setLeaving(isLeaving) {
     $('#leaveScreen').hidden = !isLeaving;
+  }
+
+  async function copyText(text, successMessage) {
+    const value = String(text || '').trim();
+
+    if (!value) {
+      toast('Nenhum código para copiar.', 'warn');
+      return false;
+    }
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const input = document.createElement('textarea');
+        input.value = value;
+        input.setAttribute('readonly', '');
+        input.style.position = 'fixed';
+        input.style.left = '-9999px';
+        input.style.top = '0';
+        document.body.appendChild(input);
+        input.focus();
+        input.select();
+        document.execCommand('copy');
+        input.remove();
+      }
+
+      toast(successMessage || 'Código copiado.');
+      return true;
+    } catch (error) {
+      toast('Não consegui copiar automaticamente. Código: ' + value, 'warn');
+      return false;
+    }
   }
 
   function setReconnect(isReconnecting) {
@@ -661,13 +688,14 @@ const UI = (function() {
       MULTI: 'Corrida',
       SOLO: 'Missão',
       CLASSROOM: 'Turma',
-      DESAFIO: 'Turma'
+      DESAFIO: 'Turma',
+      MEGA: 'Mega'
     };
     return map[String(mode || '').toUpperCase()] || String(mode || 'Geral');
   }
 
   function getRankingSubtitle(item) {
-    if (isClassroomRanking(item)) {
+    if (isPointRanking(item)) {
       return getModeLabel(item.modo) + ' · ' + Number(item.acertos || 0) + ' acertos · sala ' + (item.codigoSala || '-');
     }
 
@@ -675,7 +703,7 @@ const UI = (function() {
   }
 
   function getRankingValue(item) {
-    if (isClassroomRanking(item)) {
+    if (isPointRanking(item)) {
       return Number(item.pontos || 0) + ' pts';
     }
 
@@ -687,8 +715,13 @@ const UI = (function() {
     return mode === 'CLASSROOM' || mode === 'DESAFIO';
   }
 
+  function isPointRanking(item) {
+    const mode = String(item && item.modo ? item.modo : '').toUpperCase();
+    return mode === 'CLASSROOM' || mode === 'DESAFIO' || mode === 'MEGA';
+  }
+
   function escapeHtml(value) {
-    return String(value == null ? '' : value)
+    return String(value == null ?'' : value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -719,6 +752,7 @@ const UI = (function() {
     setHomeBusy,
     setWorking,
     setLeaving,
+    copyText,
     setReconnect,
     showHouseInfo,
     hideHouseInfo,

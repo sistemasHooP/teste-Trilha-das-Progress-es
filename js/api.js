@@ -1,4 +1,4 @@
-const ApiClient = (function() {
+﻿const ApiClient = (function() {
   function isConfigured() {
     return CONFIG.API_URL &&
       CONFIG.API_URL.indexOf('COLE_AQUI') === -1 &&
@@ -30,14 +30,14 @@ const ApiClient = (function() {
       try {
         data = JSON.parse(text);
       } catch (error) {
-        throw new Error('O backend não retornou JSON válido.');
+        throw new Error('O backend nÃ£o retornou JSON vÃ¡lido.');
       }
 
       if (response.ok && data.success) {
         return data;
       }
 
-      const message = data.error || 'Erro na comunicação com o backend.';
+      const message = data.error || 'Erro na comunicaÃ§Ã£o com o backend.';
       if (attempt < maxAttempts && /ocupado|bloqueio|lock|processando/i.test(message)) {
         await wait(450 * attempt);
         continue;
@@ -46,7 +46,7 @@ const ApiClient = (function() {
       throw new Error(message);
     }
 
-    throw new Error('Erro na comunicação com o backend.');
+    throw new Error('Erro na comunicaÃ§Ã£o com o backend.');
   }
 
   function wait(ms) {

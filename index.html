@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0c4f2a">
     <title>Trilha das Progressões - PA & PG</title>
-    <link rel="stylesheet" href="css/style.css?v=20260518-turma13">
+    <link rel="stylesheet" href="css/style.css?v=20260520-mega10">
   </head>
   <body>
     <div class="app-shell">
@@ -19,58 +19,103 @@
 
       <main class="main-content">
         <section id="homeView" class="view view--active" aria-labelledby="homeTitle">
-          <div class="home-layout">
-            <div class="home-title">
-              <p class="eyebrow">Trilha educativa</p>
-              <h2 id="homeTitle">Entre na diversão!</h2>
-              <p class="home-copy">Escolha uma corrida em grupo, treine sozinho ou use o código recebido para entrar. Responda perguntas de PA e PG para avançar.</p>
-              <p class="beta-note">Versão beta para testes em sala. Algumas melhorias ainda estão em evolução.</p>
-              <p class="credits-note">Desenvolvido por Renaly Basílio e Thiego Pereira.</p>
-            </div>
+          <form id="homeForm" class="home-stage">
+            <div class="home-hero">
+              <div class="home-brand">
+                <p class="eyebrow">Trilha educativa</p>
+                <h2 id="homeTitle">Batalha das <span>Progressões</span></h2>
+                <p class="home-copy">Escolha um modo, entre pelo código recebido ou crie uma sala para sua turma resolver PA e PG ao vivo.</p>
+                <p class="credits-note">Desenvolvido por Renaly Basílio e Thiego Pereira.</p>
+              </div>
 
-            <form id="homeForm" class="form-panel">
-              <label class="field">
-                <span>Nome do jogador</span>
+              <label class="player-setup field">
+                <span>Como te chamas?</span>
                 <input id="playerName" type="text" maxlength="40" autocomplete="name" placeholder="Digite seu nome">
               </label>
+            </div>
 
-              <div class="mode-row">
-                <button id="createRoomBtn" class="btn btn--primary" type="button">Corrida das Progressões</button>
-                <button class="mode-info-btn" type="button" data-mode-info="race" aria-label="Sobre Corrida das Progressões">i</button>
-              </div>
-              <div class="mode-row">
-                <button id="soloRoomBtn" class="btn btn--secondary" type="button">Missão PA & PG</button>
-                <button class="mode-info-btn" type="button" data-mode-info="solo" aria-label="Sobre Missão PA e PG">i</button>
-              </div>
-              <div class="mode-row">
-                <button id="createChallengeBtn" class="btn btn--primary btn--challenge" type="button">Criar Desafio da Turma</button>
-                <button class="mode-info-btn" type="button" data-mode-info="classroom" aria-label="Sobre Desafio da Turma">i</button>
+            <section class="modes-section" aria-label="Modos de jogo">
+              <h3 class="modes-header">Escolha seu modo de jogo</h3>
+
+              <div class="modes-grid">
+                <article class="mode-card mode-card--solo">
+                  <span class="mode-icon" aria-hidden="true">&#127919;</span>
+                  <div class="mode-info">
+                    <h4>Missão Solo</h4>
+                    <p>Treine PA e PG no seu ritmo. Sem pressão, só você contra o tabuleiro.</p>
+                  </div>
+                  <div class="mode-actions">
+                    <button id="soloRoomBtn" class="btn btn--secondary" type="button">Jogar sozinho</button>
+                  </div>
+                </article>
+
+                <article class="mode-card mode-card--race">
+                  <span class="mode-icon" aria-hidden="true">&#127922;</span>
+                  <div class="mode-info">
+                    <h4>Corrida</h4>
+                    <p>O clássico jogo de tabuleiro. Cria uma sala para 2 a 4 jogadores e vê quem chega ao fim primeiro.</p>
+                  </div>
+                  <div class="mode-actions">
+                    <button id="createRoomBtn" class="btn btn--primary" type="button">Criar sala</button>
+                    <div class="quick-join">
+                      <input type="text" inputmode="numeric" maxlength="5" placeholder="Código" data-code-input aria-label="Código da Corrida">
+                      <button class="btn btn--secondary" type="button" data-quick-join>Entrar</button>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="mode-card mode-card--classroom">
+                  <span class="mode-icon" aria-hidden="true">&#128218;</span>
+                  <div class="mode-info">
+                    <h4>Desafio da Turma</h4>
+                    <p>Modo para professores. Cria um quiz rápido e testa os conhecimentos dos alunos ao vivo.</p>
+                  </div>
+                  <div class="mode-actions">
+                    <button id="createChallengeBtn" class="btn btn--primary btn--challenge" type="button">Criar desafio</button>
+                    <div class="quick-join">
+                      <input type="text" inputmode="numeric" maxlength="5" placeholder="Código" data-code-input aria-label="Código do Desafio da Turma">
+                      <button class="btn btn--secondary" type="button" data-quick-join>Entrar</button>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="mode-card mode-card--mega">
+                  <span class="mode-icon" aria-hidden="true">&#9876;&#65039;</span>
+                  <div class="mode-info">
+                    <h4>Mega Batalha</h4>
+                    <p>Torneio gigante. Até 4 turmas se enfrentam ao mesmo tempo. A união faz a força.</p>
+                  </div>
+                  <div class="mode-actions">
+                    <button id="createMegaBtn" class="btn btn--mega-action" type="button">Criar torneio</button>
+                    <div class="quick-join">
+                      <input type="text" inputmode="numeric" maxlength="5" placeholder="Código" data-code-input aria-label="Código da Mega Batalha">
+                      <button class="btn btn--secondary" type="button" data-quick-join>Entrar</button>
+                    </div>
+                  </div>
+                </article>
               </div>
 
-              <div class="join-row">
-                <label class="field field--grow">
-                  <span>Código da sala</span>
-                  <input id="roomCodeInput" type="text" inputmode="numeric" maxlength="5" placeholder="Ex: 1234 ou 12345">
-                </label>
-                <button id="joinRoomBtn" class="btn btn--secondary" type="button">Entrar com código</button>
+              <div class="home-hidden-join" hidden aria-hidden="true">
+                <input id="roomCodeInput" type="text" inputmode="numeric" maxlength="5">
+                <button id="joinRoomBtn" type="button">Entrar com código</button>
               </div>
-            </form>
+            </section>
 
-            <section class="panel home-ranking-panel" aria-labelledby="homeRankingTitle">
-              <div class="panel-heading">
-                <h3 id="homeRankingTitle">Ranking por modo</h3>
-                <span id="homeRankingStatus" class="mini-badge">Carregando</span>
+            <section class="home-ranking-panel fame-panel" aria-labelledby="homeRankingTitle">
+              <div class="fame-heading">
+                <h3 id="homeRankingTitle">Hall da Fama</h3>
+                <span id="homeRankingStatus" class="ranking-status">Carregando</span>
               </div>
               <div id="homeRankingList" class="home-ranking-categories">
                 <div class="home-ranking-category">
-                  <h4>Corrida das Progressões</h4>
-                  <div class="ranking-list ranking-list--compact home-ranking-list" data-home-ranking="race">
+                  <h4>Missão Solo</h4>
+                  <div class="ranking-list ranking-list--compact home-ranking-list" data-home-ranking="solo">
                     <p class="muted-text">Buscando melhores tempos.</p>
                   </div>
                 </div>
                 <div class="home-ranking-category">
-                  <h4>Missão PA & PG</h4>
-                  <div class="ranking-list ranking-list--compact home-ranking-list" data-home-ranking="solo">
+                  <h4>Corrida</h4>
+                  <div class="ranking-list ranking-list--compact home-ranking-list" data-home-ranking="race">
                     <p class="muted-text">Buscando melhores tempos.</p>
                   </div>
                 </div>
@@ -80,8 +125,157 @@
                     <p class="muted-text">Aguardando registros.</p>
                   </div>
                 </div>
+                <div class="home-ranking-category">
+                  <h4>Mega Batalha</h4>
+                  <div class="ranking-list ranking-list--compact home-ranking-list" data-home-ranking="mega">
+                    <p class="muted-text">Aguardando turmas campeãs.</p>
+                  </div>
+                </div>
               </div>
             </section>
+          </form>
+        </section>
+
+        <section id="megaSetupView" class="view" aria-labelledby="megaSetupTitle">
+          <div class="room-header">
+            <div>
+              <p class="eyebrow">Professor anfitrião</p>
+              <h2 id="megaSetupTitle">Criar Mega Batalha</h2>
+            </div>
+          </div>
+
+          <div class="mega-setup-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Turmas participantes</h3>
+                <span class="mini-badge">2 a 4 turmas</span>
+              </div>
+              <label class="field">
+                <span>Quantidade de turmas</span>
+                <select id="megaTeamCount">
+                  <option value="2">2 turmas</option>
+                  <option value="3">3 turmas</option>
+                  <option value="4" selected>4 turmas</option>
+                </select>
+              </label>
+              <div id="megaTeamFields" class="mega-team-fields"></div>
+            </section>
+
+            <section class="panel panel--actions">
+              <label class="field">
+                <span>Tempo por pergunta</span>
+                <select id="megaQuestionSeconds">
+                  <option value="30">30 segundos</option>
+                  <option value="45" selected>45 segundos</option>
+                  <option value="60">60 segundos</option>
+                  <option value="90">90 segundos</option>
+                </select>
+              </label>
+              <button id="createMegaConfirmBtn" class="btn btn--primary" type="button">Criar batalha</button>
+              <button id="megaSetupBackBtn" class="btn btn--ghost" type="button">Voltar ao início</button>
+            </section>
+          </div>
+        </section>
+
+        <section id="megaJoinView" class="view" aria-labelledby="megaJoinTitle">
+          <div class="room-header">
+            <div>
+              <p class="eyebrow">Entrada da turma</p>
+              <h2 id="megaJoinTitle">Entrar na Mega Batalha</h2>
+            </div>
+            <div class="room-code-box">
+              <span>Código</span>
+              <strong id="megaJoinCode">0000</strong>
+            </div>
+          </div>
+
+          <div class="mega-setup-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Escolha sua turma</h3>
+                <span id="megaJoinTeamCount" class="mini-badge">0 turmas</span>
+              </div>
+              <div id="megaJoinTeams" class="mega-team-choice-list"></div>
+              <label class="field">
+                <span>PIN da turma</span>
+                <input id="megaJoinPin" type="text" inputmode="numeric" maxlength="3" placeholder="Ex: 314">
+              </label>
+            </section>
+
+            <section class="panel panel--actions">
+              <button id="megaJoinConfirmBtn" class="btn btn--primary" type="button">Entrar na turma</button>
+              <button id="megaJoinBackBtn" class="btn btn--ghost" type="button">Voltar ao início</button>
+            </section>
+          </div>
+        </section>
+
+        <section id="megaView" class="view mega-view" aria-labelledby="megaTitle">
+          <div class="challenge-header mega-header">
+            <div>
+              <p id="megaRoleLabel" class="eyebrow">Mega Batalha</p>
+              <h2 id="megaTitle">Arena Interturmas</h2>
+            </div>
+            <div class="room-code-box">
+              <span>Código</span>
+              <strong id="megaCode">0000</strong>
+              <button id="copyMegaCodeBtn" class="copy-code-btn" type="button" aria-label="Copiar código da Mega Batalha">Copiar</button>
+            </div>
+          </div>
+
+          <div class="challenge-layout mega-layout">
+            <section class="panel challenge-question-panel mega-question-panel">
+              <div class="challenge-meta-row">
+                <span id="megaProgress" class="mini-badge">Pergunta 1/10</span>
+                <span id="megaTeamBadge" class="mini-badge">Interturmas</span>
+                <span id="megaTimer" class="mini-badge mini-badge--timer">00:45</span>
+              </div>
+              <div id="megaTimeBar" class="mega-time-bar" aria-hidden="true"><i></i></div>
+              <span id="megaQuestionType" class="type-badge">PA</span>
+              <h2 id="megaQuestionText">Aguardando o início da batalha.</h2>
+              <div id="megaOptions" class="answer-options"></div>
+              <button id="megaSubmitAnswerBtn" class="btn btn--primary challenge-submit-btn" type="button" hidden disabled>Confirmar resposta</button>
+              <div id="megaResultBox" class="question-feedback" hidden></div>
+              <div id="megaStudentWaiting" class="challenge-waiting" hidden>
+                <strong>Resposta registrada</strong>
+                <p>Aguarde o tempo acabar para ver o placar das turmas.</p>
+              </div>
+            </section>
+
+            <aside class="side-panel challenge-side">
+              <section id="megaTeacherPanel" class="panel challenge-teacher-panel mega-teacher-panel" hidden>
+                <div class="panel-heading">
+                  <h3 id="megaTeacherPanelTitle">Painel do anfitrião</h3>
+                  <span id="megaAnsweredBadge" class="mini-badge">0 respostas</span>
+                </div>
+                <div id="megaPinList" class="mega-pin-list"></div>
+                <p id="megaFlowHint" class="challenge-flow-hint">Compartilhe o código e os PINs de cada turma.</p>
+                <button id="megaStartBtn" class="btn btn--primary" type="button">Iniciar batalha</button>
+                <button id="megaRevealBtn" class="btn btn--secondary" type="button">Forçar resultado</button>
+                <button id="megaNextBtn" class="btn btn--primary" type="button">Próxima pergunta</button>
+                <button id="megaEndBtn" class="btn btn--ghost" type="button">Encerrar batalha</button>
+              </section>
+
+              <section id="megaScorePanel" class="panel mega-score-panel">
+                <button id="megaScoreToggle" class="mega-score-toggle" type="button" hidden aria-expanded="false">Ver desempenho das turmas</button>
+                <div id="megaScoreContent" class="mega-score-content">
+                  <div class="panel-heading">
+                    <h3>Placar das turmas</h3>
+                    <span id="megaTeamCountBadge" class="mini-badge">0 alunos</span>
+                  </div>
+                  <div id="megaTeamRankingList" class="mega-team-ranking"></div>
+                </div>
+              </section>
+
+              <section id="megaTopStudentsPanel" class="panel mega-top-panel">
+                <div class="panel-heading">
+                  <h3>Destaques</h3>
+                  <span class="mini-badge">Top alunos</span>
+                </div>
+                <div id="megaTopStudents" class="ranking-list ranking-list--compact"></div>
+              </section>
+
+              <button id="megaLeaveBtn" class="btn btn--ghost" type="button">Sair da batalha</button>
+            </aside>
           </div>
         </section>
 
@@ -388,16 +582,20 @@
       </div>
     </div>
 
-    <script src="js/config.js?v=20260518-turma13"></script>
-    <script src="js/api.js?v=20260518-turma13"></script>
-    <script src="js/firebase-config.js?v=20260518-turma13"></script>
-    <script src="js/game.js?v=20260518-turma13"></script>
-    <script src="js/board.js?v=20260518-turma13"></script>
-    <script src="js/ui.js?v=20260518-turma13"></script>
-    <script src="js/app.js?v=20260518-turma13"></script>
-    <script type="module" src="js/firebase-questions.js?v=20260518-turma13"></script>
-    <script type="module" src="js/firebase-ranking.js?v=20260518-turma13"></script>
-    <script type="module" src="js/firebase-game.js?v=20260518-turma13"></script>
-    <script type="module" src="js/classroom.js?v=20260518-turma13"></script>
+    <script src="js/config.js?v=20260520-mega10"></script>
+    <script src="js/api.js?v=20260520-mega10"></script>
+    <script src="js/firebase-config.js?v=20260520-mega10"></script>
+    <script src="js/game.js?v=20260520-mega10"></script>
+    <script src="js/board.js?v=20260520-mega10"></script>
+    <script src="js/ui.js?v=20260520-mega10"></script>
+    <script src="js/app.js?v=20260520-mega10"></script>
+    <script type="module" src="js/firebase-questions.js?v=20260520-mega10"></script>
+    <script type="module" src="js/firebase-ranking.js?v=20260520-mega10"></script>
+    <script type="module" src="js/firebase-game.js?v=20260520-mega10"></script>
+    <script type="module" src="js/classroom.js?v=20260520-mega10"></script>
+    <script type="module" src="js/mega-battle.js?v=20260520-mega10"></script>
   </body>
 </html>
+
+
+

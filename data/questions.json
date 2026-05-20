@@ -1,11 +1,11 @@
-{
+﻿{
   "version": "2026-05-17",
   "total": 200,
   "questions": [
     {
       "perguntaId": "PA001",
       "tipo": "PA",
-      "enunciado": "Em uma PA, o primeiro termo é 3 e a razão é 5. Qual é o 6º termo?",
+      "enunciado": "Em uma PA, o primeiro termo Ã© 3 e a razÃ£o Ã© 5. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "18",
         "B": "23",
@@ -13,13 +13,13 @@
         "D": "30"
       },
       "correta": "C",
-      "explicacao": "an = a1 + (n - 1)r. Então a6 = 3 + 5 * 5 = 28.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a6 = 3 + 5 * 5 = 28.",
       "ativa": true
     },
     {
       "perguntaId": "PA002",
       "tipo": "PA",
-      "enunciado": "Na sequência 7, 11, 15, 19, qual é o próximo termo?",
+      "enunciado": "Na sequÃªncia 7, 11, 15, 19, qual Ã© o prÃ³ximo termo?",
       "alternativas": {
         "A": "21",
         "B": "22",
@@ -27,13 +27,13 @@
         "D": "24"
       },
       "correta": "C",
-      "explicacao": "A razão é 4. Depois de 19 vem 19 + 4 = 23.",
+      "explicacao": "A razÃ£o Ã© 4. Depois de 19 vem 19 + 4 = 23.",
       "ativa": true
     },
     {
       "perguntaId": "PA003",
       "tipo": "PA",
-      "enunciado": "Em uma PA com a1 = 12 e razão -2, qual é o 7º termo?",
+      "enunciado": "Em uma PA com a1 = 12 e razÃ£o -2, qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "-2",
         "B": "2",
@@ -47,7 +47,7 @@
     {
       "perguntaId": "PA004",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 10 primeiros termos de uma PA em que a1 = 2 e a10 = 20?",
+      "enunciado": "Qual Ã© a soma dos 10 primeiros termos de uma PA em que a1 = 2 e a10 = 20?",
       "alternativas": {
         "A": "90",
         "B": "100",
@@ -61,7 +61,7 @@
     {
       "perguntaId": "PA005",
       "tipo": "PA",
-      "enunciado": "Na PA 5, 8, 11, 14, qual é a razão?",
+      "enunciado": "Na PA 5, 8, 11, 14, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "2",
         "B": "3",
@@ -69,13 +69,13 @@
         "D": "5"
       },
       "correta": "B",
-      "explicacao": "A razão é a diferença entre termos consecutivos: 8 - 5 = 3.",
+      "explicacao": "A razÃ£o Ã© a diferenÃ§a entre termos consecutivos: 8 - 5 = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PA006",
       "tipo": "PA",
-      "enunciado": "Em uma PA com a1 = 4 e razão 6, qual é o 8º termo?",
+      "enunciado": "Em uma PA com a1 = 4 e razÃ£o 6, qual Ã© o 8Âº termo?",
       "alternativas": {
         "A": "40",
         "B": "42",
@@ -89,12 +89,12 @@
     {
       "perguntaId": "PA007",
       "tipo": "PA",
-      "enunciado": "Qual termo da PA 2, 5, 8, 11 e assim por diante é igual a 29?",
+      "enunciado": "Qual termo da PA 2, 5, 8, 11 e assim por diante Ã© igual a 29?",
       "alternativas": {
-        "A": "8º termo",
-        "B": "9º termo",
-        "C": "10º termo",
-        "D": "11º termo"
+        "A": "8Âº termo",
+        "B": "9Âº termo",
+        "C": "10Âº termo",
+        "D": "11Âº termo"
       },
       "correta": "C",
       "explicacao": "29 = 2 + (n - 1) * 3. Assim, n - 1 = 9 e n = 10.",
@@ -103,7 +103,7 @@
     {
       "perguntaId": "PA008",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 6 primeiros termos da PA 1, 4, 7 e assim por diante?",
+      "enunciado": "Qual Ã© a soma dos 6 primeiros termos da PA 1, 4, 7 e assim por diante?",
       "alternativas": {
         "A": "48",
         "B": "51",
@@ -111,13 +111,13 @@
         "D": "57"
       },
       "correta": "B",
-      "explicacao": "O 6º termo é 16. S6 = 6 * (1 + 16) / 2 = 51.",
+      "explicacao": "O 6Âº termo Ã© 16. S6 = 6 * (1 + 16) / 2 = 51.",
       "ativa": true
     },
     {
       "perguntaId": "PA009",
       "tipo": "PA",
-      "enunciado": "Em uma PA com a1 = 20 e razão -3, qual é o 5º termo?",
+      "enunciado": "Em uma PA com a1 = 20 e razÃ£o -3, qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "5",
         "B": "6",
@@ -131,7 +131,7 @@
     {
       "perguntaId": "PA010",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a3 = 10 e a razão é 4. Qual é o primeiro termo?",
+      "enunciado": "Em uma PA, a3 = 10 e a razÃ£o Ã© 4. Qual Ã© o primeiro termo?",
       "alternativas": {
         "A": "2",
         "B": "4",
@@ -139,13 +139,13 @@
         "D": "8"
       },
       "correta": "A",
-      "explicacao": "a3 = a1 + 2r. Então 10 = a1 + 8, logo a1 = 2.",
+      "explicacao": "a3 = a1 + 2r. EntÃ£o 10 = a1 + 8, logo a1 = 2.",
       "ativa": true
     },
     {
       "perguntaId": "PA011",
       "tipo": "PA",
-      "enunciado": "Os números 6, x e 18 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 6, x e 18 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "10",
         "B": "12",
@@ -153,13 +153,13 @@
         "D": "16"
       },
       "correta": "B",
-      "explicacao": "O termo central é a média dos extremos: x = (6 + 18) / 2 = 12.",
+      "explicacao": "O termo central Ã© a mÃ©dia dos extremos: x = (6 + 18) / 2 = 12.",
       "ativa": true
     },
     {
       "perguntaId": "PA012",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a4 = 14 e a8 = 30. Qual é a razão?",
+      "enunciado": "Em uma PA, a4 = 14 e a8 = 30. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "2",
         "B": "3",
@@ -167,13 +167,13 @@
         "D": "5"
       },
       "correta": "C",
-      "explicacao": "Do 4º ao 8º termo há 4 intervalos. A razão é (30 - 14) / 4 = 4.",
+      "explicacao": "Do 4Âº ao 8Âº termo hÃ¡ 4 intervalos. A razÃ£o Ã© (30 - 14) / 4 = 4.",
       "ativa": true
     },
     {
       "perguntaId": "PA013",
       "tipo": "PA",
-      "enunciado": "Em uma PA com a1 = 9 e razão 2, qual é o 12º termo?",
+      "enunciado": "Em uma PA com a1 = 9 e razÃ£o 2, qual Ã© o 12Âº termo?",
       "alternativas": {
         "A": "27",
         "B": "29",
@@ -187,7 +187,7 @@
     {
       "perguntaId": "PA014",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 9 primeiros termos da PA 1, 5, 9 e assim por diante?",
+      "enunciado": "Qual Ã© a soma dos 9 primeiros termos da PA 1, 5, 9 e assim por diante?",
       "alternativas": {
         "A": "135",
         "B": "144",
@@ -201,7 +201,7 @@
     {
       "perguntaId": "PA015",
       "tipo": "PA",
-      "enunciado": "Na PA 30, 25, 20, 15 e assim por diante, qual é o 7º termo?",
+      "enunciado": "Na PA 30, 25, 20, 15 e assim por diante, qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "-5",
         "B": "0",
@@ -209,13 +209,13 @@
         "D": "10"
       },
       "correta": "B",
-      "explicacao": "A razão é -5. a7 = 30 + 6 * (-5) = 0.",
+      "explicacao": "A razÃ£o Ã© -5. a7 = 30 + 6 * (-5) = 0.",
       "ativa": true
     },
     {
       "perguntaId": "PA016",
       "tipo": "PA",
-      "enunciado": "Quantos termos há na PA 3, 7, 11 e assim por diante até o termo 39?",
+      "enunciado": "Quantos termos hÃ¡ na PA 3, 7, 11 e assim por diante atÃ© o termo 39?",
       "alternativas": {
         "A": "8",
         "B": "9",
@@ -229,7 +229,7 @@
     {
       "perguntaId": "PA017",
       "tipo": "PA",
-      "enunciado": "Qual é o termo médio entre 8 e 20 em uma PA de três termos?",
+      "enunciado": "Qual Ã© o termo mÃ©dio entre 8 e 20 em uma PA de trÃªs termos?",
       "alternativas": {
         "A": "14",
         "B": "15",
@@ -237,13 +237,13 @@
         "D": "18"
       },
       "correta": "A",
-      "explicacao": "O termo médio é a média aritmética: (8 + 20) / 2 = 14.",
+      "explicacao": "O termo mÃ©dio Ã© a mÃ©dia aritmÃ©tica: (8 + 20) / 2 = 14.",
       "ativa": true
     },
     {
       "perguntaId": "PA018",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a2 = 7 e a5 = 19. Qual é o primeiro termo?",
+      "enunciado": "Em uma PA, a2 = 7 e a5 = 19. Qual Ã© o primeiro termo?",
       "alternativas": {
         "A": "2",
         "B": "3",
@@ -251,13 +251,13 @@
         "D": "5"
       },
       "correta": "B",
-      "explicacao": "Entre a2 e a5 há 3 intervalos. r = 4 e a1 = 7 - 4 = 3.",
+      "explicacao": "Entre a2 e a5 hÃ¡ 3 intervalos. r = 4 e a1 = 7 - 4 = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PA019",
       "tipo": "PA",
-      "enunciado": "Em uma PA com a1 = -4 e razão 3, qual é o 6º termo?",
+      "enunciado": "Em uma PA com a1 = -4 e razÃ£o 3, qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "8",
         "B": "9",
@@ -271,7 +271,7 @@
     {
       "perguntaId": "PA020",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 5 primeiros termos da PA 10, 8, 6 e assim por diante?",
+      "enunciado": "Qual Ã© a soma dos 5 primeiros termos da PA 10, 8, 6 e assim por diante?",
       "alternativas": {
         "A": "30",
         "B": "32",
@@ -279,13 +279,13 @@
         "D": "36"
       },
       "correta": "A",
-      "explicacao": "Os termos são 10, 8, 6, 4 e 2. A soma é 30.",
+      "explicacao": "Os termos sÃ£o 10, 8, 6, 4 e 2. A soma Ã© 30.",
       "ativa": true
     },
     {
       "perguntaId": "PG001",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 2 e a razão é 3. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 2 e a razÃ£o Ã© 3. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "54",
         "B": "81",
@@ -293,13 +293,13 @@
         "D": "243"
       },
       "correta": "C",
-      "explicacao": "an = a1 * q^(n - 1). Então a5 = 2 * 3^4 = 162.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a5 = 2 * 3^4 = 162.",
       "ativa": true
     },
     {
       "perguntaId": "PG002",
       "tipo": "PG",
-      "enunciado": "Na sequência 5, 10, 20, 40, qual é o próximo termo?",
+      "enunciado": "Na sequÃªncia 5, 10, 20, 40, qual Ã© o prÃ³ximo termo?",
       "alternativas": {
         "A": "60",
         "B": "70",
@@ -307,13 +307,13 @@
         "D": "90"
       },
       "correta": "C",
-      "explicacao": "A razão é 2. Depois de 40 vem 40 * 2 = 80.",
+      "explicacao": "A razÃ£o Ã© 2. Depois de 40 vem 40 * 2 = 80.",
       "ativa": true
     },
     {
       "perguntaId": "PG003",
       "tipo": "PG",
-      "enunciado": "Qual é a razão da PG 3, 12, 48, 192?",
+      "enunciado": "Qual Ã© a razÃ£o da PG 3, 12, 48, 192?",
       "alternativas": {
         "A": "3",
         "B": "4",
@@ -321,13 +321,13 @@
         "D": "6"
       },
       "correta": "B",
-      "explicacao": "A razão é obtida dividindo termos consecutivos: 12 / 3 = 4.",
+      "explicacao": "A razÃ£o Ã© obtida dividindo termos consecutivos: 12 / 3 = 4.",
       "ativa": true
     },
     {
       "perguntaId": "PG004",
       "tipo": "PG",
-      "enunciado": "Em uma PG com a1 = 81 e razão 1/3, qual é o 4º termo?",
+      "enunciado": "Em uma PG com a1 = 81 e razÃ£o 1/3, qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "1",
         "B": "2",
@@ -341,7 +341,7 @@
     {
       "perguntaId": "PG005",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 4 primeiros termos da PG com a1 = 2 e razão 2?",
+      "enunciado": "Qual Ã© a soma dos 4 primeiros termos da PG com a1 = 2 e razÃ£o 2?",
       "alternativas": {
         "A": "28",
         "B": "30",
@@ -349,18 +349,18 @@
         "D": "34"
       },
       "correta": "B",
-      "explicacao": "Os termos são 2, 4, 8 e 16. A soma é 30.",
+      "explicacao": "Os termos sÃ£o 2, 4, 8 e 16. A soma Ã© 30.",
       "ativa": true
     },
     {
       "perguntaId": "PG006",
       "tipo": "PG",
-      "enunciado": "Qual termo da PG 1, 3, 9, 27 e assim por diante é igual a 81?",
+      "enunciado": "Qual termo da PG 1, 3, 9, 27 e assim por diante Ã© igual a 81?",
       "alternativas": {
-        "A": "3º termo",
-        "B": "4º termo",
-        "C": "5º termo",
-        "D": "6º termo"
+        "A": "3Âº termo",
+        "B": "4Âº termo",
+        "C": "5Âº termo",
+        "D": "6Âº termo"
       },
       "correta": "C",
       "explicacao": "1 * 3^(n - 1) = 81 = 3^4. Assim, n = 5.",
@@ -369,7 +369,7 @@
     {
       "perguntaId": "PG007",
       "tipo": "PG",
-      "enunciado": "Em uma PG com a1 = 4 e razão 5, qual é o 3º termo?",
+      "enunciado": "Em uma PG com a1 = 4 e razÃ£o 5, qual Ã© o 3Âº termo?",
       "alternativas": {
         "A": "20",
         "B": "40",
@@ -383,7 +383,7 @@
     {
       "perguntaId": "PG008",
       "tipo": "PG",
-      "enunciado": "Na PG 64, 32, 16, 8, qual é a razão?",
+      "enunciado": "Na PG 64, 32, 16, 8, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "1/2",
         "B": "2",
@@ -391,13 +391,13 @@
         "D": "8"
       },
       "correta": "A",
-      "explicacao": "A razão é 32 / 64 = 1/2.",
+      "explicacao": "A razÃ£o Ã© 32 / 64 = 1/2.",
       "ativa": true
     },
     {
       "perguntaId": "PG009",
       "tipo": "PG",
-      "enunciado": "Em uma PG com a1 = 7 e razão 2, qual é o 6º termo?",
+      "enunciado": "Em uma PG com a1 = 7 e razÃ£o 2, qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "112",
         "B": "224",
@@ -411,7 +411,7 @@
     {
       "perguntaId": "PG010",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos termos 3, 6, 12, 24 e 48?",
+      "enunciado": "Qual Ã© a soma dos termos 3, 6, 12, 24 e 48?",
       "alternativas": {
         "A": "87",
         "B": "90",
@@ -425,7 +425,7 @@
     {
       "perguntaId": "PG011",
       "tipo": "PG",
-      "enunciado": "Os números 2, x e 18 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 2, x e 18 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "4",
         "B": "6",
@@ -433,13 +433,13 @@
         "D": "9"
       },
       "correta": "B",
-      "explicacao": "x² = 2 * 18 = 36. Como x é positivo, x = 6.",
+      "explicacao": "xÂ² = 2 * 18 = 36. Como x Ã© positivo, x = 6.",
       "ativa": true
     },
     {
       "perguntaId": "PG012",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a2 = 12 e a razão é 3. Qual é o primeiro termo?",
+      "enunciado": "Em uma PG, a2 = 12 e a razÃ£o Ã© 3. Qual Ã© o primeiro termo?",
       "alternativas": {
         "A": "4",
         "B": "6",
@@ -447,13 +447,13 @@
         "D": "15"
       },
       "correta": "A",
-      "explicacao": "a2 = a1 * q. Então 12 = a1 * 3 e a1 = 4.",
+      "explicacao": "a2 = a1 * q. EntÃ£o 12 = a1 * 3 e a1 = 4.",
       "ativa": true
     },
     {
       "perguntaId": "PG013",
       "tipo": "PG",
-      "enunciado": "Em uma PG com a1 = 5 e razão 3, qual é o 4º termo?",
+      "enunciado": "Em uma PG com a1 = 5 e razÃ£o 3, qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "45",
         "B": "75",
@@ -467,7 +467,7 @@
     {
       "perguntaId": "PG014",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a3 = 20 e a razão é 2. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, a3 = 20 e a razÃ£o Ã© 2. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "40",
         "B": "60",
@@ -475,13 +475,13 @@
         "D": "100"
       },
       "correta": "C",
-      "explicacao": "Do 3º ao 5º termo há dois avanços. a5 = 20 * 2^2 = 80.",
+      "explicacao": "Do 3Âº ao 5Âº termo hÃ¡ dois avanÃ§os. a5 = 20 * 2^2 = 80.",
       "ativa": true
     },
     {
       "perguntaId": "PG015",
       "tipo": "PG",
-      "enunciado": "Na PG 100, 10, 1, 0,1, qual é a razão?",
+      "enunciado": "Na PG 100, 10, 1, 0,1, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "0,01",
         "B": "0,1",
@@ -489,13 +489,13 @@
         "D": "10"
       },
       "correta": "B",
-      "explicacao": "A razão é 10 / 100 = 0,1.",
+      "explicacao": "A razÃ£o Ã© 10 / 100 = 0,1.",
       "ativa": true
     },
     {
       "perguntaId": "PG016",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 3 primeiros termos da PG com a1 = 4 e razão 3?",
+      "enunciado": "Qual Ã© a soma dos 3 primeiros termos da PG com a1 = 4 e razÃ£o 3?",
       "alternativas": {
         "A": "36",
         "B": "48",
@@ -503,13 +503,13 @@
         "D": "64"
       },
       "correta": "C",
-      "explicacao": "Os termos são 4, 12 e 36. A soma é 52.",
+      "explicacao": "Os termos sÃ£o 4, 12 e 36. A soma Ã© 52.",
       "ativa": true
     },
     {
       "perguntaId": "PG017",
       "tipo": "PG",
-      "enunciado": "Em uma PG com a1 = 1/2 e razão 2, qual é o 5º termo?",
+      "enunciado": "Em uma PG com a1 = 1/2 e razÃ£o 2, qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "4",
         "B": "8",
@@ -523,21 +523,21 @@
     {
       "perguntaId": "PG018",
       "tipo": "PG",
-      "enunciado": "Qual termo da PG 2, 6, 18 e assim por diante é igual a 486?",
+      "enunciado": "Qual termo da PG 2, 6, 18 e assim por diante Ã© igual a 486?",
       "alternativas": {
-        "A": "4º termo",
-        "B": "5º termo",
-        "C": "6º termo",
-        "D": "7º termo"
+        "A": "4Âº termo",
+        "B": "5Âº termo",
+        "C": "6Âº termo",
+        "D": "7Âº termo"
       },
       "correta": "C",
-      "explicacao": "2 * 3^(n - 1) = 486. Então 3^(n - 1) = 243 = 3^5 e n = 6.",
+      "explicacao": "2 * 3^(n - 1) = 486. EntÃ£o 3^(n - 1) = 243 = 3^5 e n = 6.",
       "ativa": true
     },
     {
       "perguntaId": "PG019",
       "tipo": "PG",
-      "enunciado": "Em uma PG com a1 = 9 e razão -2, qual é o 4º termo?",
+      "enunciado": "Em uma PG com a1 = 9 e razÃ£o -2, qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "-36",
         "B": "36",
@@ -551,7 +551,7 @@
     {
       "perguntaId": "PG020",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a4 = 54 e a razão é 3. Qual é o primeiro termo?",
+      "enunciado": "Em uma PG, a4 = 54 e a razÃ£o Ã© 3. Qual Ã© o primeiro termo?",
       "alternativas": {
         "A": "2",
         "B": "3",
@@ -559,13 +559,13 @@
         "D": "9"
       },
       "correta": "A",
-      "explicacao": "a4 = a1 * 3^3. Então 54 = 27a1 e a1 = 2.",
+      "explicacao": "a4 = a1 * 3^3. EntÃ£o 54 = 27a1 e a1 = 2.",
       "ativa": true
     },
     {
       "perguntaId": "PA021",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 6 e a razão é 4. Qual é o 9º termo?",
+      "enunciado": "Em uma PA, a1 = 6 e a razÃ£o Ã© 4. Qual Ã© o 9Âº termo?",
       "alternativas": {
         "A": "34",
         "B": "42",
@@ -573,13 +573,13 @@
         "D": "46"
       },
       "correta": "C",
-      "explicacao": "an = a1 + (n - 1)r. Então a9 = 6 + 8 * 4 = 38.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a9 = 6 + 8 * 4 = 38.",
       "ativa": true
     },
     {
       "perguntaId": "PA022",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 15 e a razão é -3. Qual é o 8º termo?",
+      "enunciado": "Em uma PA, a1 = 15 e a razÃ£o Ã© -3. Qual Ã© o 8Âº termo?",
       "alternativas": {
         "A": "-3",
         "B": "-9",
@@ -587,13 +587,13 @@
         "D": "-12"
       },
       "correta": "C",
-      "explicacao": "an = a1 + (n - 1)r. Então a8 = 15 + 7 * -3 = -6.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a8 = 15 + 7 * -3 = -6.",
       "ativa": true
     },
     {
       "perguntaId": "PA023",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 2 e a razão é 7. Qual é o 6º termo?",
+      "enunciado": "Em uma PA, a1 = 2 e a razÃ£o Ã© 7. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "30",
         "B": "37",
@@ -601,13 +601,13 @@
         "D": "51"
       },
       "correta": "B",
-      "explicacao": "an = a1 + (n - 1)r. Então a6 = 2 + 5 * 7 = 37.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a6 = 2 + 5 * 7 = 37.",
       "ativa": true
     },
     {
       "perguntaId": "PA024",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 11 e a razão é 5. Qual é o 10º termo?",
+      "enunciado": "Em uma PA, a1 = 11 e a razÃ£o Ã© 5. Qual Ã© o 10Âº termo?",
       "alternativas": {
         "A": "56",
         "B": "51",
@@ -615,13 +615,13 @@
         "D": "66"
       },
       "correta": "A",
-      "explicacao": "an = a1 + (n - 1)r. Então a10 = 11 + 9 * 5 = 56.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a10 = 11 + 9 * 5 = 56.",
       "ativa": true
     },
     {
       "perguntaId": "PA025",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 40 e a razão é -4. Qual é o 7º termo?",
+      "enunciado": "Em uma PA, a1 = 40 e a razÃ£o Ã© -4. Qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "16",
         "B": "20",
@@ -629,13 +629,13 @@
         "D": "8"
       },
       "correta": "A",
-      "explicacao": "an = a1 + (n - 1)r. Então a7 = 40 + 6 * -4 = 16.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a7 = 40 + 6 * -4 = 16.",
       "ativa": true
     },
     {
       "perguntaId": "PA026",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = -6 e a razão é 3. Qual é o 12º termo?",
+      "enunciado": "Em uma PA, a1 = -6 e a razÃ£o Ã© 3. Qual Ã© o 12Âº termo?",
       "alternativas": {
         "A": "24",
         "B": "30",
@@ -643,13 +643,13 @@
         "D": "27"
       },
       "correta": "D",
-      "explicacao": "an = a1 + (n - 1)r. Então a12 = -6 + 11 * 3 = 27.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a12 = -6 + 11 * 3 = 27.",
       "ativa": true
     },
     {
       "perguntaId": "PA027",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 18 e a razão é 2. Qual é o 11º termo?",
+      "enunciado": "Em uma PA, a1 = 18 e a razÃ£o Ã© 2. Qual Ã© o 11Âº termo?",
       "alternativas": {
         "A": "36",
         "B": "40",
@@ -657,13 +657,13 @@
         "D": "42"
       },
       "correta": "C",
-      "explicacao": "an = a1 + (n - 1)r. Então a11 = 18 + 10 * 2 = 38.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a11 = 18 + 10 * 2 = 38.",
       "ativa": true
     },
     {
       "perguntaId": "PA028",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 5 e a razão é -2. Qual é o 9º termo?",
+      "enunciado": "Em uma PA, a1 = 5 e a razÃ£o Ã© -2. Qual Ã© o 9Âº termo?",
       "alternativas": {
         "A": "-9",
         "B": "-13",
@@ -671,13 +671,13 @@
         "D": "-11"
       },
       "correta": "D",
-      "explicacao": "an = a1 + (n - 1)r. Então a9 = 5 + 8 * -2 = -11.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a9 = 5 + 8 * -2 = -11.",
       "ativa": true
     },
     {
       "perguntaId": "PA029",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 9 e a razão é 6. Qual é o 7º termo?",
+      "enunciado": "Em uma PA, a1 = 9 e a razÃ£o Ã© 6. Qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "39",
         "B": "45",
@@ -685,13 +685,13 @@
         "D": "57"
       },
       "correta": "B",
-      "explicacao": "an = a1 + (n - 1)r. Então a7 = 9 + 6 * 6 = 45.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a7 = 9 + 6 * 6 = 45.",
       "ativa": true
     },
     {
       "perguntaId": "PA030",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 32 e a razão é -5. Qual é o 6º termo?",
+      "enunciado": "Em uma PA, a1 = 32 e a razÃ£o Ã© -5. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "12",
         "B": "2",
@@ -699,13 +699,13 @@
         "D": "7"
       },
       "correta": "D",
-      "explicacao": "an = a1 + (n - 1)r. Então a6 = 32 + 5 * -5 = 7.",
+      "explicacao": "an = a1 + (n - 1)r. EntÃ£o a6 = 32 + 5 * -5 = 7.",
       "ativa": true
     },
     {
       "perguntaId": "PA031",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 8 primeiros termos de uma PA com a1 = 3 e razão 2?",
+      "enunciado": "Qual Ã© a soma dos 8 primeiros termos de uma PA com a1 = 3 e razÃ£o 2?",
       "alternativas": {
         "A": "80",
         "B": "72",
@@ -719,7 +719,7 @@
     {
       "perguntaId": "PA032",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 6 primeiros termos de uma PA com a1 = 7 e razão 5?",
+      "enunciado": "Qual Ã© a soma dos 6 primeiros termos de uma PA com a1 = 7 e razÃ£o 5?",
       "alternativas": {
         "A": "111",
         "B": "117",
@@ -733,7 +733,7 @@
     {
       "perguntaId": "PA033",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 10 primeiros termos de uma PA com a1 = 10 e razão -1?",
+      "enunciado": "Qual Ã© a soma dos 10 primeiros termos de uma PA com a1 = 10 e razÃ£o -1?",
       "alternativas": {
         "A": "45",
         "B": "65",
@@ -747,7 +747,7 @@
     {
       "perguntaId": "PA034",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 9 primeiros termos de uma PA com a1 = 4 e razão 4?",
+      "enunciado": "Qual Ã© a soma dos 9 primeiros termos de uma PA com a1 = 4 e razÃ£o 4?",
       "alternativas": {
         "A": "180",
         "B": "171",
@@ -761,7 +761,7 @@
     {
       "perguntaId": "PA035",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 7 primeiros termos de uma PA com a1 = 12 e razão 3?",
+      "enunciado": "Qual Ã© a soma dos 7 primeiros termos de uma PA com a1 = 12 e razÃ£o 3?",
       "alternativas": {
         "A": "140",
         "B": "154",
@@ -775,7 +775,7 @@
     {
       "perguntaId": "PA036",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 8 primeiros termos de uma PA com a1 = 20 e razão -2?",
+      "enunciado": "Qual Ã© a soma dos 8 primeiros termos de uma PA com a1 = 20 e razÃ£o -2?",
       "alternativas": {
         "A": "104",
         "B": "96",
@@ -789,7 +789,7 @@
     {
       "perguntaId": "PA037",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 5 primeiros termos de uma PA com a1 = 1 e razão 6?",
+      "enunciado": "Qual Ã© a soma dos 5 primeiros termos de uma PA com a1 = 1 e razÃ£o 6?",
       "alternativas": {
         "A": "60",
         "B": "65",
@@ -803,7 +803,7 @@
     {
       "perguntaId": "PA038",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 12 primeiros termos de uma PA com a1 = 8 e razão 2?",
+      "enunciado": "Qual Ã© a soma dos 12 primeiros termos de uma PA com a1 = 8 e razÃ£o 2?",
       "alternativas": {
         "A": "228",
         "B": "216",
@@ -817,7 +817,7 @@
     {
       "perguntaId": "PA039",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 9 primeiros termos de uma PA com a1 = -3 e razão 5?",
+      "enunciado": "Qual Ã© a soma dos 9 primeiros termos de uma PA com a1 = -3 e razÃ£o 5?",
       "alternativas": {
         "A": "144",
         "B": "153",
@@ -831,7 +831,7 @@
     {
       "perguntaId": "PA040",
       "tipo": "PA",
-      "enunciado": "Qual é a soma dos 6 primeiros termos de uma PA com a1 = 15 e razão -3?",
+      "enunciado": "Qual Ã© a soma dos 6 primeiros termos de uma PA com a1 = 15 e razÃ£o -3?",
       "alternativas": {
         "A": "39",
         "B": "45",
@@ -845,7 +845,7 @@
     {
       "perguntaId": "PA041",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 4 e a7 = 28. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 4 e a7 = 28. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "2",
@@ -859,7 +859,7 @@
     {
       "perguntaId": "PA042",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 30 e a9 = 6. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 30 e a9 = 6. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "-5",
         "B": "-4",
@@ -873,7 +873,7 @@
     {
       "perguntaId": "PA043",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = -5 e a10 = 31. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = -5 e a10 = 31. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "2",
@@ -887,7 +887,7 @@
     {
       "perguntaId": "PA044",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 12 e a6 = 42. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 12 e a6 = 42. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -901,7 +901,7 @@
     {
       "perguntaId": "PA045",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 50 e a7 = 14. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 50 e a7 = 14. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "-8",
         "B": "-7",
@@ -915,7 +915,7 @@
     {
       "perguntaId": "PA046",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 3 e a8 = 45. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 3 e a8 = 45. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -929,7 +929,7 @@
     {
       "perguntaId": "PA047",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 22 e a9 = -2. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 22 e a9 = -2. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "-5",
         "B": "-4",
@@ -943,7 +943,7 @@
     {
       "perguntaId": "PA048",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 9 e a11 = 69. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 9 e a11 = 69. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -957,7 +957,7 @@
     {
       "perguntaId": "PA049",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = -8 e a5 = 16. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = -8 e a5 = 16. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -971,7 +971,7 @@
     {
       "perguntaId": "PA050",
       "tipo": "PA",
-      "enunciado": "Em uma PA, a1 = 14 e a10 = 41. Qual é a razão?",
+      "enunciado": "Em uma PA, a1 = 14 e a10 = 41. Qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "1",
         "B": "2",
@@ -985,7 +985,7 @@
     {
       "perguntaId": "PG021",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 3 e a razão é 2. Qual é o 6º termo?",
+      "enunciado": "Em uma PG, a1 = 3 e a razÃ£o Ã© 2. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "96",
         "B": "48",
@@ -993,13 +993,13 @@
         "D": "98"
       },
       "correta": "A",
-      "explicacao": "an = a1 * q^(n - 1). Então a6 = 3 * 2^5 = 96.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a6 = 3 * 2^5 = 96.",
       "ativa": true
     },
     {
       "perguntaId": "PG022",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 5 e a razão é 3. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, a1 = 5 e a razÃ£o Ã© 3. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "135",
         "B": "405",
@@ -1007,13 +1007,13 @@
         "D": "408"
       },
       "correta": "B",
-      "explicacao": "an = a1 * q^(n - 1). Então a5 = 5 * 3^4 = 405.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a5 = 5 * 3^4 = 405.",
       "ativa": true
     },
     {
       "perguntaId": "PG023",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 64 e a razão é 0,5. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, a1 = 64 e a razÃ£o Ã© 0,5. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "4",
         "B": "8",
@@ -1021,13 +1021,13 @@
         "D": "4,5"
       },
       "correta": "A",
-      "explicacao": "an = a1 * q^(n - 1). Então a5 = 64 * 0,5^4 = 4.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a5 = 64 * 0,5^4 = 4.",
       "ativa": true
     },
     {
       "perguntaId": "PG024",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 7 e a razão é 2. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, a1 = 7 e a razÃ£o Ã© 2. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "56",
         "B": "28",
@@ -1035,13 +1035,13 @@
         "D": "58"
       },
       "correta": "A",
-      "explicacao": "an = a1 * q^(n - 1). Então a4 = 7 * 2^3 = 56.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a4 = 7 * 2^3 = 56.",
       "ativa": true
     },
     {
       "perguntaId": "PG025",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 4 e a razão é 4. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, a1 = 4 e a razÃ£o Ã© 4. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "256",
         "B": "64",
@@ -1049,13 +1049,13 @@
         "D": "260"
       },
       "correta": "A",
-      "explicacao": "an = a1 * q^(n - 1). Então a4 = 4 * 4^3 = 256.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a4 = 4 * 4^3 = 256.",
       "ativa": true
     },
     {
       "perguntaId": "PG026",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 81 e a razão é 0,333. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, a1 = 81 e a razÃ£o Ã© 0,333. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "9",
         "B": "1",
@@ -1063,13 +1063,13 @@
         "D": "3"
       },
       "correta": "D",
-      "explicacao": "an = a1 * q^(n - 1). Então a4 = 81 * 0,333^3 = 3.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a4 = 81 * 0,333^3 = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PG027",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 2 e a razão é 5. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, a1 = 2 e a razÃ£o Ã© 5. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "50",
         "B": "1250",
@@ -1077,13 +1077,13 @@
         "D": "255"
       },
       "correta": "C",
-      "explicacao": "an = a1 * q^(n - 1). Então a4 = 2 * 5^3 = 250.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a4 = 2 * 5^3 = 250.",
       "ativa": true
     },
     {
       "perguntaId": "PG028",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 9 e a razão é -2. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, a1 = 9 e a razÃ£o Ã© -2. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "144",
         "B": "-72",
@@ -1091,13 +1091,13 @@
         "D": "142"
       },
       "correta": "A",
-      "explicacao": "an = a1 * q^(n - 1). Então a5 = 9 * -2^4 = 144.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a5 = 9 * -2^4 = 144.",
       "ativa": true
     },
     {
       "perguntaId": "PG029",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 1 e a razão é 3. Qual é o 7º termo?",
+      "enunciado": "Em uma PG, a1 = 1 e a razÃ£o Ã© 3. Qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "243",
         "B": "729",
@@ -1105,13 +1105,13 @@
         "D": "732"
       },
       "correta": "B",
-      "explicacao": "an = a1 * q^(n - 1). Então a7 = 1 * 3^6 = 729.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a7 = 1 * 3^6 = 729.",
       "ativa": true
     },
     {
       "perguntaId": "PG030",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 48 e a razão é 0,5. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, a1 = 48 e a razÃ£o Ã© 0,5. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "12",
         "B": "3",
@@ -1119,13 +1119,13 @@
         "D": "6,5"
       },
       "correta": "C",
-      "explicacao": "an = a1 * q^(n - 1). Então a4 = 48 * 0,5^3 = 6.",
+      "explicacao": "an = a1 * q^(n - 1). EntÃ£o a4 = 48 * 0,5^3 = 6.",
       "ativa": true
     },
     {
       "perguntaId": "PG031",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 5 primeiros termos da PG 2, 4, 8, 16, 32?",
+      "enunciado": "Qual Ã© a soma dos 5 primeiros termos da PG 2, 4, 8, 16, 32?",
       "alternativas": {
         "A": "60",
         "B": "64",
@@ -1139,7 +1139,7 @@
     {
       "perguntaId": "PG032",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 4 primeiros termos da PG 3, 9, 27, 81?",
+      "enunciado": "Qual Ã© a soma dos 4 primeiros termos da PG 3, 9, 27, 81?",
       "alternativas": {
         "A": "120",
         "B": "117",
@@ -1153,7 +1153,7 @@
     {
       "perguntaId": "PG033",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 4 primeiros termos da PG 5, 10, 20, 40?",
+      "enunciado": "Qual Ã© a soma dos 4 primeiros termos da PG 5, 10, 20, 40?",
       "alternativas": {
         "A": "70",
         "B": "80",
@@ -1167,7 +1167,7 @@
     {
       "perguntaId": "PG034",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 3 primeiros termos da PG 4, 12, 36?",
+      "enunciado": "Qual Ã© a soma dos 3 primeiros termos da PG 4, 12, 36?",
       "alternativas": {
         "A": "52",
         "B": "48",
@@ -1181,7 +1181,7 @@
     {
       "perguntaId": "PG035",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 4 primeiros termos da PG 1, 4, 16, 64?",
+      "enunciado": "Qual Ã© a soma dos 4 primeiros termos da PG 1, 4, 16, 64?",
       "alternativas": {
         "A": "84",
         "B": "85",
@@ -1195,7 +1195,7 @@
     {
       "perguntaId": "PG036",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 5 primeiros termos da PG 6, 12, 24, 48, 96?",
+      "enunciado": "Qual Ã© a soma dos 5 primeiros termos da PG 6, 12, 24, 48, 96?",
       "alternativas": {
         "A": "180",
         "B": "192",
@@ -1209,7 +1209,7 @@
     {
       "perguntaId": "PG037",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 4 primeiros termos da PG 8, 4, 2, 1?",
+      "enunciado": "Qual Ã© a soma dos 4 primeiros termos da PG 8, 4, 2, 1?",
       "alternativas": {
         "A": "7",
         "B": "23",
@@ -1223,7 +1223,7 @@
     {
       "perguntaId": "PG038",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 3 primeiros termos da PG 7, 14, 28?",
+      "enunciado": "Qual Ã© a soma dos 3 primeiros termos da PG 7, 14, 28?",
       "alternativas": {
         "A": "42",
         "B": "49",
@@ -1237,7 +1237,7 @@
     {
       "perguntaId": "PG039",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 3 primeiros termos da PG 2, 10, 50?",
+      "enunciado": "Qual Ã© a soma dos 3 primeiros termos da PG 2, 10, 50?",
       "alternativas": {
         "A": "60",
         "B": "64",
@@ -1251,7 +1251,7 @@
     {
       "perguntaId": "PG040",
       "tipo": "PG",
-      "enunciado": "Qual é a soma dos 4 primeiros termos da PG 10, 5, 2,5, 1,25?",
+      "enunciado": "Qual Ã© a soma dos 4 primeiros termos da PG 10, 5, 2,5, 1,25?",
       "alternativas": {
         "A": "8,75",
         "B": "28,75",
@@ -1265,7 +1265,7 @@
     {
       "perguntaId": "PG041",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 3 e a5 = 48. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 3 e a5 = 48. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "1",
         "B": "3",
@@ -1273,13 +1273,13 @@
         "D": "4"
       },
       "correta": "C",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^4 = 48 / 3, logo q = 2.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^4 = 48 / 3, logo q = 2.",
       "ativa": true
     },
     {
       "perguntaId": "PG042",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 2 e a5 = 162. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 2 e a5 = 162. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "2",
         "B": "4",
@@ -1287,13 +1287,13 @@
         "D": "3"
       },
       "correta": "D",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^4 = 162 / 2, logo q = 3.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^4 = 162 / 2, logo q = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PG043",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 5 e a4 = 625. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 5 e a4 = 625. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -1301,13 +1301,13 @@
         "D": "10"
       },
       "correta": "B",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^3 = 625 / 5, logo q = 5.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^3 = 625 / 5, logo q = 5.",
       "ativa": true
     },
     {
       "perguntaId": "PG044",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 64 e a4 = 8. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 64 e a4 = 8. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "-0,5",
         "B": "0,5",
@@ -1315,13 +1315,13 @@
         "D": "1"
       },
       "correta": "B",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^3 = 8 / 64, logo q = 0,5.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^3 = 8 / 64, logo q = 0,5.",
       "ativa": true
     },
     {
       "perguntaId": "PG045",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 7 e a7 = 448. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 7 e a7 = 448. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "1",
         "B": "3",
@@ -1329,13 +1329,13 @@
         "D": "4"
       },
       "correta": "C",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^6 = 448 / 7, logo q = 2.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^6 = 448 / 7, logo q = 2.",
       "ativa": true
     },
     {
       "perguntaId": "PG046",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 9 e a5 = 729. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 9 e a5 = 729. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "2",
         "B": "4",
@@ -1343,13 +1343,13 @@
         "D": "3"
       },
       "correta": "D",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^4 = 729 / 9, logo q = 3.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^4 = 729 / 9, logo q = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PG047",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 4 e a5 = 324. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 4 e a5 = 324. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "2",
         "B": "4",
@@ -1357,13 +1357,13 @@
         "D": "3"
       },
       "correta": "D",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^4 = 324 / 4, logo q = 3.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^4 = 324 / 4, logo q = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PG048",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 10 e a4 = 80. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 10 e a4 = 80. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "1",
         "B": "3",
@@ -1371,13 +1371,13 @@
         "D": "4"
       },
       "correta": "C",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^3 = 80 / 10, logo q = 2.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^3 = 80 / 10, logo q = 2.",
       "ativa": true
     },
     {
       "perguntaId": "PG049",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 6 e a5 = 486. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 6 e a5 = 486. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "2",
         "B": "4",
@@ -1385,13 +1385,13 @@
         "D": "3"
       },
       "correta": "D",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^4 = 486 / 6, logo q = 3.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^4 = 486 / 6, logo q = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PG050",
       "tipo": "PG",
-      "enunciado": "Em uma PG, a1 = 81 e a4 = 3. Considerando razão positiva, qual é a razão?",
+      "enunciado": "Em uma PG, a1 = 81 e a4 = 3. Considerando razÃ£o positiva, qual Ã© a razÃ£o?",
       "alternativas": {
         "A": "0,333",
         "B": "-0,667",
@@ -1399,13 +1399,13 @@
         "D": "0,667"
       },
       "correta": "A",
-      "explicacao": "Usamos an = a1 * q^(n - 1). Então q^3 = 3 / 81, logo q = 0,333.",
+      "explicacao": "Usamos an = a1 * q^(n - 1). EntÃ£o q^3 = 3 / 81, logo q = 0,333.",
       "ativa": true
     },
     {
       "perguntaId": "PA051",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 13 e varia de 4 em 4. Qual é o 12º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 13 e varia de 4 em 4. Qual Ã© o 12Âº termo?",
       "alternativas": {
         "A": "53",
         "B": "57",
@@ -1419,7 +1419,7 @@
     {
       "perguntaId": "PA052",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 25 e varia de -2 em -2. Qual é o 14º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 25 e varia de -2 em -2. Qual Ã© o 14Âº termo?",
       "alternativas": {
         "A": "1",
         "B": "-1",
@@ -1433,7 +1433,7 @@
     {
       "perguntaId": "PA053",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em -10 e varia de 5 em 5. Qual é o 11º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em -10 e varia de 5 em 5. Qual Ã© o 11Âº termo?",
       "alternativas": {
         "A": "40",
         "B": "35",
@@ -1447,7 +1447,7 @@
     {
       "perguntaId": "PA054",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 6 e varia de 8 em 8. Qual é o 9º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 6 e varia de 8 em 8. Qual Ã© o 9Âº termo?",
       "alternativas": {
         "A": "62",
         "B": "78",
@@ -1461,7 +1461,7 @@
     {
       "perguntaId": "PA055",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 48 e varia de -6 em -6. Qual é o 8º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 48 e varia de -6 em -6. Qual Ã© o 8Âº termo?",
       "alternativas": {
         "A": "12",
         "B": "0",
@@ -1475,7 +1475,7 @@
     {
       "perguntaId": "PA056",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 1 e varia de 9 em 9. Qual é o 7º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 1 e varia de 9 em 9. Qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "46",
         "B": "64",
@@ -1489,7 +1489,7 @@
     {
       "perguntaId": "PA057",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 17 e varia de 3 em 3. Qual é o 15º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 17 e varia de 3 em 3. Qual Ã© o 15Âº termo?",
       "alternativas": {
         "A": "56",
         "B": "62",
@@ -1503,7 +1503,7 @@
     {
       "perguntaId": "PA058",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 60 e varia de -5 em -5. Qual é o 10º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 60 e varia de -5 em -5. Qual Ã© o 10Âº termo?",
       "alternativas": {
         "A": "20",
         "B": "10",
@@ -1517,7 +1517,7 @@
     {
       "perguntaId": "PA059",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em -4 e varia de 7 em 7. Qual é o 13º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em -4 e varia de 7 em 7. Qual Ã© o 13Âº termo?",
       "alternativas": {
         "A": "80",
         "B": "73",
@@ -1531,7 +1531,7 @@
     {
       "perguntaId": "PA060",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 21 e varia de -4 em -4. Qual é o 6º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 21 e varia de -4 em -4. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "5",
         "B": "1",
@@ -1545,7 +1545,7 @@
     {
       "perguntaId": "PA061",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 30 e varia de 2 em 2. Qual é o 16º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 30 e varia de 2 em 2. Qual Ã© o 16Âº termo?",
       "alternativas": {
         "A": "60",
         "B": "58",
@@ -1559,7 +1559,7 @@
     {
       "perguntaId": "PA062",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em -12 e varia de 6 em 6. Qual é o 8º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em -12 e varia de 6 em 6. Qual Ã© o 8Âº termo?",
       "alternativas": {
         "A": "24",
         "B": "36",
@@ -1573,7 +1573,7 @@
     {
       "perguntaId": "PA063",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 5 e varia de 11 em 11. Qual é o 5º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 5 e varia de 11 em 11. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "38",
         "B": "49",
@@ -1587,7 +1587,7 @@
     {
       "perguntaId": "PA064",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 100 e varia de -9 em -9. Qual é o 9º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 100 e varia de -9 em -9. Qual Ã© o 9Âº termo?",
       "alternativas": {
         "A": "28",
         "B": "37",
@@ -1601,7 +1601,7 @@
     {
       "perguntaId": "PA065",
       "tipo": "PA",
-      "enunciado": "Uma sequência em PA começa em 2 e varia de -3 em -3. Qual é o 12º termo?",
+      "enunciado": "Uma sequÃªncia em PA comeÃ§a em 2 e varia de -3 em -3. Qual Ã© o 12Âº termo?",
       "alternativas": {
         "A": "-28",
         "B": "-34",
@@ -1615,7 +1615,7 @@
     {
       "perguntaId": "PA066",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 4 e razão 3, qual é a posição do termo 31?",
+      "enunciado": "Na PA em que a1 = 4 e razÃ£o 3, qual Ã© a posiÃ§Ã£o do termo 31?",
       "alternativas": {
         "A": "9",
         "B": "11",
@@ -1629,7 +1629,7 @@
     {
       "perguntaId": "PA067",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 10 e razão 5, qual é a posição do termo 55?",
+      "enunciado": "Na PA em que a1 = 10 e razÃ£o 5, qual Ã© a posiÃ§Ã£o do termo 55?",
       "alternativas": {
         "A": "9",
         "B": "11",
@@ -1643,7 +1643,7 @@
     {
       "perguntaId": "PA068",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 40 e razão -4, qual é a posição do termo 8?",
+      "enunciado": "Na PA em que a1 = 40 e razÃ£o -4, qual Ã© a posiÃ§Ã£o do termo 8?",
       "alternativas": {
         "A": "8",
         "B": "9",
@@ -1657,7 +1657,7 @@
     {
       "perguntaId": "PA069",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = -2 e razão 6, qual é a posição do termo 52?",
+      "enunciado": "Na PA em que a1 = -2 e razÃ£o 6, qual Ã© a posiÃ§Ã£o do termo 52?",
       "alternativas": {
         "A": "9",
         "B": "11",
@@ -1671,7 +1671,7 @@
     {
       "perguntaId": "PA070",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 7 e razão 7, qual é a posição do termo 70?",
+      "enunciado": "Na PA em que a1 = 7 e razÃ£o 7, qual Ã© a posiÃ§Ã£o do termo 70?",
       "alternativas": {
         "A": "9",
         "B": "11",
@@ -1685,7 +1685,7 @@
     {
       "perguntaId": "PA071",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 25 e razão -3, qual é a posição do termo -2?",
+      "enunciado": "Na PA em que a1 = 25 e razÃ£o -3, qual Ã© a posiÃ§Ã£o do termo -2?",
       "alternativas": {
         "A": "9",
         "B": "11",
@@ -1699,7 +1699,7 @@
     {
       "perguntaId": "PA072",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 1 e razão 8, qual é a posição do termo 65?",
+      "enunciado": "Na PA em que a1 = 1 e razÃ£o 8, qual Ã© a posiÃ§Ã£o do termo 65?",
       "alternativas": {
         "A": "8",
         "B": "9",
@@ -1713,7 +1713,7 @@
     {
       "perguntaId": "PA073",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 18 e razão 2, qual é a posição do termo 44?",
+      "enunciado": "Na PA em que a1 = 18 e razÃ£o 2, qual Ã© a posiÃ§Ã£o do termo 44?",
       "alternativas": {
         "A": "13",
         "B": "15",
@@ -1727,7 +1727,7 @@
     {
       "perguntaId": "PA074",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = -9 e razão 5, qual é a posição do termo 36?",
+      "enunciado": "Na PA em que a1 = -9 e razÃ£o 5, qual Ã© a posiÃ§Ã£o do termo 36?",
       "alternativas": {
         "A": "9",
         "B": "11",
@@ -1741,7 +1741,7 @@
     {
       "perguntaId": "PA075",
       "tipo": "PA",
-      "enunciado": "Na PA em que a1 = 100 e razão -10, qual é a posição do termo 20?",
+      "enunciado": "Na PA em que a1 = 100 e razÃ£o -10, qual Ã© a posiÃ§Ã£o do termo 20?",
       "alternativas": {
         "A": "8",
         "B": "9",
@@ -1755,7 +1755,7 @@
     {
       "perguntaId": "PA076",
       "tipo": "PA",
-      "enunciado": "Os números 8, x e 26 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 8, x e 26 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "15",
         "B": "17",
@@ -1763,13 +1763,13 @@
         "D": "21"
       },
       "correta": "B",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (8 + 26) / 2 = 17.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (8 + 26) / 2 = 17.",
       "ativa": true
     },
     {
       "perguntaId": "PA077",
       "tipo": "PA",
-      "enunciado": "Os números -4, x e 20 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros -4, x e 20 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "8",
         "B": "6",
@@ -1777,13 +1777,13 @@
         "D": "12"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (-4 + 20) / 2 = 8.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (-4 + 20) / 2 = 8.",
       "ativa": true
     },
     {
       "perguntaId": "PA078",
       "tipo": "PA",
-      "enunciado": "Os números 15, x e 45 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 15, x e 45 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "28",
         "B": "32",
@@ -1791,13 +1791,13 @@
         "D": "34"
       },
       "correta": "C",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (15 + 45) / 2 = 30.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (15 + 45) / 2 = 30.",
       "ativa": true
     },
     {
       "perguntaId": "PA079",
       "tipo": "PA",
-      "enunciado": "Os números 2, x e 38 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 2, x e 38 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "20",
         "B": "18",
@@ -1805,13 +1805,13 @@
         "D": "24"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (2 + 38) / 2 = 20.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (2 + 38) / 2 = 20.",
       "ativa": true
     },
     {
       "perguntaId": "PA080",
       "tipo": "PA",
-      "enunciado": "Os números 30, x e 6 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 30, x e 6 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "16",
         "B": "20",
@@ -1819,13 +1819,13 @@
         "D": "22"
       },
       "correta": "C",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (30 + 6) / 2 = 18.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (30 + 6) / 2 = 18.",
       "ativa": true
     },
     {
       "perguntaId": "PA081",
       "tipo": "PA",
-      "enunciado": "Os números -12, x e 18 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros -12, x e 18 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "1",
         "B": "5",
@@ -1833,13 +1833,13 @@
         "D": "3"
       },
       "correta": "D",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (-12 + 18) / 2 = 3.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (-12 + 18) / 2 = 3.",
       "ativa": true
     },
     {
       "perguntaId": "PA082",
       "tipo": "PA",
-      "enunciado": "Os números 40, x e 100 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 40, x e 100 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "68",
         "B": "72",
@@ -1847,13 +1847,13 @@
         "D": "74"
       },
       "correta": "C",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (40 + 100) / 2 = 70.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (40 + 100) / 2 = 70.",
       "ativa": true
     },
     {
       "perguntaId": "PA083",
       "tipo": "PA",
-      "enunciado": "Os números 5, x e 29 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 5, x e 29 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "15",
         "B": "17",
@@ -1861,13 +1861,13 @@
         "D": "21"
       },
       "correta": "B",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (5 + 29) / 2 = 17.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (5 + 29) / 2 = 17.",
       "ativa": true
     },
     {
       "perguntaId": "PA084",
       "tipo": "PA",
-      "enunciado": "Os números 11, x e 71 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 11, x e 71 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "39",
         "B": "41",
@@ -1875,13 +1875,13 @@
         "D": "45"
       },
       "correta": "B",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (11 + 71) / 2 = 41.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (11 + 71) / 2 = 41.",
       "ativa": true
     },
     {
       "perguntaId": "PA085",
       "tipo": "PA",
-      "enunciado": "Os números -20, x e 10 estão em PA. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros -20, x e 10 estÃ£o em PA. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "-7",
         "B": "-5",
@@ -1889,13 +1889,13 @@
         "D": "-1"
       },
       "correta": "B",
-      "explicacao": "Em três termos de uma PA, o termo central é a média dos extremos: x = (-20 + 10) / 2 = -5.",
+      "explicacao": "Em trÃªs termos de uma PA, o termo central Ã© a mÃ©dia dos extremos: x = (-20 + 10) / 2 = -5.",
       "ativa": true
     },
     {
       "perguntaId": "PA086",
       "tipo": "PA",
-      "enunciado": "Calcule S15 de uma PA com primeiro termo 2 e razão 3.",
+      "enunciado": "Calcule S15 de uma PA com primeiro termo 2 e razÃ£o 3.",
       "alternativas": {
         "A": "330",
         "B": "345",
@@ -1903,13 +1903,13 @@
         "D": "390"
       },
       "correta": "B",
-      "explicacao": "O termo a15 é 44. Portanto S15 = 15 * (2 + 44) / 2 = 345.",
+      "explicacao": "O termo a15 Ã© 44. Portanto S15 = 15 * (2 + 44) / 2 = 345.",
       "ativa": true
     },
     {
       "perguntaId": "PA087",
       "tipo": "PA",
-      "enunciado": "Calcule S12 de uma PA com primeiro termo 6 e razão 4.",
+      "enunciado": "Calcule S12 de uma PA com primeiro termo 6 e razÃ£o 4.",
       "alternativas": {
         "A": "336",
         "B": "324",
@@ -1917,13 +1917,13 @@
         "D": "372"
       },
       "correta": "A",
-      "explicacao": "O termo a12 é 50. Portanto S12 = 12 * (6 + 50) / 2 = 336.",
+      "explicacao": "O termo a12 Ã© 50. Portanto S12 = 12 * (6 + 50) / 2 = 336.",
       "ativa": true
     },
     {
       "perguntaId": "PA088",
       "tipo": "PA",
-      "enunciado": "Calcule S18 de uma PA com primeiro termo 50 e razão -2.",
+      "enunciado": "Calcule S18 de uma PA com primeiro termo 50 e razÃ£o -2.",
       "alternativas": {
         "A": "576",
         "B": "612",
@@ -1931,13 +1931,13 @@
         "D": "648"
       },
       "correta": "C",
-      "explicacao": "O termo a18 é 16. Portanto S18 = 18 * (50 + 16) / 2 = 594.",
+      "explicacao": "O termo a18 Ã© 16. Portanto S18 = 18 * (50 + 16) / 2 = 594.",
       "ativa": true
     },
     {
       "perguntaId": "PA089",
       "tipo": "PA",
-      "enunciado": "Calcule S14 de uma PA com primeiro termo -5 e razão 5.",
+      "enunciado": "Calcule S14 de uma PA com primeiro termo -5 e razÃ£o 5.",
       "alternativas": {
         "A": "371",
         "B": "385",
@@ -1945,13 +1945,13 @@
         "D": "427"
       },
       "correta": "B",
-      "explicacao": "O termo a14 é 60. Portanto S14 = 14 * (-5 + 60) / 2 = 385.",
+      "explicacao": "O termo a14 Ã© 60. Portanto S14 = 14 * (-5 + 60) / 2 = 385.",
       "ativa": true
     },
     {
       "perguntaId": "PA090",
       "tipo": "PA",
-      "enunciado": "Calcule S10 de uma PA com primeiro termo 9 e razão 7.",
+      "enunciado": "Calcule S10 de uma PA com primeiro termo 9 e razÃ£o 7.",
       "alternativas": {
         "A": "395",
         "B": "405",
@@ -1959,13 +1959,13 @@
         "D": "435"
       },
       "correta": "B",
-      "explicacao": "O termo a10 é 72. Portanto S10 = 10 * (9 + 72) / 2 = 405.",
+      "explicacao": "O termo a10 Ã© 72. Portanto S10 = 10 * (9 + 72) / 2 = 405.",
       "ativa": true
     },
     {
       "perguntaId": "PA091",
       "tipo": "PA",
-      "enunciado": "Calcule S20 de uma PA com primeiro termo 20 e razão -1.",
+      "enunciado": "Calcule S20 de uma PA com primeiro termo 20 e razÃ£o -1.",
       "alternativas": {
         "A": "190",
         "B": "230",
@@ -1973,13 +1973,13 @@
         "D": "270"
       },
       "correta": "C",
-      "explicacao": "O termo a20 é 1. Portanto S20 = 20 * (20 + 1) / 2 = 210.",
+      "explicacao": "O termo a20 Ã© 1. Portanto S20 = 20 * (20 + 1) / 2 = 210.",
       "ativa": true
     },
     {
       "perguntaId": "PA092",
       "tipo": "PA",
-      "enunciado": "Calcule S11 de uma PA com primeiro termo 3 e razão 6.",
+      "enunciado": "Calcule S11 de uma PA com primeiro termo 3 e razÃ£o 6.",
       "alternativas": {
         "A": "352",
         "B": "374",
@@ -1987,13 +1987,13 @@
         "D": "363"
       },
       "correta": "D",
-      "explicacao": "O termo a11 é 63. Portanto S11 = 11 * (3 + 63) / 2 = 363.",
+      "explicacao": "O termo a11 Ã© 63. Portanto S11 = 11 * (3 + 63) / 2 = 363.",
       "ativa": true
     },
     {
       "perguntaId": "PA093",
       "tipo": "PA",
-      "enunciado": "Calcule S9 de uma PA com primeiro termo 100 e razão -8.",
+      "enunciado": "Calcule S9 de uma PA com primeiro termo 100 e razÃ£o -8.",
       "alternativas": {
         "A": "612",
         "B": "603",
@@ -2001,13 +2001,13 @@
         "D": "639"
       },
       "correta": "A",
-      "explicacao": "O termo a9 é 36. Portanto S9 = 9 * (100 + 36) / 2 = 612.",
+      "explicacao": "O termo a9 Ã© 36. Portanto S9 = 9 * (100 + 36) / 2 = 612.",
       "ativa": true
     },
     {
       "perguntaId": "PA094",
       "tipo": "PA",
-      "enunciado": "Calcule S25 de uma PA com primeiro termo 12 e razão 2.",
+      "enunciado": "Calcule S25 de uma PA com primeiro termo 12 e razÃ£o 2.",
       "alternativas": {
         "A": "900",
         "B": "875",
@@ -2015,13 +2015,13 @@
         "D": "975"
       },
       "correta": "A",
-      "explicacao": "O termo a25 é 60. Portanto S25 = 25 * (12 + 60) / 2 = 900.",
+      "explicacao": "O termo a25 Ã© 60. Portanto S25 = 25 * (12 + 60) / 2 = 900.",
       "ativa": true
     },
     {
       "perguntaId": "PA095",
       "tipo": "PA",
-      "enunciado": "Calcule S16 de uma PA com primeiro termo 1 e razão 4.",
+      "enunciado": "Calcule S16 de uma PA com primeiro termo 1 e razÃ£o 4.",
       "alternativas": {
         "A": "496",
         "B": "480",
@@ -2029,13 +2029,13 @@
         "D": "544"
       },
       "correta": "A",
-      "explicacao": "O termo a16 é 61. Portanto S16 = 16 * (1 + 61) / 2 = 496.",
+      "explicacao": "O termo a16 Ã© 61. Portanto S16 = 16 * (1 + 61) / 2 = 496.",
       "ativa": true
     },
     {
       "perguntaId": "PA096",
       "tipo": "PA",
-      "enunciado": "Calcule S21 de uma PA com primeiro termo -10 e razão 3.",
+      "enunciado": "Calcule S21 de uma PA com primeiro termo -10 e razÃ£o 3.",
       "alternativas": {
         "A": "420",
         "B": "399",
@@ -2043,13 +2043,13 @@
         "D": "483"
       },
       "correta": "A",
-      "explicacao": "O termo a21 é 50. Portanto S21 = 21 * (-10 + 50) / 2 = 420.",
+      "explicacao": "O termo a21 Ã© 50. Portanto S21 = 21 * (-10 + 50) / 2 = 420.",
       "ativa": true
     },
     {
       "perguntaId": "PA097",
       "tipo": "PA",
-      "enunciado": "Calcule S13 de uma PA com primeiro termo 40 e razão -5.",
+      "enunciado": "Calcule S13 de uma PA com primeiro termo 40 e razÃ£o -5.",
       "alternativas": {
         "A": "117",
         "B": "143",
@@ -2057,13 +2057,13 @@
         "D": "169"
       },
       "correta": "C",
-      "explicacao": "O termo a13 é -20. Portanto S13 = 13 * (40 + -20) / 2 = 130.",
+      "explicacao": "O termo a13 Ã© -20. Portanto S13 = 13 * (40 + -20) / 2 = 130.",
       "ativa": true
     },
     {
       "perguntaId": "PA098",
       "tipo": "PA",
-      "enunciado": "Calcule S8 de uma PA com primeiro termo 7 e razão 9.",
+      "enunciado": "Calcule S8 de uma PA com primeiro termo 7 e razÃ£o 9.",
       "alternativas": {
         "A": "308",
         "B": "300",
@@ -2071,13 +2071,13 @@
         "D": "332"
       },
       "correta": "A",
-      "explicacao": "O termo a8 é 70. Portanto S8 = 8 * (7 + 70) / 2 = 308.",
+      "explicacao": "O termo a8 Ã© 70. Portanto S8 = 8 * (7 + 70) / 2 = 308.",
       "ativa": true
     },
     {
       "perguntaId": "PA099",
       "tipo": "PA",
-      "enunciado": "Calcule S10 de uma PA com primeiro termo 18 e razão 6.",
+      "enunciado": "Calcule S10 de uma PA com primeiro termo 18 e razÃ£o 6.",
       "alternativas": {
         "A": "440",
         "B": "460",
@@ -2085,13 +2085,13 @@
         "D": "480"
       },
       "correta": "C",
-      "explicacao": "O termo a10 é 72. Portanto S10 = 10 * (18 + 72) / 2 = 450.",
+      "explicacao": "O termo a10 Ã© 72. Portanto S10 = 10 * (18 + 72) / 2 = 450.",
       "ativa": true
     },
     {
       "perguntaId": "PA100",
       "tipo": "PA",
-      "enunciado": "Calcule S30 de uma PA com primeiro termo 5 e razão -1.",
+      "enunciado": "Calcule S30 de uma PA com primeiro termo 5 e razÃ£o -1.",
       "alternativas": {
         "A": "-315",
         "B": "-285",
@@ -2099,13 +2099,13 @@
         "D": "-195"
       },
       "correta": "B",
-      "explicacao": "O termo a30 é -24. Portanto S30 = 30 * (5 + -24) / 2 = -285.",
+      "explicacao": "O termo a30 Ã© -24. Portanto S30 = 30 * (5 + -24) / 2 = -285.",
       "ativa": true
     },
     {
       "perguntaId": "PG051",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 2 e a razão é 4. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 2 e a razÃ£o Ã© 4. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "512",
         "B": "128",
@@ -2119,7 +2119,7 @@
     {
       "perguntaId": "PG052",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 6 e a razão é 3. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 6 e a razÃ£o Ã© 3. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "54",
         "B": "486",
@@ -2133,7 +2133,7 @@
     {
       "perguntaId": "PG053",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 128 e a razão é 0,5. Qual é o 6º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 128 e a razÃ£o Ã© 0,5. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "4",
         "B": "8",
@@ -2147,7 +2147,7 @@
     {
       "perguntaId": "PG054",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 5 e a razão é 5. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 5 e a razÃ£o Ã© 5. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "125",
         "B": "625",
@@ -2161,7 +2161,7 @@
     {
       "perguntaId": "PG055",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 12 e a razão é 2. Qual é o 6º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 12 e a razÃ£o Ã© 2. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "384",
         "B": "192",
@@ -2175,7 +2175,7 @@
     {
       "perguntaId": "PG056",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 81 e a razão é 0,333. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 81 e a razÃ£o Ã© 0,333. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "3",
         "B": "1",
@@ -2189,7 +2189,7 @@
     {
       "perguntaId": "PG057",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 3 e a razão é -2. Qual é o 6º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 3 e a razÃ£o Ã© -2. Qual Ã© o 6Âº termo?",
       "alternativas": {
         "A": "-96",
         "B": "48",
@@ -2203,7 +2203,7 @@
     {
       "perguntaId": "PG058",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 7 e a razão é 3. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 7 e a razÃ£o Ã© 3. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "189",
         "B": "1701",
@@ -2217,7 +2217,7 @@
     {
       "perguntaId": "PG059",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 16 e a razão é 0,5. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 16 e a razÃ£o Ã© 0,5. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "2",
         "B": "1",
@@ -2231,7 +2231,7 @@
     {
       "perguntaId": "PG060",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 1 e a razão é 6. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 1 e a razÃ£o Ã© 6. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "216",
         "B": "36",
@@ -2245,7 +2245,7 @@
     {
       "perguntaId": "PG061",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 9 e a razão é 2. Qual é o 7º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 9 e a razÃ£o Ã© 2. Qual Ã© o 7Âº termo?",
       "alternativas": {
         "A": "576",
         "B": "288",
@@ -2259,7 +2259,7 @@
     {
       "perguntaId": "PG062",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 4 e a razão é -3. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 4 e a razÃ£o Ã© -3. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "-108",
         "B": "36",
@@ -2273,7 +2273,7 @@
     {
       "perguntaId": "PG063",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 10 e a razão é 2. Qual é o 5º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 10 e a razÃ£o Ã© 2. Qual Ã© o 5Âº termo?",
       "alternativas": {
         "A": "160",
         "B": "80",
@@ -2287,7 +2287,7 @@
     {
       "perguntaId": "PG064",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 625 e a razão é 0,2. Qual é o 4º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 625 e a razÃ£o Ã© 0,2. Qual Ã© o 4Âº termo?",
       "alternativas": {
         "A": "25",
         "B": "5",
@@ -2301,7 +2301,7 @@
     {
       "perguntaId": "PG065",
       "tipo": "PG",
-      "enunciado": "Em uma PG, o primeiro termo é 2 e a razão é 3. Qual é o 8º termo?",
+      "enunciado": "Em uma PG, o primeiro termo Ã© 2 e a razÃ£o Ã© 3. Qual Ã© o 8Âº termo?",
       "alternativas": {
         "A": "1458",
         "B": "13122",
@@ -2315,7 +2315,7 @@
     {
       "perguntaId": "PG066",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 2 e razão 3, qual é a posição do termo 162?",
+      "enunciado": "Na PG com a1 = 2 e razÃ£o 3, qual Ã© a posiÃ§Ã£o do termo 162?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -2329,7 +2329,7 @@
     {
       "perguntaId": "PG067",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 5 e razão 2, qual é a posição do termo 80?",
+      "enunciado": "Na PG com a1 = 5 e razÃ£o 2, qual Ã© a posiÃ§Ã£o do termo 80?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -2343,7 +2343,7 @@
     {
       "perguntaId": "PG068",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 4 e razão 4, qual é a posição do termo 256?",
+      "enunciado": "Na PG com a1 = 4 e razÃ£o 4, qual Ã© a posiÃ§Ã£o do termo 256?",
       "alternativas": {
         "A": "4",
         "B": "3",
@@ -2357,7 +2357,7 @@
     {
       "perguntaId": "PG069",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 3 e razão 5, qual é a posição do termo 375?",
+      "enunciado": "Na PG com a1 = 3 e razÃ£o 5, qual Ã© a posiÃ§Ã£o do termo 375?",
       "alternativas": {
         "A": "4",
         "B": "3",
@@ -2371,7 +2371,7 @@
     {
       "perguntaId": "PG070",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 7 e razão 2, qual é a posição do termo 112?",
+      "enunciado": "Na PG com a1 = 7 e razÃ£o 2, qual Ã© a posiÃ§Ã£o do termo 112?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -2385,7 +2385,7 @@
     {
       "perguntaId": "PG071",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 81 e razão 0,333, qual é a posição do termo 3?",
+      "enunciado": "Na PG com a1 = 81 e razÃ£o 0,333, qual Ã© a posiÃ§Ã£o do termo 3?",
       "alternativas": {
         "A": "4",
         "B": "3",
@@ -2399,7 +2399,7 @@
     {
       "perguntaId": "PG072",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 10 e razão 3, qual é a posição do termo 270?",
+      "enunciado": "Na PG com a1 = 10 e razÃ£o 3, qual Ã© a posiÃ§Ã£o do termo 270?",
       "alternativas": {
         "A": "4",
         "B": "3",
@@ -2413,7 +2413,7 @@
     {
       "perguntaId": "PG073",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 6 e razão 2, qual é a posição do termo 96?",
+      "enunciado": "Na PG com a1 = 6 e razÃ£o 2, qual Ã© a posiÃ§Ã£o do termo 96?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -2427,7 +2427,7 @@
     {
       "perguntaId": "PG074",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 1 e razão 4, qual é a posição do termo 1024?",
+      "enunciado": "Na PG com a1 = 1 e razÃ£o 4, qual Ã© a posiÃ§Ã£o do termo 1024?",
       "alternativas": {
         "A": "5",
         "B": "7",
@@ -2441,7 +2441,7 @@
     {
       "perguntaId": "PG075",
       "tipo": "PG",
-      "enunciado": "Na PG com a1 = 32 e razão 0,5, qual é a posição do termo 2?",
+      "enunciado": "Na PG com a1 = 32 e razÃ£o 0,5, qual Ã© a posiÃ§Ã£o do termo 2?",
       "alternativas": {
         "A": "4",
         "B": "5",
@@ -2455,7 +2455,7 @@
     {
       "perguntaId": "PG076",
       "tipo": "PG",
-      "enunciado": "Os números 4, x e 36 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 4, x e 36 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "12",
         "B": "10",
@@ -2463,13 +2463,13 @@
         "D": "24"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PG, x² = 4 * 36. Portanto x = 12.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 4 * 36. Portanto x = 12.",
       "ativa": true
     },
     {
       "perguntaId": "PG077",
       "tipo": "PG",
-      "enunciado": "Os números 9, x e 81 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 9, x e 81 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "25",
         "B": "29",
@@ -2477,13 +2477,13 @@
         "D": "27"
       },
       "correta": "D",
-      "explicacao": "Em três termos de uma PG, x² = 9 * 81. Portanto x = 27.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 9 * 81. Portanto x = 27.",
       "ativa": true
     },
     {
       "perguntaId": "PG078",
       "tipo": "PG",
-      "enunciado": "Os números 16, x e 100 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 16, x e 100 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "40",
         "B": "38",
@@ -2491,13 +2491,13 @@
         "D": "80"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PG, x² = 16 * 100. Portanto x = 40.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 16 * 100. Portanto x = 40.",
       "ativa": true
     },
     {
       "perguntaId": "PG079",
       "tipo": "PG",
-      "enunciado": "Os números 25, x e 225 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 25, x e 225 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "73",
         "B": "77",
@@ -2505,13 +2505,13 @@
         "D": "75"
       },
       "correta": "D",
-      "explicacao": "Em três termos de uma PG, x² = 25 * 225. Portanto x = 75.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 25 * 225. Portanto x = 75.",
       "ativa": true
     },
     {
       "perguntaId": "PG080",
       "tipo": "PG",
-      "enunciado": "Os números 1, x e 49 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 1, x e 49 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "5",
         "B": "9",
@@ -2519,13 +2519,13 @@
         "D": "7"
       },
       "correta": "D",
-      "explicacao": "Em três termos de uma PG, x² = 1 * 49. Portanto x = 7.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 1 * 49. Portanto x = 7.",
       "ativa": true
     },
     {
       "perguntaId": "PG081",
       "tipo": "PG",
-      "enunciado": "Os números 12, x e 75 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 12, x e 75 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "28",
         "B": "32",
@@ -2533,13 +2533,13 @@
         "D": "60"
       },
       "correta": "C",
-      "explicacao": "Em três termos de uma PG, x² = 12 * 75. Portanto x = 30.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 12 * 75. Portanto x = 30.",
       "ativa": true
     },
     {
       "perguntaId": "PG082",
       "tipo": "PG",
-      "enunciado": "Os números 8, x e 128 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 8, x e 128 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "32",
         "B": "30",
@@ -2547,13 +2547,13 @@
         "D": "64"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PG, x² = 8 * 128. Portanto x = 32.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 8 * 128. Portanto x = 32.",
       "ativa": true
     },
     {
       "perguntaId": "PG083",
       "tipo": "PG",
-      "enunciado": "Os números 3, x e 48 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 3, x e 48 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "12",
         "B": "10",
@@ -2561,13 +2561,13 @@
         "D": "24"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PG, x² = 3 * 48. Portanto x = 12.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 3 * 48. Portanto x = 12.",
       "ativa": true
     },
     {
       "perguntaId": "PG084",
       "tipo": "PG",
-      "enunciado": "Os números 20, x e 180 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 20, x e 180 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "60",
         "B": "58",
@@ -2575,13 +2575,13 @@
         "D": "120"
       },
       "correta": "A",
-      "explicacao": "Em três termos de uma PG, x² = 20 * 180. Portanto x = 60.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 20 * 180. Portanto x = 60.",
       "ativa": true
     },
     {
       "perguntaId": "PG085",
       "tipo": "PG",
-      "enunciado": "Os números 7, x e 63 estão em PG com x positivo. Qual é o valor de x?",
+      "enunciado": "Os nÃºmeros 7, x e 63 estÃ£o em PG com x positivo. Qual Ã© o valor de x?",
       "alternativas": {
         "A": "19",
         "B": "21",
@@ -2589,13 +2589,13 @@
         "D": "42"
       },
       "correta": "B",
-      "explicacao": "Em três termos de uma PG, x² = 7 * 63. Portanto x = 21.",
+      "explicacao": "Em trÃªs termos de uma PG, xÂ² = 7 * 63. Portanto x = 21.",
       "ativa": true
     },
     {
       "perguntaId": "PG086",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 6 primeiros termos da PG que começa por 2, 4, 8, 16....",
+      "enunciado": "Calcule a soma dos 6 primeiros termos da PG que comeÃ§a por 2, 4, 8, 16....",
       "alternativas": {
         "A": "124",
         "B": "128",
@@ -2603,13 +2603,13 @@
         "D": "132"
       },
       "correta": "C",
-      "explicacao": "A soma dos termos é 2 + 4 + 8 + 16 + 32 + 64 = 126.",
+      "explicacao": "A soma dos termos Ã© 2 + 4 + 8 + 16 + 32 + 64 = 126.",
       "ativa": true
     },
     {
       "perguntaId": "PG087",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 7 primeiros termos da PG que começa por 3, 6, 12, 24....",
+      "enunciado": "Calcule a soma dos 7 primeiros termos da PG que comeÃ§a por 3, 6, 12, 24....",
       "alternativas": {
         "A": "378",
         "B": "381",
@@ -2617,13 +2617,13 @@
         "D": "388"
       },
       "correta": "B",
-      "explicacao": "A soma dos termos é 3 + 6 + 12 + 24 + 48 + 96 + 192 = 381.",
+      "explicacao": "A soma dos termos Ã© 3 + 6 + 12 + 24 + 48 + 96 + 192 = 381.",
       "ativa": true
     },
     {
       "perguntaId": "PG088",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que começa por 5, 15, 45, 135....",
+      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que comeÃ§a por 5, 15, 45, 135....",
       "alternativas": {
         "A": "600",
         "B": "605",
@@ -2631,13 +2631,13 @@
         "D": "606"
       },
       "correta": "B",
-      "explicacao": "A soma dos termos é 5 + 15 + 45 + 135 + 405 = 605.",
+      "explicacao": "A soma dos termos Ã© 5 + 15 + 45 + 135 + 405 = 605.",
       "ativa": true
     },
     {
       "perguntaId": "PG089",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que começa por 4, 16, 64, 256.",
+      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que comeÃ§a por 4, 16, 64, 256.",
       "alternativas": {
         "A": "340",
         "B": "336",
@@ -2645,13 +2645,13 @@
         "D": "341"
       },
       "correta": "A",
-      "explicacao": "A soma dos termos é 4 + 16 + 64 + 256 = 340.",
+      "explicacao": "A soma dos termos Ã© 4 + 16 + 64 + 256 = 340.",
       "ativa": true
     },
     {
       "perguntaId": "PG090",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que começa por 6, 18, 54, 162.",
+      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que comeÃ§a por 6, 18, 54, 162.",
       "alternativas": {
         "A": "240",
         "B": "234",
@@ -2659,13 +2659,13 @@
         "D": "244"
       },
       "correta": "A",
-      "explicacao": "A soma dos termos é 6 + 18 + 54 + 162 = 240.",
+      "explicacao": "A soma dos termos Ã© 6 + 18 + 54 + 162 = 240.",
       "ativa": true
     },
     {
       "perguntaId": "PG091",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que começa por 1, 5, 25, 125....",
+      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que comeÃ§a por 1, 5, 25, 125....",
       "alternativas": {
         "A": "780",
         "B": "781",
@@ -2673,13 +2673,13 @@
         "D": "786"
       },
       "correta": "B",
-      "explicacao": "A soma dos termos é 1 + 5 + 25 + 125 + 625 = 781.",
+      "explicacao": "A soma dos termos Ã© 1 + 5 + 25 + 125 + 625 = 781.",
       "ativa": true
     },
     {
       "perguntaId": "PG092",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que começa por 12, 24, 48, 96....",
+      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que comeÃ§a por 12, 24, 48, 96....",
       "alternativas": {
         "A": "372",
         "B": "360",
@@ -2687,13 +2687,13 @@
         "D": "377"
       },
       "correta": "A",
-      "explicacao": "A soma dos termos é 12 + 24 + 48 + 96 + 192 = 372.",
+      "explicacao": "A soma dos termos Ã© 12 + 24 + 48 + 96 + 192 = 372.",
       "ativa": true
     },
     {
       "perguntaId": "PG093",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que começa por 16, 8, 4, 2....",
+      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que comeÃ§a por 16, 8, 4, 2....",
       "alternativas": {
         "A": "15",
         "B": "47",
@@ -2701,13 +2701,13 @@
         "D": "31"
       },
       "correta": "D",
-      "explicacao": "A soma dos termos é 16 + 8 + 4 + 2 + 1 = 31.",
+      "explicacao": "A soma dos termos Ã© 16 + 8 + 4 + 2 + 1 = 31.",
       "ativa": true
     },
     {
       "perguntaId": "PG094",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que começa por 7, 21, 63, 189.",
+      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que comeÃ§a por 7, 21, 63, 189.",
       "alternativas": {
         "A": "280",
         "B": "273",
@@ -2715,13 +2715,13 @@
         "D": "284"
       },
       "correta": "A",
-      "explicacao": "A soma dos termos é 7 + 21 + 63 + 189 = 280.",
+      "explicacao": "A soma dos termos Ã© 7 + 21 + 63 + 189 = 280.",
       "ativa": true
     },
     {
       "perguntaId": "PG095",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 6 primeiros termos da PG que começa por 10, 20, 40, 80....",
+      "enunciado": "Calcule a soma dos 6 primeiros termos da PG que comeÃ§a por 10, 20, 40, 80....",
       "alternativas": {
         "A": "620",
         "B": "640",
@@ -2729,13 +2729,13 @@
         "D": "636"
       },
       "correta": "C",
-      "explicacao": "A soma dos termos é 10 + 20 + 40 + 80 + 160 + 320 = 630.",
+      "explicacao": "A soma dos termos Ã© 10 + 20 + 40 + 80 + 160 + 320 = 630.",
       "ativa": true
     },
     {
       "perguntaId": "PG096",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 3 primeiros termos da PG que começa por 9, 36, 144.",
+      "enunciado": "Calcule a soma dos 3 primeiros termos da PG que comeÃ§a por 9, 36, 144.",
       "alternativas": {
         "A": "180",
         "B": "189",
@@ -2743,13 +2743,13 @@
         "D": "192"
       },
       "correta": "B",
-      "explicacao": "A soma dos termos é 9 + 36 + 144 = 189.",
+      "explicacao": "A soma dos termos Ã© 9 + 36 + 144 = 189.",
       "ativa": true
     },
     {
       "perguntaId": "PG097",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que começa por 2, 12, 72, 432.",
+      "enunciado": "Calcule a soma dos 4 primeiros termos da PG que comeÃ§a por 2, 12, 72, 432.",
       "alternativas": {
         "A": "516",
         "B": "520",
@@ -2757,13 +2757,13 @@
         "D": "522"
       },
       "correta": "C",
-      "explicacao": "A soma dos termos é 2 + 12 + 72 + 432 = 518.",
+      "explicacao": "A soma dos termos Ã© 2 + 12 + 72 + 432 = 518.",
       "ativa": true
     },
     {
       "perguntaId": "PG098",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 6 primeiros termos da PG que começa por 8, 16, 32, 64....",
+      "enunciado": "Calcule a soma dos 6 primeiros termos da PG que comeÃ§a por 8, 16, 32, 64....",
       "alternativas": {
         "A": "504",
         "B": "496",
@@ -2771,13 +2771,13 @@
         "D": "510"
       },
       "correta": "A",
-      "explicacao": "A soma dos termos é 8 + 16 + 32 + 64 + 128 + 256 = 504.",
+      "explicacao": "A soma dos termos Ã© 8 + 16 + 32 + 64 + 128 + 256 = 504.",
       "ativa": true
     },
     {
       "perguntaId": "PG099",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que começa por 20, 10, 5, 2,5....",
+      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que comeÃ§a por 20, 10, 5, 2,5....",
       "alternativas": {
         "A": "18,75",
         "B": "58,75",
@@ -2785,13 +2785,13 @@
         "D": "38,75"
       },
       "correta": "D",
-      "explicacao": "A soma dos termos é 20 + 10 + 5 + 2,5 + 1,25 = 38,75.",
+      "explicacao": "A soma dos termos Ã© 20 + 10 + 5 + 2,5 + 1,25 = 38,75.",
       "ativa": true
     },
     {
       "perguntaId": "PG100",
       "tipo": "PG",
-      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que começa por 3, 12, 48, 192....",
+      "enunciado": "Calcule a soma dos 5 primeiros termos da PG que comeÃ§a por 3, 12, 48, 192....",
       "alternativas": {
         "A": "1020",
         "B": "1026",
@@ -2799,7 +2799,7 @@
         "D": "1023"
       },
       "correta": "D",
-      "explicacao": "A soma dos termos é 3 + 12 + 48 + 192 + 768 = 1023.",
+      "explicacao": "A soma dos termos Ã© 3 + 12 + 48 + 192 + 768 = 1023.",
       "ativa": true
     }
   ]
