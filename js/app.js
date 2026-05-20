@@ -1,4 +1,4 @@
-﻿const App = (function() {
+const App = (function() {
   const STORAGE_KEYS = {
     salaId: 'trilha.salaId',
     playerId: 'trilha.playerId',

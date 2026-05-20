@@ -1,4 +1,4 @@
-﻿const CLASSROOM_CONFIG = {
+const CLASSROOM_CONFIG = {
   totalQuestions: 10,
   questionSeconds: 180,
   maxStudents: 45,

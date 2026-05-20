@@ -1,4 +1,4 @@
-﻿const Board = (function() {
+const Board = (function() {
   let lastPositions = {};
 
   const POSITIONS = [
@@ -37,13 +37,13 @@
 
   const SPECIALS = {
     8: { label: '-2', className: 'board-cell-node--red', title: 'Volte 2 casas', text: 'Quem cair aqui volta 2 casas automaticamente.' },
-    13: { label: 'BONUS', className: 'board-cell-node--bonus', title: 'Desafio bÃ´nus', text: 'Quem acertar a pergunta avanÃ§a 1 casa extra. Se errar, permanece onde estava antes de rolar o dado.' },
-    16: { label: 'TROCA', className: 'board-cell-node--bonus', title: 'Trocar pergunta', text: 'Quem cair aqui pode trocar a pergunta uma Ãºnica vez antes de responder. NÃ£o troca com outro jogador.' },
-    19: { label: 'PAUSA', className: 'board-cell-node--skip', title: 'Fique uma rodada sem jogar', text: 'Quem cair aqui perde a prÃ³xima vez em que o turno chegar nele.' },
+    13: { label: 'BONUS', className: 'board-cell-node--bonus', title: 'Desafio bônus', text: 'Quem acertar a pergunta avança 1 casa extra. Se errar, permanece onde estava antes de rolar o dado.' },
+    16: { label: 'TROCA', className: 'board-cell-node--bonus', title: 'Trocar pergunta', text: 'Quem cair aqui pode trocar a pergunta uma única vez antes de responder. Não troca com outro jogador.' },
+    19: { label: 'PAUSA', className: 'board-cell-node--skip', title: 'Fique uma rodada sem jogar', text: 'Quem cair aqui perde a próxima vez em que o turno chegar nele.' },
     22: { label: '-2', className: 'board-cell-node--red', title: 'Volte 2 casas', text: 'Quem cair aqui volta 2 casas automaticamente.' },
-    26: { label: '+2', className: 'board-cell-node--yellow', title: 'Avance 2 casas', text: 'Quem acertar a pergunta desta casa avanÃ§a 2 casas automaticamente.' },
-    29: { label: 'TROCA', className: 'board-cell-node--bonus', title: 'Trocar pergunta', text: 'Quem cair aqui pode trocar a pergunta uma Ãºnica vez antes de responder. NÃ£o troca com outro jogador.' },
-    30: { label: 'FIM', className: 'board-cell-node--finish', title: 'Chegada', text: 'Para vencer, precisa tirar o nÃºmero exato no dado e acertar a pergunta da chegada.' }
+    26: { label: '+2', className: 'board-cell-node--yellow', title: 'Avance 2 casas', text: 'Quem acertar a pergunta desta casa avança 2 casas automaticamente.' },
+    29: { label: 'TROCA', className: 'board-cell-node--bonus', title: 'Trocar pergunta', text: 'Quem cair aqui pode trocar a pergunta uma única vez antes de responder. Não troca com outro jogador.' },
+    30: { label: 'FIM', className: 'board-cell-node--finish', title: 'Chegada', text: 'Para vencer, precisa tirar o número exato no dado e acertar a pergunta da chegada.' }
   };
 
   function render(container, estado) {
@@ -160,15 +160,15 @@
       return {
         position: number,
         title: 'Casa comum',
-        text: 'O jogador sÃ³ avanÃ§a para esta casa se acertar a pergunta. Se errar, permanece onde estava antes de rolar o dado.',
+        text: 'O jogador só avança para esta casa se acertar a pergunta. Se errar, permanece onde estava antes de rolar o dado.',
         special: false
       };
     }
 
     return {
       position: number,
-      title: 'InÃ­cio',
-      text: 'Todos comeÃ§am antes da casa 1.',
+      title: 'Início',
+      text: 'Todos começam antes da casa 1.',
       special: false
     };
   }

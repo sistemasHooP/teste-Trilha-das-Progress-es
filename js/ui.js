@@ -1,4 +1,4 @@
-﻿const UI = (function() {
+const UI = (function() {
   let selectedAnswer = '';
   let diceTimer = null;
   let gameClockTimer = null;

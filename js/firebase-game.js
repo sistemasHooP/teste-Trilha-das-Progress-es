@@ -1,4 +1,4 @@
-﻿import { FirebaseQuestions } from './firebase-questions.js?v=20260520-mega10';
+import { FirebaseQuestions } from './firebase-questions.js?v=20260520-mega11';
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
